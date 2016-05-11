@@ -7,10 +7,11 @@ apply plugin: 'groovy'
 apply plugin: 'maven'
 apply plugin: 'idea'
 apply plugin: 'project-report'
+apply plugin: 'java-library-distribution'
 
 group = 'com.spidasoftware'
 version = '0.1-SNAPSHOT' 
-description = "geoserver-spidadb-plugin"
+description = "mongodb-geoserver-plugin"
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -52,10 +53,45 @@ repositories {
     maven { url "http://repo.boundlessgeo.com/main/" }
 }
 
+task sourcesZip(type: Zip, dependsOn: classes) {
+    classifier = 'sources'
+    into ('') {
+		from { 'build.gradle' }
+		from { 'gradlew' }
+		from { 'gradlew.bat' }
+		from { 'LICENSE' }
+		from { 'README.md' }
+        		
+	}
+	into ('src') {
+		from { 'src' }
+	}
+	into ('gradle') {
+		from { 'gradle' }
+	}
+} 
+
+distributions {
+    main {
+        contents {
+        	from sourcesZip
+        	from jar
+        	into ('') {
+        		from { 'LICENSE' }
+        		from { 'README.md' }
+        	}
+            exclude { override ->
+                override.file.path.matches('.*(gt|net|gs|jts|jscience|wicket|htmlvalidator|slf4j|log4j|gs|spring|bcprov|srvlet|json|commons|freemarker|xstream|guava|jsr|jasypt|jai|servlet|imageio|jdom|postgres|xpp|aopalliance|cglib|hsqldb|xmlpull|xpp|vecmath|jgrdidshift|org.w3|common|ecore|picocontainer|xsd|xml|jgridshift).*.jar')
+            }
+        }
+    }
+}
+
+artifacts { archives distZip }
+
 uploadArchives {
 	repositories.mavenDeployer {
 		repository(url: m2Settings.exposed) {
-			authentication(userName: m2Settings.username, password: m2Settings.password)
 			authentication(userName: m2Settings.username, password: m2Settings.password)
 		}
 	}
