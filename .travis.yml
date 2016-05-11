@@ -1,3 +1,6 @@
 language: groovy
 services: mongodb
 sudo: false
+before_script:
+  - mongo test_calcdb --eval 'db.createCollection("locations");'
+  - mongo test_calcdb --eval 'db.createCollection("designs");'
