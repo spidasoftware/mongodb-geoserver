@@ -1,0 +1,140 @@
+<xsd:schema xmlns:DB="http://spida/db" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://spida/db">
+    <xsd:import namespace="http://www.opengis.net/gml" schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" />
+    <xsd:complexType name="locationType">
+        <xsd:complexContent>
+            <xsd:extension base="gml:AbstractFeatureType">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="id" nillable="false" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="label" nillable="false" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="owner" nillable="false" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="geographicCoordinate" nillable="false" type="gml:GeometryPropertyType"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="address" nillable="true" type="DB:address"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="dateModified" nillable="false" type="xsd:long"/>
+                    <xsd:element maxOccurs="2147483647" minOccurs="0" name="form" nillable="true" type="DB:form"/>
+                    <xsd:element maxOccurs="2147483647" minOccurs="0" name="design" nillable="true" type="DB:design"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="form">
+        <xsd:complexContent>
+            <xsd:extension base="gml:AbstractFeatureType">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="title" nillable="false" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="template" nillable="true" type="xsd:string"/>
+                    <xsd:element maxOccurs="2147483647" minOccurs="0" name="field" nillable="true" type="DB:field"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="field">
+        <xsd:complexContent>
+            <xsd:extension base="gml:AbstractFeatureType">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="name" nillable="false" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="value" nillable="false" type="xsd:string"/>
+                    <xsd:element maxOccurs="2147483647" minOccurs="0" name="groupedField" nillable="false" type="DB:groupedField"/>
+                    <xsd:element maxOccurs="2147483647" minOccurs="0" name="rowField" nillable="false" type="DB:rowField"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="rowField">
+        <xsd:complexContent>
+            <xsd:extension base="gml:AbstractFeatureType">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="2147483647" minOccurs="0" name="groupedField" nillable="false" type="DB:groupedField"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="groupedField">
+        <xsd:complexContent>
+            <xsd:extension base="gml:AbstractFeatureType">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="name" nillable="false" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="value" nillable="false" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="assetTag">
+        <xsd:complexContent>
+            <xsd:extension base="gml:AbstractFeatureType">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="type" nillable="false" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="value" nillable="false" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="primary" nillable="false" type="xsd:boolean"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="address">
+        <xsd:complexContent>
+            <xsd:extension base="gml:AbstractFeatureType">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="number" nillable="true" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="street" nillable="true" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="city" nillable="true" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="county" nillable="true" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="state" nillable="true" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="zip_code" nillable="true" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="design">
+        <xsd:complexContent>
+            <xsd:extension base="gml:AbstractFeatureType">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="id" nillable="false" type="xsd:string"/>
+                    <xsd:element maxOccurs="2147483647" minOccurs="0" name="asset" nillable="false" type="DB:asset"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="asset">
+        <xsd:complexContent>
+            <xsd:extension base="gml:AbstractFeatureType">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="id" nillable="false" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="actual" nillable="false" type="xsd:double"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="allowable" nillable="false" type="xsd:double"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="unit" nillable="false" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="analysisDate" nillable="false" type="xsd:long"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="component" nillable="false" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="loadInfo" nillable="false" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="passes" nillable="false" type="xsd:boolean"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="glc" nillable="false" type="DB:measurable"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="agl" nillable="false" type="DB:measurable"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="dateModified" nillable="true" type="xsd:long"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="length" nillable="false" type="DB:measurable"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="species" nillable="false" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="class" nillable="false" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="owner" nillable="false" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="clientFile" nillable="true" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="clientFileVersion" nillable="true" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="projectName" nillable="true" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="projectId" nillable="true" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="mapNumber" nillable="true" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="comments" nillable="true" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="assetType" nillable="false" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="designType" nillable="false" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="email" nillable="true" type="xsd:string"/>
+                    <xsd:element maxOccurs="2147483647" minOccurs="0" name="assetTag" nillable="true" type="DB:assetTag"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="measurable">
+        <xsd:complexContent>
+            <xsd:extension base="gml:AbstractFeatureType">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="value" nillable="false" type="xsd:double"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="unit" nillable="false" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="FEATURE_NAME" substitutionGroup="gml:AbstractFeature" type="DB:locationType"/>
+</xsd:schema>
