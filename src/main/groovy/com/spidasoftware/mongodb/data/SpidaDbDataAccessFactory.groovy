@@ -48,7 +48,7 @@ public class SpidaDbDataAccessFactory implements DataAccessFactory {
 
     @Override
     DataAccessFactory.Param[] getParametersInfo() {
-        return [HOST, FEATURE_TYPE_MAPPING_FILE, NAMESPACE]
+        return [HOST, PORT, DATABASE_NAME, USERNAME, PASSWORD, FEATURE_TYPE_MAPPING_FILE, NAMESPACE]
     }
 
     @Override
