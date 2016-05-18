@@ -143,7 +143,7 @@ public class SpidaDbDataAccess implements DataAccess<FeatureType, Feature> {
         try {
             def serverAddress = new ServerAddress(host, Integer.valueOf(port))
             if(username && password) {
-                MongoCredential credential = MongoCredential.createCredential(username, databaseName, password);
+                MongoCredential credential = MongoCredential.createCredential(username, databaseName, password.toCharArray());
                 mongoClient = new MongoClient(serverAddress, Arrays.asList(credential));
             } else {
                 mongoClient = new MongoClient(serverAddress)
