@@ -61,15 +61,13 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testGetPole() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("asset", "designs", CQL.toFilter("assetType='POLE'"))
+            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("pole", "designs", CQL.toFilter("designType='Measured Design'"))
         when:
             Feature feature = mongoDBSubCollectionFeatureCollectionIterator.next()
         then:
             !mongoDBSubCollectionFeatureCollectionIterator.hasNext()
-            feature.attributeCount == 24
-            feature.getAttribute("assetType") == "POLE"
+            feature.attributeCount == 16
             feature.getAttribute("designType") == "Measured Design"
-            feature.getAttribute("loadInfo") == null
             feature.getAttribute("locationLabel") == "684704E"
             feature.getAttribute("locationId") == "55fac7fde4b0e7f2e3be342c"
             feature.getAttribute("clientFile") == "SCE.client"
@@ -84,24 +82,17 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("length") == 45
             feature.getAttribute("lengthUnit") == "FOOT"
             feature.getAttribute("owner") == "Acme Power"
-            feature.getAttribute("actual") == null
-            feature.getAttribute("allowable") == null
-            feature.getAttribute("unit") == null
-            feature.getAttribute("analysisDate") == null
-            feature.getAttribute("component") == null
-            feature.getAttribute("passes") == null
-            feature.getAttribute("id") == "56e9b7137d84511d8dd0f13c_POLE"
+            feature.getAttribute("id") == "56e9b7137d84511d8dd0f13c"
     }
 
     void testGetAnalysis() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("asset", "designs", CQL.toFilter("actual=1.5677448671814123"))
+            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("analysis", "designs", CQL.toFilter("actual=1.5677448671814123"))
         when:
             Feature feature = mongoDBSubCollectionFeatureCollectionIterator.next()
         then:
             !mongoDBSubCollectionFeatureCollectionIterator.hasNext()
             feature.attributeCount == 24
-            feature.getAttribute("assetType") == "ANALYSIS"
             feature.getAttribute("designType") == "Measured Design"
             feature.getAttribute("loadInfo") == "CSA Heavy"
             feature.getAttribute("locationLabel") == "684704E"
@@ -124,19 +115,53 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("analysisDate") == 1446037442824
             feature.getAttribute("component") ==  "Pole-Buckling"
             feature.getAttribute("passes") == true
+            feature.getAttribute("poleId") == "56e9b7137d84511d8dd0f13c"
             feature.getAttribute("id") == "56e9b7137d84511d8dd0f13c_ANALYSIS_0"
     }
 
-    void testGetAllAssets() {
+    void testGetAllPoles() {
         when:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("asset", "designs", Filter.INCLUDE)
+            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("pole", "designs", Filter.INCLUDE)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.size() == 4
+            mongoDBSubCollectionFeatureCollectionIterator.size() == 1
     }
 
-    void testLimitAssetPropertyNames() {
+    void testGetAllAnalysis() {
+        when:
+            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("analysis", "designs", Filter.INCLUDE)
+        then:
+            mongoDBSubCollectionFeatureCollectionIterator.size() == 3
+    }
+
+    void testLimitPolePropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("asset", "designs", CQL.toFilter("actual=1.5677448671814123"), ["id", "actual"] as String[])
+            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("pole", "designs", CQL.toFilter("designType='Measured Design'"), ["id", "designType"] as String[])
+        when:
+            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.next()
+        then:
+            !mongoDBSubCollectionFeatureCollectionIterator.hasNext()
+            feature.attributeCount == 16
+            feature.getAttribute("designType") == "Measured Design"
+            feature.getAttribute("locationLabel") == null
+            feature.getAttribute("locationId") == null
+            feature.getAttribute("clientFile") == null
+            feature.getAttribute("clientFileVersion") == null
+            feature.getAttribute("dateModified") == null
+            feature.getAttribute("glc") == null
+            feature.getAttribute("glcUnit") == null
+            feature.getAttribute("agl") == null
+            feature.getAttribute("aglUnit") == null
+            feature.getAttribute("species") == null
+            feature.getAttribute("class") == null
+            feature.getAttribute("length") == null
+            feature.getAttribute("lengthUnit") == null
+            feature.getAttribute("owner") == null
+            feature.getAttribute("id") == "56e9b7137d84511d8dd0f13c"
+    }
+
+    void testLimitAnalysisPropertyNames() {
+        setup:
+            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("analysis", "designs", CQL.toFilter("actual=1.5677448671814123"), ["id", "actual"] as String[])
         when:
             Feature feature = mongoDBSubCollectionFeatureCollectionIterator.next()
         then:
@@ -281,7 +306,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("midspanHeight") == 27.5
             feature.getAttribute("midspanHeightUnit") == "FOOT"
             feature.getAttribute("tensionAdjustment") == 0.9
-            feature.getAttribute("assetId") == "56e9b7137d84511d8dd0f13c_POLE"
+            feature.getAttribute("poleId") == "56e9b7137d84511d8dd0f13c"
     }
 
     void testLimitWirePropertyNames() {
@@ -303,7 +328,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("midspanHeight") == null
             feature.getAttribute("midspanHeightUnit") == null
             feature.getAttribute("tensionAdjustment") == null
-            feature.getAttribute("assetId") == null
+            feature.getAttribute("poleId") == null
     }
 
     void testGetSpanPointFeature() {
@@ -317,7 +342,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("distance") == 88
             feature.getAttribute("distanceUnit") == "FOOT"
             feature.getAttribute("environment") == "STREET"
-            feature.getAttribute("assetId") == "56e9b7137d84511d8dd0f13c_POLE"
+            feature.getAttribute("poleId") == "56e9b7137d84511d8dd0f13c"
     }
 
     void testLimitSpanPointPropertyNames() {
@@ -331,7 +356,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("distance") == 88
             feature.getAttribute("distanceUnit") == null
             feature.getAttribute("environment") == null
-            feature.getAttribute("assetId") == null
+            feature.getAttribute("poleId") == null
     }
 
     void testGetSpanGuyFeature() {
@@ -352,7 +377,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("midspanHeightUnit") == "FOOT"
             feature.getAttribute("height") == 27.25
             feature.getAttribute("heightUnit") == "FOOT"
-            feature.getAttribute("assetId") == "56e9b7137d84511d8dd0f13c_POLE"
+            feature.getAttribute("poleId") == "56e9b7137d84511d8dd0f13c"
     }
 
     void testLimitSpanGuyPropertyNames() {
@@ -373,7 +398,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("midspanHeightUnit") == null
             feature.getAttribute("height") == null
             feature.getAttribute("heightUnit") == null
-            feature.getAttribute("assetId") == null
+            feature.getAttribute("poleId") == null
     }
 
     void testGetGuyFeature() {
@@ -390,7 +415,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("conductorStrands") == 7
             feature.getAttribute("attachmentHeight") == 28.25
             feature.getAttribute("attachmentHeightUnit") == "FOOT"
-            feature.getAttribute("assetId") == "56e9b7137d84511d8dd0f13c_POLE"
+            feature.getAttribute("poleId") == "56e9b7137d84511d8dd0f13c"
     }
 
     void testLimitGuyPropertyNames() {
@@ -407,7 +432,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("conductorStrands") == null
             feature.getAttribute("attachmentHeight") == null
             feature.getAttribute("attachmentHeightUnit") == null
-            feature.getAttribute("assetId") == null
+            feature.getAttribute("poleId") == null
     }
 
     void testGetInsulatorFeature() {
@@ -426,7 +451,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("offsetUnit") == "INCH"
             feature.getAttribute("direction") == 95
             feature.getAttribute("doubleInsulator") == false
-            feature.getAttribute("assetId") == "56e9b7137d84511d8dd0f13c_POLE"
+            feature.getAttribute("poleId") == "56e9b7137d84511d8dd0f13c"
     }
 
     void testLimitInsulatorPropertyNames() {
@@ -445,7 +470,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("offsetUnit") == null
             feature.getAttribute("direction") == null
             feature.getAttribute("doubleInsulator") == null
-            feature.getAttribute("assetId") == null
+            feature.getAttribute("poleId") == null
     }
 
     void testGetEquipmentFeature() {
@@ -464,7 +489,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("bottomHeight") == 24.75
             feature.getAttribute("bottomHeightUnit") == "FOOT"
             feature.getAttribute("direction") == 108
-            feature.getAttribute("assetId") == "56e9b7137d84511d8dd0f13c_POLE"
+            feature.getAttribute("poleId") == "56e9b7137d84511d8dd0f13c"
     }
 
     void testLimitEquipmentPropertyNames() {
@@ -483,7 +508,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("bottomHeight") == null
             feature.getAttribute("bottomHeightUnit") == null
             feature.getAttribute("direction") == null
-            feature.getAttribute("assetId") == null
+            feature.getAttribute("poleId") == null
     }
 
     void testGetDamageFeature() {
@@ -518,7 +543,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("neckOffsetUnit") == null
             feature.getAttribute("nestDepth") == null
             feature.getAttribute("nestDepthUnit") == null
-            feature.getAttribute("assetId") == "56e9b7137d84511d8dd0f13c_POLE"
+            feature.getAttribute("poleId") == "56e9b7137d84511d8dd0f13c"
     }
 
     void testLimitDamagePropertyNames() {
@@ -553,7 +578,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("neckOffsetUnit") == null
             feature.getAttribute("nestDepth") == null
             feature.getAttribute("nestDepthUnit") == null
-            feature.getAttribute("assetId") == null
+            feature.getAttribute("poleId") == null
     }
 
     void testCrossArmGetFeature() {
@@ -572,7 +597,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("offsetUnit") == "INCH"
             feature.getAttribute("direction") == 57
             feature.getAttribute("associatedBacking") == "Other"
-            feature.getAttribute("assetId") == "56e9b7137d84511d8dd0f13c_POLE"
+            feature.getAttribute("poleId") == "56e9b7137d84511d8dd0f13c"
     }
 
     void testLimitCrossArmPropertyNames() {
@@ -591,7 +616,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("offsetUnit") == null
             feature.getAttribute("direction") == null
             feature.getAttribute("associatedBacking") == null
-            feature.getAttribute("assetId") == null
+            feature.getAttribute("poleId") == null
     }
 
     void testGetAnchorFeature() {
@@ -610,7 +635,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("heightUnit") == "FOOT"
             feature.getAttribute("supportType") == "Other"
             feature.getAttribute("type") == "Single"
-            feature.getAttribute("assetId") == "56e9b7137d84511d8dd0f13c_POLE"
+            feature.getAttribute("poleId") == "56e9b7137d84511d8dd0f13c"
     }
 
     void testLimitAnchorPropertyNames() {
@@ -629,7 +654,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("height") == null
             feature.getAttribute("supportType") == null
             feature.getAttribute("type") == null
-            feature.getAttribute("assetId") == null
+            feature.getAttribute("poleId") == null
     }
 
     void testGetWireEndPointFeature() {
@@ -647,7 +672,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("inclinationUnit") == "DEGREE_ANGLE"
             feature.getAttribute("type") == "PREVIOUS_POLE"
             feature.getAttribute("comments") == "someComments"
-            feature.getAttribute("assetId") == "56e9b7137d84511d8dd0f13c_POLE"
+            feature.getAttribute("poleId") == "56e9b7137d84511d8dd0f13c"
     }
 
     void testLimitWireEndPointPropertyNames() {
@@ -665,7 +690,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("inclinationUnit") == null
             feature.getAttribute("type") == null
             feature.getAttribute("comments") == null
-            feature.getAttribute("assetId") == null
+            feature.getAttribute("poleId") == null
     }
 
     void testGetNotePointFeature() {
@@ -682,7 +707,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("note") == "Residential Driveway"
             feature.getAttribute("height") == 23
             feature.getAttribute("heightUnit") == "FOOT"
-            feature.getAttribute("assetId") == "56e9b7137d84511d8dd0f13c_POLE"
+            feature.getAttribute("poleId") == "56e9b7137d84511d8dd0f13c"
     }
 
     void testLimitNotePointPropertyNames() {
@@ -699,7 +724,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("note") == null
             feature.getAttribute("height") == null
             feature.getAttribute("heightUnit") == null
-            feature.getAttribute("assetId") == null
+            feature.getAttribute("poleId") == null
     }
 
     void testGetPointLoadFeature() {
@@ -735,7 +760,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("myUnit") == "POUND_FORCE_FOOT"
             feature.getAttribute("mz") == 0
             feature.getAttribute("mzUnit") == "POUND_FORCE_FOOT"
-            feature.getAttribute("assetId") == "56e9b7137d84511d8dd0f13c_POLE"
+            feature.getAttribute("poleId") == "56e9b7137d84511d8dd0f13c"
     }
 
     void testLimitPointLoadPropertyNames() {
@@ -771,7 +796,7 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("myUnit") == null
             feature.getAttribute("mz") == null
             feature.getAttribute("mzUnit") == null
-            feature.getAttribute("assetId") == null
+            feature.getAttribute("poleId") == null
     }
 
     private MongoDBSubCollectionFeatureCollectionIterator getFeatureIterator(String typeName, String collectionName, Filter filter, String[] propertyNames = null) {

@@ -195,7 +195,7 @@
         }]
     }]
 }, {
-    "typeName": "asset",
+    "typeName": "pole",
     "collection": "designs",
     "idAsAttribute": true,
     "attributes": [{
@@ -247,30 +247,76 @@
     }, {
         "name": "owner",
         "path": "calcDesign.structure.pole.owner.id"
+    }, {
+        "name": "id",
+        "path": "id"
+    }]
+}, {
+    "typeName": "analysis",
+    "collection": "designs",
+    "idAsAttribute": true,
+    "attributes": [{
+        "name": "designType",
+        "path": "calcDesign.label"
+    }, {
+        "name": "locationId",
+        "path": "locationId"
+    }, {
+        "name": "locationLabel",
+        "path": "locationLabel"
+    }, {
+        "name": "clientFile",
+        "path": "clientFile"
+    }, {
+        "name": "clientFileVersion",
+        "path": "clientFileVersion"
+    }, {
+        "name": "dateModified",
+        "path": "dateModified",
+        "class": "Long"
+    }, {
+        "name": "glc",
+        "path": "calcDesign.structure.pole.glc.value",
+        "class": "Double"
+    }, {
+        "name": "glcUnit",
+        "path": "calcDesign.structure.pole.glc.unit"
+    }, {
+        "name": "agl",
+        "path": "calcDesign.structure.pole.agl.value",
+        "class": "Double"
+    }, {
+        "name": "aglUnit",
+        "path": "calcDesign.structure.pole.agl.unit"
+    }, {
+        "name": "species",
+        "path": "calcDesign.structure.pole.clientItem.species"
+    }, {
+        "name": "class",
+        "path": "calcDesign.structure.pole.clientItem.classOfPole"
+    }, {
+        "name": "length",
+        "path": "calcDesign.structure.pole.clientItem.height.value",
+        "class": "Double"
+    }, {
+        "name": "lengthUnit",
+        "path": "calcDesign.structure.pole.clientItem.height.unit"
+    }, {
+        "name": "owner",
+        "path": "calcDesign.structure.pole.owner.id"
+    }, {
+        "name": "poleId",
+        "path": "id"
     }],
     "subCollections": [{
-        "subCollectionPath": "calcDesign.structure.pole",
-        "includeInDefaultQuery": false,
-        "attributes": [{
-            "name": "id",
-            "concatenate": [{
-                "path": "id"
-            }, {
-                "value": "POLE"
-            }]
-        }, {
-            "name": "assetType",
-            "value": "POLE"
-        }]
-    }, {
         "subCollectionPath": "calcDesign.analysis",
         "includeInDefaultQuery": false,
         "attributes": [{
-            "name": "assetType",
-            "value": "ANALYSIS"
-        }, {
             "name": "loadInfo",
             "subCollectionPath": "id"
+        }, {
+            "name": "poleId",
+            "path": "id"
         }],
         "subCollections": [{
             "subCollectionPath": "results",
@@ -312,17 +358,13 @@
             }]
         }]
     }]
-}, {
+},{
     "typeName": "wire",
     "collection": "designs",
     "idAsAttribute": false,
     "attributes": [{
-        "name": "assetId",
-        "concatenate": [{
-            "path": "id"
-        }, {
-            "value": "POLE"
-        }]
+        "name": "poleId",
+        "path": "id"
     }],
     "subCollections": [{
         "subCollectionPath": "calcDesign.structure.wires",
@@ -379,12 +421,8 @@
     "collection": "designs",
     "idAsAttribute": false,
     "attributes": [{
-        "name": "assetId",
-        "concatenate": [{
-            "path": "id"
-        }, {
-            "value": "POLE"
-        }]
+        "name": "poleId",
+        "path": "id"
     }],
     "subCollections": [{
         "subCollectionPath": "calcDesign.structure.spanPoints",
@@ -413,12 +451,8 @@
     "collection": "designs",
     "idAsAttribute": false,
     "attributes": [{
-        "name": "assetId",
-        "concatenate": [{
-            "path": "id"
-        }, {
-            "value": "POLE"
-        }]
+        "name": "poleId",
+        "path": "id"
     }],
     "subCollections": [{
         "subCollectionPath": "calcDesign.structure.spanGuys",
@@ -472,12 +506,8 @@
     "collection": "designs",
     "idAsAttribute": false,
     "attributes": [{
-        "name": "assetId",
-        "concatenate": [{
-            "path": "id"
-        }, {
-            "value": "POLE"
-        }]
+        "name": "poleId",
+        "path": "id"
     }],
     "subCollections": [{
         "subCollectionPath": "calcDesign.structure.guys",
@@ -517,12 +547,8 @@
     "collection": "designs",
     "idAsAttribute": false,
     "attributes": [{
-        "name": "assetId",
-        "concatenate": [{
-            "path": "id"
-        }, {
-            "value": "POLE"
-        }]
+        "name": "poleId",
+        "path": "id"
     }],
     "subCollections": [{
         "subCollectionPath": "calcDesign.structure.insulators",
@@ -569,12 +595,8 @@
     "collection": "designs",
     "idAsAttribute": false,
     "attributes": [{
-        "name": "assetId",
-        "concatenate": [{
-            "path": "id"
-        }, {
-            "value": "POLE"
-        }]
+        "name": "poleId",
+        "path": "id"
     }],
     "subCollections": [{
         "subCollectionPath": "calcDesign.structure.equipments",
@@ -620,12 +642,8 @@
     "collection": "designs",
     "idAsAttribute": false,
     "attributes": [{
-        "name": "assetId",
-        "concatenate": [{
-            "path": "id"
-        }, {
-            "value": "POLE"
-        }]
+        "name": "poleId",
+        "path": "id"
     }],
     "subCollections": [{
         "subCollectionPath": "calcDesign.structure.damages",
@@ -728,12 +746,8 @@
     "collection": "designs",
     "idAsAttribute": false,
     "attributes": [{
-        "name": "assetId",
-        "concatenate": [{
-            "path": "id"
-        }, {
-            "value": "POLE"
-        }]
+        "name": "poleId",
+        "path": "id"
     }],
     "subCollections": [{
         "subCollectionPath": "calcDesign.structure.crossArms",
@@ -779,12 +793,8 @@
     "collection": "designs",
     "idAsAttribute": false,
     "attributes": [{
-        "name": "assetId",
-        "concatenate": [{
-            "path": "id"
-        }, {
-            "value": "POLE"
-        }]
+        "name": "poleId",
+        "path": "id"
     }],
     "subCollections": [{
         "subCollectionPath": "calcDesign.structure.anchors",
@@ -830,12 +840,8 @@
     "collection": "designs",
     "idAsAttribute": false,
     "attributes": [{
-        "name": "assetId",
-        "concatenate": [{
-            "path": "id"
-        }, {
-            "value": "POLE"
-        }]
+        "name": "poleId",
+        "path": "id"
     }],
     "subCollections": [{
         "subCollectionPath": "calcDesign.structure.wireEndPoints",
@@ -878,12 +884,8 @@
     "collection": "designs",
     "idAsAttribute": false,
     "attributes": [{
-        "name": "assetId",
-        "concatenate": [{
-            "path": "id"
-        }, {
-            "value": "POLE"
-        }]
+        "name": "poleId",
+        "path": "id"
     }],
     "subCollections": [{
         "subCollectionPath": "calcDesign.structure.notePoints",
@@ -923,12 +925,8 @@
     "collection": "designs",
     "idAsAttribute": false,
     "attributes": [{
-        "name": "assetId",
-        "concatenate": [{
-            "path": "id"
-        }, {
-            "value": "POLE"
-        }]
+        "name": "poleId",
+        "path": "id"
     }],
     "subCollections": [{
         "subCollectionPath": "calcDesign.structure.pointLoads",

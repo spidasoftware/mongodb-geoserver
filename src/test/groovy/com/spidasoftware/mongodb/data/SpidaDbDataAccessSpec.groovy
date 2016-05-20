@@ -27,13 +27,14 @@ class SpidaDbDataAccessSpec extends Specification {
         when:
             List<Name> names = spidaDbDataAccess.getNames()
         then:
-            names.size() == 18
+            names.size() == 19
             names.findAll { it.localPart == "location" }.size() == 1
             names.findAll { it.localPart == "poleTag" }.size() == 1
             names.findAll { it.localPart == "summaryNote" }.size() == 1
             names.findAll { it.localPart == "form" }.size() == 1
             names.findAll { it.localPart == "formField" }.size() == 1
-            names.findAll { it.localPart == "asset" }.size() == 1
+            names.findAll { it.localPart == "pole" }.size() == 1
+            names.findAll { it.localPart == "analysis" }.size() == 1
             names.findAll { it.localPart == "wire" }.size() == 1
             names.findAll { it.localPart == "spanPoint" }.size() == 1
             names.findAll { it.localPart == "spanGuy" }.size() == 1
@@ -129,14 +130,13 @@ class SpidaDbDataAccessSpec extends Specification {
             featureType.getDescriptor("formId").type.binding == String
     }
 
-    void "test asset feature type"() {
+    void "test analysis feature type"() {
         when:
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "asset"))
+            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "analysis"))
         then:
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
-            featureType.getName().getLocalPart() == "asset"
-            featureType.getDescriptor("assetType").type.binding == String
+            featureType.getName().getLocalPart() == "analysis"
             featureType.getDescriptor("designType").type.binding == String
             featureType.getDescriptor("loadInfo").type.binding == String
             featureType.getDescriptor("locationLabel").type.binding == String
@@ -159,6 +159,32 @@ class SpidaDbDataAccessSpec extends Specification {
             featureType.getDescriptor("analysisDate").type.binding == Long
             featureType.getDescriptor("component").type.binding == String
             featureType.getDescriptor("passes").type.binding == Boolean
+            featureType.getDescriptor("poleId").type.binding == String
+            featureType.getDescriptor("id").type.binding == String
+    }
+
+    void "test pole feature type"() {
+        when:
+            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "pole"))
+        then:
+            featureType.coordinateReferenceSystem == null
+            featureType.getGeometryDescriptor() == null
+            featureType.getName().getLocalPart() == "pole"
+            featureType.getDescriptor("designType").type.binding == String
+            featureType.getDescriptor("locationLabel").type.binding == String
+            featureType.getDescriptor("locationId").type.binding == String
+            featureType.getDescriptor("clientFile").type.binding == String
+            featureType.getDescriptor("clientFileVersion").type.binding == String
+            featureType.getDescriptor("dateModified").type.binding == Long
+            featureType.getDescriptor("glc").type.binding == Double
+            featureType.getDescriptor("glcUnit").type.binding == String
+            featureType.getDescriptor("agl").type.binding == Double
+            featureType.getDescriptor("aglUnit").type.binding == String
+            featureType.getDescriptor("species").type.binding == String
+            featureType.getDescriptor("class").type.binding == String
+            featureType.getDescriptor("length").type.binding == Double
+            featureType.getDescriptor("lengthUnit").type.binding == String
+            featureType.getDescriptor("owner").type.binding == String
             featureType.getDescriptor("id").type.binding == String
     }
 
@@ -180,7 +206,7 @@ class SpidaDbDataAccessSpec extends Specification {
             featureType.getDescriptor("midspanHeight").type.binding == Double
             featureType.getDescriptor("midspanHeightUnit").type.binding == String
             featureType.getDescriptor("tensionAdjustment").type.binding == Double
-            featureType.getDescriptor("assetId").type.binding == String
+            featureType.getDescriptor("poleId").type.binding == String
     }
 
     void "test spanPoint feature type"() {
@@ -193,7 +219,7 @@ class SpidaDbDataAccessSpec extends Specification {
             featureType.getDescriptor("distance").type.binding == Double
             featureType.getDescriptor("distanceUnit").type.binding == String
             featureType.getDescriptor("environment").type.binding == String
-            featureType.getDescriptor("assetId").type.binding == String
+            featureType.getDescriptor("poleId").type.binding == String
     }
 
     void "test spanGuy feature type"() {
@@ -213,7 +239,7 @@ class SpidaDbDataAccessSpec extends Specification {
             featureType.getDescriptor("midspanHeightUnit").type.binding == String
             featureType.getDescriptor("height").type.binding == Double
             featureType.getDescriptor("heightUnit").type.binding == String
-            featureType.getDescriptor("assetId").type.binding == String
+            featureType.getDescriptor("poleId").type.binding == String
     }
     void "test guy feature type"() {
         when:
@@ -228,7 +254,7 @@ class SpidaDbDataAccessSpec extends Specification {
             featureType.getDescriptor("conductorStrands").type.binding == Long
             featureType.getDescriptor("attachmentHeight").type.binding == Double
             featureType.getDescriptor("attachmentHeightUnit").type.binding == String
-            featureType.getDescriptor("assetId").type.binding == String
+            featureType.getDescriptor("poleId").type.binding == String
     }
 
     void "test insulator feature type"() {
@@ -246,7 +272,7 @@ class SpidaDbDataAccessSpec extends Specification {
             featureType.getDescriptor("bottomHeight").type.binding == Double
             featureType.getDescriptor("bottomHeightUnit").type.binding == String
             featureType.getDescriptor("direction").type.binding == Long
-            featureType.getDescriptor("assetId").type.binding == String
+            featureType.getDescriptor("poleId").type.binding == String
     }
 
     void "test equipment feature type"() {
@@ -264,7 +290,7 @@ class SpidaDbDataAccessSpec extends Specification {
             featureType.getDescriptor("bottomHeight").type.binding == Double
             featureType.getDescriptor("bottomHeightUnit").type.binding == String
             featureType.getDescriptor("direction").type.binding == Long
-            featureType.getDescriptor("assetId").type.binding == String
+            featureType.getDescriptor("poleId").type.binding == String
     }
 
     void "test damage feature type"() {
@@ -294,7 +320,7 @@ class SpidaDbDataAccessSpec extends Specification {
             featureType.getDescriptor("neckDepthUnit").type.binding == String
             featureType.getDescriptor("nestDepth").type.binding == Double
             featureType.getDescriptor("nestDepthUnit").type.binding == String
-            featureType.getDescriptor("assetId").type.binding == String
+            featureType.getDescriptor("poleId").type.binding == String
     }
 
     void "test crossArm feature type"() {
@@ -312,7 +338,7 @@ class SpidaDbDataAccessSpec extends Specification {
             featureType.getDescriptor("offsetUnit").type.binding == String
             featureType.getDescriptor("direction").type.binding == Long
             featureType.getDescriptor("associatedBacking").type.binding == String
-            featureType.getDescriptor("assetId").type.binding == String
+            featureType.getDescriptor("poleId").type.binding == String
     }
 
     void "test anchor feature type"() {
@@ -330,7 +356,7 @@ class SpidaDbDataAccessSpec extends Specification {
             featureType.getDescriptor("heightUnit").type.binding == String
             featureType.getDescriptor("supportType").type.binding == String
             featureType.getDescriptor("type").type.binding == String
-            featureType.getDescriptor("assetId").type.binding == String
+            featureType.getDescriptor("poleId").type.binding == String
     }
 
     void "test wireEndPoint feature type"() {
@@ -347,7 +373,7 @@ class SpidaDbDataAccessSpec extends Specification {
             featureType.getDescriptor("inclinationUnit").type.binding == String
             featureType.getDescriptor("type").type.binding == String
             featureType.getDescriptor("comments").type.binding == String
-            featureType.getDescriptor("assetId").type.binding == String
+            featureType.getDescriptor("poleId").type.binding == String
     }
 
     void "test notePoint feature type"() {
@@ -363,7 +389,7 @@ class SpidaDbDataAccessSpec extends Specification {
             featureType.getDescriptor("note").type.binding == String
             featureType.getDescriptor("height").type.binding == Double
             featureType.getDescriptor("heightUnit").type.binding == String
-            featureType.getDescriptor("assetId").type.binding == String
+            featureType.getDescriptor("poleId").type.binding == String
     }
 
     void "test pointLoad feature type"() {
@@ -398,6 +424,6 @@ class SpidaDbDataAccessSpec extends Specification {
             featureType.getDescriptor("myUnit").type.binding == String
             featureType.getDescriptor("mz").type.binding == Double
             featureType.getDescriptor("mzUnit").type.binding == String
-            featureType.getDescriptor("assetId").type.binding == String
+            featureType.getDescriptor("poleId").type.binding == String
     }
 }
