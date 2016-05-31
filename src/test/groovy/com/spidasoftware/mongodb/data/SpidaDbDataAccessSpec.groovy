@@ -27,9 +27,10 @@ class SpidaDbDataAccessSpec extends Specification {
         when:
             List<Name> names = spidaDbDataAccess.getNames()
         then:
-            names.size() == 19
+            names.size() == 20
             names.findAll { it.localPart == "location" }.size() == 1
             names.findAll { it.localPart == "poleTag" }.size() == 1
+            names.findAll { it.localPart == "remedy" }.size() == 1
             names.findAll { it.localPart == "summaryNote" }.size() == 1
             names.findAll { it.localPart == "form" }.size() == 1
             names.findAll { it.localPart == "formField" }.size() == 1
@@ -89,6 +90,17 @@ class SpidaDbDataAccessSpec extends Specification {
             featureType.getGeometryDescriptor() == null
             featureType.getName().getLocalPart() == "poleTag"
             featureType.getDescriptor("type").type.binding == String
+            featureType.getDescriptor("value").type.binding == String
+            featureType.getDescriptor("locationId").type.binding == String
+    }
+
+    void "test remedy feature type"() {
+        when:
+            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "remedy"))
+        then:
+            featureType.coordinateReferenceSystem == null
+            featureType.getGeometryDescriptor() == null
+            featureType.getName().getLocalPart() == "remedy"
             featureType.getDescriptor("value").type.binding == String
             featureType.getDescriptor("locationId").type.binding == String
     }

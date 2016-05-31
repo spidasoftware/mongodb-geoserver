@@ -263,6 +263,30 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
             feature.getAttribute("formId") == null
     }
 
+    void testRemedyFeature() {
+        setup:
+            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("remedy", "locations",  CQL.toFilter("value='Duplicate pole from other Windstrean/KDL proposal, do not put on cover map'"))
+        when:
+            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.next()
+        then:
+            !mongoDBSubCollectionFeatureCollectionIterator.hasNext()
+            feature.attributeCount == 2
+            feature.getAttribute("value") == "Duplicate pole from other Windstrean/KDL proposal, do not put on cover map"
+            feature.getAttribute("locationId") == "55fac7fde4b0e7f2e3be342c"
+    }
+
+    void testLimitRemedyPropertyNames() {
+        setup:
+            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("remedy", "locations", CQL.toFilter("value='Duplicate pole from other Windstrean/KDL proposal, do not put on cover map'"), ["value"] as String[])
+        when:
+            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.next()
+        then:
+            !mongoDBSubCollectionFeatureCollectionIterator.hasNext()
+            feature.attributeCount == 2
+            feature.getAttribute("value") == "Duplicate pole from other Windstrean/KDL proposal, do not put on cover map"
+            feature.getAttribute("locationId") == null
+    }
+
     void testGetSummaryNoteFeature() {
         setup:
             def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("summaryNote", "locations",  CQL.toFilter("value='Windstream/KDL install down guy for span to the W'"))

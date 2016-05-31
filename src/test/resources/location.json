@@ -26,7 +26,11 @@
                 33.80541229248047
             ]
         },
-        "remedies": [],
+        "remedies": [
+            {
+                "description" : "Duplicate pole from other Windstrean/KDL proposal, do not put on cover map"
+            }
+        ],
         "poleTags": [{
             "type": "FOREIGN",
             "value": "NT"

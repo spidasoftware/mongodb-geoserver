@@ -91,6 +91,22 @@
         }]
     }]
 }, {
+    "typeName": "remedy",
+    "collection": "locations",
+    "idAsAttribute": false,
+    "attributes": [{
+        "name": "locationId",
+        "path": "id"
+    }],
+    "subCollections": [{
+        "subCollectionPath": "calcLocation.remedies",
+        "includeInDefaultQuery": true,
+        "attributes": [{
+            "name": "value",
+            "subCollectionPath": "description"
+        }]
+    }]
+}, {
     "typeName": "summaryNote",
     "collection": "locations",
     "idAsAttribute": false,

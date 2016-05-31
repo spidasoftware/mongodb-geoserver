@@ -68,6 +68,7 @@ class FilterToDBQuerySpec extends Specification {
             typeName       | collectionName | expectedSize
             "location"     | "locations"    | 1
             "poleTag"      | "locations"    | 3
+            "remedy"       | "locations"    | 1
             "summaryNote"  | "locations"    | 4
             "form"         | "locations"    | 2
             "formField"    | "locations"    | 2
@@ -104,6 +105,7 @@ class FilterToDBQuerySpec extends Specification {
             typeName       | collectionName | expectedSize
             "location"     | "locations"    | 1
             "poleTag"      | "locations"    | 3
+            "remedy"       | "locations"    | 1
             "summaryNote"  | "locations"    | 4
             "form"         | "locations"    | 2
             "formField"    | "locations"    | 2
@@ -140,6 +142,7 @@ class FilterToDBQuerySpec extends Specification {
             typeName       | collectionName
             "location"     | "locations"
             "poleTag"      | "locations"
+            "remedy"       | "locations"
             "summaryNote"  | "locations"
             "form"         | "locations"
             "formField"    | "locations"
@@ -296,6 +299,29 @@ class FilterToDBQuerySpec extends Specification {
             "value doesn't exist"      | CQL.toFilter("value='TEST'")                                              | new BasicDBObject("calcLocation.summaryNotes", "TEST")                                              | 0
             "locationId exists"        | CQL.toFilter("locationId='55fac7fde4b0e7f2e3be342c'")                     | new BasicDBObject("id", "55fac7fde4b0e7f2e3be342c")                                                 | 4
             "locationId doesn't exist" | CQL.toFilter("locationId='TEST'")                                         | new BasicDBObject("id", "TEST")                                                                     | 0
+    }
+
+    @Unroll("Test remedy property query for #description")
+    void "test remedy property queries"() {
+        setup:
+            String typeName = "remedy"
+            String collectionName = "locations"
+            Query query = new Query(typeName, filter)
+            FilterToDBQuery filterToDBQuery = getFilterToDBQuery(typeName, collectionName)
+        when:
+            BasicDBObject dbQuery = filterToDBQuery.visit(filter, null)
+        then:
+            dbQuery == expectedQuery
+        when:
+            FeatureCollection featureCollection = filterToDBQuery.getFeatureCollection(query)
+        then:
+            featureCollection.size() == expectedSize
+        where:
+            description                | filter                                                                                             | expectedQuery                                                                                                                        | expectedSize
+            "value exists"             | CQL.toFilter("value='Duplicate pole from other Windstrean/KDL proposal, do not put on cover map'") | new BasicDBObject("calcLocation.remedies.description", "Duplicate pole from other Windstrean/KDL proposal, do not put on cover map") | 1
+            "value doesn't exist"      | CQL.toFilter("value='TEST'")                                                                       | new BasicDBObject("calcLocation.remedies.description", "TEST")                                                                       | 0
+            "locationId exists"        | CQL.toFilter("locationId='55fac7fde4b0e7f2e3be342c'")                                              | new BasicDBObject("id", "55fac7fde4b0e7f2e3be342c")                                                                                  | 1
+            "locationId doesn't exist" | CQL.toFilter("locationId='TEST'")                                                                  | new BasicDBObject("id", "TEST")                                                                                                      | 0
     }
 
     @Unroll("Test form property query for #description")
