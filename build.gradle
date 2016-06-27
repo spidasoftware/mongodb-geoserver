@@ -13,8 +13,8 @@ group = 'com.spidasoftware'
 version = '0.1' 
 description = "mongodb-geoserver-plugin"
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,8 +97,8 @@ uploadArchives {
 	}
 }
 
-def geotoolsVersion = '14.3'
-def geoserverVersion = '2.8.3'
+def geotoolsVersion = '11.1'
+def geoserverVersion = '2.5.2'
 dependencies {
     compile group: 'org.geotools', name: 'gt-main', version:"${geotoolsVersion}", transitive: false
     compile group: 'org.geotools', name: 'gt-data', version:"${geotoolsVersion}", transitive: false
@@ -112,11 +112,11 @@ dependencies {
     compile(group: 'org.geoserver.web', name: 'gs-web-core', version:"${geoserverVersion}") {
         exclude module: 'jai_core'
     }
-    compile group: 'org.mongodb', name:'mongo-java-driver', version:'3.2.2'
+    compile group: 'org.mongodb', name:'mongo-java-driver', version:'2.14.2'
     compile group: 'com.vividsolutions', name:'jts', version:'1.13', transitive: false
     compile group: 'org.jscience', name:'jscience', version:'4.3.1', transitive: false
 
-    compile "org.codehaus.groovy:groovy-all:2.4.1"
+    compile "org.codehaus.groovy:groovy-all:2.1.9"
     testCompile "org.spockframework:spock-core:1.0-groovy-2.4"
     testCompile "cglib:cglib:2.2"
     testCompile 'org.objenesis:objenesis:1.4'

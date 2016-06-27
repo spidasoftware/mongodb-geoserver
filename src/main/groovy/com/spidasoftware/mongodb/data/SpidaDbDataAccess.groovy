@@ -5,8 +5,8 @@ import com.mongodb.BasicDBObject
 import com.mongodb.DB
 import com.mongodb.DBObject
 import com.mongodb.MongoClient
-import com.mongodb.MongoClientURI
-import com.mongodb.MongoCredential
+//import com.mongodb.MongoClientURI
+//import com.mongodb.MongoCredential
 import com.mongodb.ServerAddress
 import com.vividsolutions.jts.geom.Point
 import org.geotools.data.DataAccess
@@ -143,8 +143,8 @@ public class SpidaDbDataAccess implements DataAccess<FeatureType, Feature> {
         try {
             def serverAddress = new ServerAddress(host, Integer.valueOf(port))
             if(username && password) {
-                MongoCredential credential = MongoCredential.createCredential(username, databaseName, password.toCharArray());
-                mongoClient = new MongoClient(serverAddress, Arrays.asList(credential));
+                //MongoCredential credential = MongoCredential.createCredential(username, databaseName, password.toCharArray());
+                //mongoClient = new MongoClient(serverAddress, Arrays.asList(credential));
             } else {
                 mongoClient = new MongoClient(serverAddress)
             }
@@ -171,7 +171,7 @@ public class SpidaDbDataAccess implements DataAccess<FeatureType, Feature> {
                 }
 
                 if (!alreadyIndexed) {
-                    collection.createIndex(new BasicDBObject((geometryPath): "2dsphere"), new BasicDBObject('sparse', true))
+                    //collection.createIndex(new BasicDBObject((geometryPath): "2dsphere"), new BasicDBObject('sparse', true))
                 }
             }
         }
