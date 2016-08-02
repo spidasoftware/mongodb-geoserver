@@ -11,21 +11,21 @@ import spock.lang.Specification
 
 import java.util.logging.Logger
 
-class SpidaDbDataAccessSpec extends Specification {
+class MongoDBDataAccessSpec extends Specification {
 
-    static final Logger log = Logging.getLogger(SpidaDbDataAccessSpec.class.getPackage().getName())
+    static final Logger log = Logging.getLogger(MongoDBDataAccessSpec.class.getPackage().getName())
 
-    SpidaDbDataAccess spidaDbDataAccess
+    MongoDBDataAccess mongoDBDataAccess
     String namespace = "http://spida/db"
     BasicDBList jsonMapping = JSON.parse(getClass().getResourceAsStream('/mapping.json').text)
 
     void setup() {
-        spidaDbDataAccess = new SpidaDbDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, jsonMapping)
+        mongoDBDataAccess = new MongoDBDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, jsonMapping)
     }
 
     void testGetNames() {
         when:
-            List<Name> names = spidaDbDataAccess.getNames()
+            List<Name> names = mongoDBDataAccess.getNames()
         then:
             names.size() == 20
             names.findAll { it.localPart == "location" }.size() == 1
@@ -52,14 +52,14 @@ class SpidaDbDataAccessSpec extends Specification {
 
     void "test can get schema for every type"() {
         expect:
-            spidaDbDataAccess.getNames().each { Name name ->
-                assert spidaDbDataAccess.getSchema(name) != null // Can get the schema
+            mongoDBDataAccess.getNames().each { Name name ->
+                assert mongoDBDataAccess.getSchema(name) != null // Can get the schema
             }
     }
 
     void "test location feature type"() {
         when:
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "location"))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "location"))
         then:
             featureType.coordinateReferenceSystem == CRS.decode("urn:ogc:def:crs:EPSG:4326")
             featureType.getGeometryDescriptor().getName().getLocalPart() == "geographicCoordinate"
@@ -84,7 +84,7 @@ class SpidaDbDataAccessSpec extends Specification {
 
     void "test poleTag feature type"() {
         when:
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "poleTag"))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "poleTag"))
         then:
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
@@ -96,7 +96,7 @@ class SpidaDbDataAccessSpec extends Specification {
 
     void "test remedy feature type"() {
         when:
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "remedy"))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "remedy"))
         then:
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
@@ -107,7 +107,7 @@ class SpidaDbDataAccessSpec extends Specification {
 
     void "test summaryNote feature type"() {
         when:
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "summaryNote"))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "summaryNote"))
         then:
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
@@ -118,7 +118,7 @@ class SpidaDbDataAccessSpec extends Specification {
 
     void "test form feature type"() {
         when:
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "form"))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "form"))
         then:
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
@@ -131,7 +131,7 @@ class SpidaDbDataAccessSpec extends Specification {
 
     void "test formField feature type"() {
         when:
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "formField"))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "formField"))
         then:
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
@@ -144,7 +144,7 @@ class SpidaDbDataAccessSpec extends Specification {
 
     void "test analysis feature type"() {
         when:
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "analysis"))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "analysis"))
         then:
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
@@ -177,7 +177,7 @@ class SpidaDbDataAccessSpec extends Specification {
 
     void "test pole feature type"() {
         when:
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "pole"))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "pole"))
         then:
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
@@ -202,7 +202,7 @@ class SpidaDbDataAccessSpec extends Specification {
 
     void "test wire feature type"() {
         when:
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "wire"))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "wire"))
         then:
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
@@ -223,7 +223,7 @@ class SpidaDbDataAccessSpec extends Specification {
 
     void "test spanPoint feature type"() {
         when:
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "spanPoint"))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "spanPoint"))
         then:
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
@@ -236,7 +236,7 @@ class SpidaDbDataAccessSpec extends Specification {
 
     void "test spanGuy feature type"() {
         when:
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "spanGuy"))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "spanGuy"))
         then:
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
@@ -255,7 +255,7 @@ class SpidaDbDataAccessSpec extends Specification {
     }
     void "test guy feature type"() {
         when:
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "guy"))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "guy"))
         then:
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
@@ -271,7 +271,7 @@ class SpidaDbDataAccessSpec extends Specification {
 
     void "test insulator feature type"() {
         when:
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "equipment"))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "equipment"))
         then:
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
@@ -289,7 +289,7 @@ class SpidaDbDataAccessSpec extends Specification {
 
     void "test equipment feature type"() {
         when:
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "equipment"))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "equipment"))
         then:
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
@@ -307,7 +307,7 @@ class SpidaDbDataAccessSpec extends Specification {
 
     void "test damage feature type"() {
         when:
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "damage"))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "damage"))
         then:
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
@@ -337,7 +337,7 @@ class SpidaDbDataAccessSpec extends Specification {
 
     void "test crossArm feature type"() {
         when:
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "crossArm"))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "crossArm"))
         then:
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
@@ -355,7 +355,7 @@ class SpidaDbDataAccessSpec extends Specification {
 
     void "test anchor feature type"() {
         when:
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "anchor"))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "anchor"))
         then:
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
@@ -373,7 +373,7 @@ class SpidaDbDataAccessSpec extends Specification {
 
     void "test wireEndPoint feature type"() {
         when:
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "wireEndPoint"))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "wireEndPoint"))
         then:
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
@@ -390,7 +390,7 @@ class SpidaDbDataAccessSpec extends Specification {
 
     void "test notePoint feature type"() {
         when:
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "notePoint"))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "notePoint"))
         then:
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
@@ -406,7 +406,7 @@ class SpidaDbDataAccessSpec extends Specification {
 
     void "test pointLoad feature type"() {
         when:
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "pointLoad"))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "pointLoad"))
         then:
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null

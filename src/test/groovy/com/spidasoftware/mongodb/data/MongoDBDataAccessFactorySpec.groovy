@@ -4,17 +4,17 @@ import spock.lang.Specification
 import spock.lang.Unroll
 import spock.util.mop.ConfineMetaClassChanges
 
-class SpidaDbDataAccessFactorySpec extends Specification {
+class MongoDBDataAccessFactorySpec extends Specification {
 
-    SpidaDbDataAccessFactory spidaDbDataAccessFactory
+    MongoDBDataAccessFactory mongoDBDataAccessFactory
 
     void setup() {
-        spidaDbDataAccessFactory = new SpidaDbDataAccessFactory()
+        mongoDBDataAccessFactory = new MongoDBDataAccessFactory()
     }
 
     void "test isAvailable"() {
         expect:
-            spidaDbDataAccessFactory.isAvailable()
+            mongoDBDataAccessFactory.isAvailable()
     }
 
     @Unroll("test canProcess testNo=#testNo")
@@ -25,7 +25,7 @@ class SpidaDbDataAccessFactorySpec extends Specification {
             featureTypeMappingFile.getText() >> jsonMapping
             File.metaClass.constructor = { String path -> return featureTypeMappingFile }
         when:
-            boolean canProcess = spidaDbDataAccessFactory.canProcess(["host"                  : host,
+            boolean canProcess = mongoDBDataAccessFactory.canProcess(["host"                  : host,
                                                                       "port"                  : port,
                                                                       "databaseName"          : databaseName,
                                                                       "namespace"             : namespace,

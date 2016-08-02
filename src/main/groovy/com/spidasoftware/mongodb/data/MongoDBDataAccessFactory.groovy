@@ -12,9 +12,9 @@ import org.opengis.feature.type.FeatureType
 import java.awt.*
 import java.util.logging.Logger
 
-public class SpidaDbDataAccessFactory implements DataAccessFactory {
+public class MongoDBDataAccessFactory implements DataAccessFactory {
 
-    private static final Logger log = Logging.getLogger(SpidaDbDataAccessFactory.class.getPackage().getName())
+    private static final Logger log = Logging.getLogger(MongoDBDataAccessFactory.class.getPackage().getName())
 
     final DataAccessFactory.Param HOST = new DataAccessFactory.Param("host", String.class, "MongoDB host", true)
     final DataAccessFactory.Param PORT = new DataAccessFactory.Param("port", String.class, "MongoDB port", true)
@@ -27,7 +27,7 @@ public class SpidaDbDataAccessFactory implements DataAccessFactory {
     @Override
     DataAccess<? extends FeatureType, ? extends Feature> createDataStore(Map<String, Serializable> params) throws IOException {
         BasicDBList jsonMapping = JSON.parse( new File((String) FEATURE_TYPE_MAPPING_FILE.lookUp(params)).text)
-        return new SpidaDbDataAccess((String) NAMESPACE.lookUp(params),
+        return new MongoDBDataAccess((String) NAMESPACE.lookUp(params),
                                      (String) HOST.lookUp(params),
                                      (String) PORT.lookUp(params),
                                      (String) DATABASE_NAME.lookUp(params),

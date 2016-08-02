@@ -1,16 +1,18 @@
-package com.spidasoftware.mongodb.feature
+package com.spidasoftware.mongodb.feature.collection
 
 import com.mongodb.BasicDBList
 import com.mongodb.BasicDBObject
 import com.mongodb.DBCursor
 import com.mongodb.DBObject
+import com.spidasoftware.mongodb.data.MongoDBFeatureSource
+import com.spidasoftware.mongodb.feature.iterator.MongoDBFeatureIterator
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.GeometryFactory
 import com.vividsolutions.jts.geom.Point
 import org.apache.commons.lang.StringUtils
 import org.geotools.data.Query
-import org.geotools.feature.FeatureCollection
-import org.geotools.feature.FeatureIterator
+import org.geotools.data.simple.SimpleFeatureCollection
+import org.geotools.data.simple.SimpleFeatureIterator
 import org.geotools.feature.GeometryAttributeImpl
 import org.geotools.feature.NameImpl
 import org.geotools.feature.simple.SimpleFeatureBuilder
@@ -20,8 +22,9 @@ import org.geotools.geometry.jts.ReferencedEnvelope
 import org.geotools.referencing.CRS
 import org.geotools.referencing.crs.DefaultProjectedCRS
 import org.geotools.util.logging.Logging
-import org.opengis.feature.Feature
 import org.opengis.feature.FeatureVisitor
+import org.opengis.feature.simple.SimpleFeature
+import org.opengis.feature.simple.SimpleFeatureType
 import org.opengis.feature.type.FeatureType
 import org.opengis.feature.type.GeometryDescriptor
 import org.opengis.feature.type.GeometryType
@@ -34,9 +37,9 @@ import org.opengis.util.ProgressListener
 
 import java.util.logging.Logger
 
-abstract class AbstractMongoDBFeatureCollectionIterator implements FeatureCollection<FeatureType, Feature>, FeatureIterator<Feature> {
+abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollection {
 
-    private static final Logger log = Logging.getLogger(AbstractMongoDBFeatureCollectionIterator.class.getPackage().getName())
+    private static final Logger log = Logging.getLogger(AbstractMongoDBFeatureCollection.class.getPackage().getName())
 
     DBCursor dbCursor
     FeatureType featureType
@@ -50,11 +53,13 @@ abstract class AbstractMongoDBFeatureCollectionIterator implements FeatureCollec
     Integer offset
     Filter filter
     Query query
+    MongoDBFeatureSource mongoDBFeatureSource
+    List<SimpleFeature> featuresList = []
 
     static final int LONGITUDE_POSITION = 0
     static final int LATITUDE_POSITION = 1
 
-    AbstractMongoDBFeatureCollectionIterator(DBCursor dbCursor, FeatureType featureType, BasicDBObject mapping, Query query) {
+    AbstractMongoDBFeatureCollection(DBCursor dbCursor, FeatureType featureType, BasicDBObject mapping, Query query, MongoDBFeatureSource mongoDBFeatureSource) {
         this.dbCursor = dbCursor
         this.featureType = featureType
         this.mapping = mapping
@@ -64,6 +69,7 @@ abstract class AbstractMongoDBFeatureCollectionIterator implements FeatureCollec
         this.max = query?.getMaxFeatures()
         this.offset = query?.getStartIndex()
         this.filter = query?.getFilter()
+        this.mongoDBFeatureSource = mongoDBFeatureSource
 
         if(this.mapping.displayGeometry && this.mapping.geometry) {
             this.sourceCRS = CRS.decode(this.mapping.geometry.crs)
@@ -79,9 +85,22 @@ abstract class AbstractMongoDBFeatureCollectionIterator implements FeatureCollec
                 }
             }
         }
+        this.initFeaturesList()
     }
 
-    protected Feature buildFromAttributes(Map attributes, DBObject dbObject) {
+    abstract void initFeaturesList()
+
+    @Override
+    boolean isEmpty() {
+        return featuresList.isEmpty()
+    }
+
+    @Override
+    int size() {
+        return this.featuresList.size()
+    }
+
+    protected SimpleFeature buildFromAttributes(Map attributes, DBObject dbObject) {
         SimpleFeatureBuilder simpleFeatureBuilder = new SimpleFeatureBuilder(this.featureType)
 
         addGeometry(simpleFeatureBuilder, dbObject)
@@ -182,12 +201,12 @@ abstract class AbstractMongoDBFeatureCollectionIterator implements FeatureCollec
     }
 
     @Override
-    FeatureIterator<Feature> features() {
-        return this
+    SimpleFeatureIterator features() {
+        return new MongoDBFeatureIterator(this.dbCursor, this.featuresList)
     }
 
     @Override
-    FeatureType getSchema() {
+    SimpleFeatureType getSchema() {
         return this.featureType
     }
 
@@ -198,46 +217,43 @@ abstract class AbstractMongoDBFeatureCollectionIterator implements FeatureCollec
 
     @Override
     void accepts(FeatureVisitor visitor, ProgressListener progress) throws IOException {
-         // TODO
+        // TODO
     }
 
     @Override
-    FeatureCollection<FeatureType, Feature> subCollection(Filter filter) {
+    SimpleFeatureCollection subCollection(Filter filter) {
         return  // TODO
     }
 
     @Override
-    FeatureCollection<FeatureType, Feature> sort(SortBy order) {
+    SimpleFeatureCollection sort(SortBy order) {
+        log.info("order = ${order}")
         return null // TODO
     }
 
     @Override
     ReferencedEnvelope getBounds() {
-        return  // TODO
+        return this.mongoDBFeatureSource.getBounds(query)
     }
 
     @Override
     boolean contains(Object o) {
-        return  // TODO
+        return this.featuresList.contains(o)
     }
 
     @Override
     boolean containsAll(Collection<?> o) {
-        return  // TODO
+        return this.featuresList.containsAll(o)
     }
 
     @Override
     Object[] toArray() {
-        return new Object[0]
+        return this.featuresList.toArray()
     }
 
     @Override
     def <O> O[] toArray(O[] a) {
-        return null
-    }
-
-    @Override
-    void close() {
-        this.dbCursor?.close()
+        a = this.featuresList.toArray()
+        return a
     }
 }

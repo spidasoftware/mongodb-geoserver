@@ -4,10 +4,9 @@ import com.mongodb.BasicDBList
 import com.mongodb.BasicDBObject
 import com.mongodb.DB
 import com.mongodb.MongoClient
-import com.mongodb.MongoClientURI
 import com.mongodb.ServerAddress
 import com.mongodb.util.JSON
-import com.spidasoftware.mongodb.feature.MongoDBFeatureCollectionIterator
+import com.spidasoftware.mongodb.feature.collection.MongoDBFeatureCollection
 import org.geotools.data.Query
 import org.geotools.feature.FeatureCollection
 import org.geotools.feature.NameImpl
@@ -19,15 +18,15 @@ import spock.lang.Specification
 
 import java.util.logging.Logger
 
-class SpidaDbFeatureSourceSpec extends Specification {
+class MongoDBFeatureSourceSpec extends Specification {
 
-    static final Logger log = Logging.getLogger(SpidaDbFeatureSourceSpec.class.getPackage().getName())
+    static final Logger log = Logging.getLogger(MongoDBFeatureSourceSpec.class.getPackage().getName())
 
     @Shared FeatureType featureType
     @Shared DB database
     @Shared BasicDBObject locationJSON
-    @Shared SpidaDbDataAccess spidaDbDataAccess
-    @Shared SpidaDbFeatureSource spidaDbFeatureSource
+    @Shared MongoDBDataAccess MongoDBDataAccess
+    @Shared MongoDBFeatureSource mongoDBFeatureSource
     @Shared BasicDBList jsonMapping
     @Shared String namespace = "http://spida/db"
 
@@ -39,14 +38,14 @@ class SpidaDbFeatureSourceSpec extends Specification {
         def serverAddress = new ServerAddress(host, Integer.valueOf(port))
         MongoClient mongoClient = new MongoClient(serverAddress)
         jsonMapping = JSON.parse(getClass().getResourceAsStream('/mapping.json').text)
-        spidaDbDataAccess = new SpidaDbDataAccess(namespace, host, port, databaseName, null, null, jsonMapping)
+        mongoDBDataAccess = new MongoDBDataAccess(namespace, host, port, databaseName, null, null, jsonMapping)
         database = mongoClient.getDB(databaseName)
         database.getCollection("locations").remove(new BasicDBObject("id", locationJSON.get("id")))
         database.getCollection("locations").insert(locationJSON)
 
-        featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "location"))
+        featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "location"))
 
-        spidaDbFeatureSource = new SpidaDbFeatureSource(spidaDbDataAccess, database, featureType,jsonMapping.find { it.typeName == "location" })
+        mongoDBFeatureSource = new MongoDBFeatureSource(mongoDBDataAccess, database, featureType,jsonMapping.find { it.typeName == "location" })
     }
 
     void cleanupSpec () {
@@ -55,25 +54,25 @@ class SpidaDbFeatureSourceSpec extends Specification {
 
     void "get getFeatures no filter or query"() {
         when:
-            FeatureCollection featureCollection = spidaDbFeatureSource.getFeatures()
+            FeatureCollection featureCollection = mongoDBFeatureSource.getFeatures()
         then:
-            featureCollection instanceof MongoDBFeatureCollectionIterator
+            featureCollection instanceof MongoDBFeatureCollection
             featureCollection.size() == database.getCollection("locations").count
     }
 
     void "get getFeatures with filter"() {
         when:
-            FeatureCollection featureCollection = spidaDbFeatureSource.getFeatures(CQL.toFilter("id='55fac7fde4b0e7f2e3be342c'"))
+            FeatureCollection featureCollection = mongoDBFeatureSource.getFeatures(CQL.toFilter("id='55fac7fde4b0e7f2e3be342c'"))
         then:
-            featureCollection instanceof MongoDBFeatureCollectionIterator
+            featureCollection instanceof MongoDBFeatureCollection
             featureCollection.size() == 1
     }
 
     void "get getFeatures with query"() {
         when:
-            FeatureCollection featureCollection = spidaDbFeatureSource.getFeatures(new Query("location", CQL.toFilter("id='55fac7fde4b0e7f2e3be342c'")))
+            FeatureCollection featureCollection = mongoDBFeatureSource.getFeatures(new Query("location", CQL.toFilter("id='55fac7fde4b0e7f2e3be342c'")))
         then:
-            featureCollection instanceof MongoDBFeatureCollectionIterator
+            featureCollection instanceof MongoDBFeatureCollection
             featureCollection.size() == 1
     }
 }

@@ -1,14 +1,14 @@
-package com.spidasoftware.mongodb.feature
+package com.spidasoftware.mongodb.feature.collection
 
 import com.mongodb.BasicDBList
 import com.mongodb.BasicDBObject
 import com.mongodb.DB
 import com.mongodb.DBCursor
 import com.mongodb.MongoClient
-import com.mongodb.MongoClientURI
 import com.mongodb.ServerAddress
 import com.mongodb.util.JSON
-import com.spidasoftware.mongodb.data.SpidaDbDataAccess
+import com.spidasoftware.mongodb.data.MongoDBDataAccess
+import com.spidasoftware.mongodb.data.MongoDBFeatureSource
 import org.geotools.data.Query
 import org.geotools.feature.NameImpl
 import org.geotools.util.logging.Logging
@@ -19,15 +19,16 @@ import spock.lang.Specification
 
 import java.util.logging.Logger
 
-class MongoDBFeatureCollectionIteratorSpec extends Specification {
+class MongoDBFeatureCollectionSpec extends Specification {
 
-    static final Logger log = Logging.getLogger(MongoDBFeatureCollectionIteratorSpec.class.getPackage().getName())
+    static final Logger log = Logging.getLogger(MongoDBFeatureCollectionSpec.class.getPackage().getName())
 
     FeatureType featureType
     DB database
     BasicDBObject locationJSON
     DBCursor dbCursor
-    SpidaDbDataAccess spidaDbDataAccess
+    MongoDBDataAccess mongoDBDataAccess
+    MongoDBFeatureSource mongoDBFeatureSource
     BasicDBList jsonMapping
     String namespace = "http://spida/db"
 
@@ -39,14 +40,16 @@ class MongoDBFeatureCollectionIteratorSpec extends Specification {
         def serverAddress = new ServerAddress(host, Integer.valueOf(port))
         MongoClient mongoClient = new MongoClient(serverAddress)
         jsonMapping = JSON.parse(getClass().getResourceAsStream('/mapping.json').text)
-        spidaDbDataAccess = new SpidaDbDataAccess(namespace, host, port, databaseName, null, null, jsonMapping)
+        mongoDBDataAccess = new MongoDBDataAccess(namespace, host, port, databaseName, null, null, jsonMapping)
         database = mongoClient.getDB(databaseName)
         database.getCollection("locations").remove(new BasicDBObject("id", locationJSON.get("id")))
         database.getCollection("locations").insert(locationJSON)
         dbCursor = database.getCollection("locations").find(new BasicDBObject("id", locationJSON.get("id")))
 
         jsonMapping = JSON.parse(getClass().getResourceAsStream('/mapping.json').text)
-        spidaDbDataAccess = new SpidaDbDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, jsonMapping)
+        mongoDBDataAccess = new MongoDBDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, jsonMapping)
+        featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "location"))
+        mongoDBFeatureSource = new MongoDBFeatureSource(mongoDBDataAccess, database, featureType, jsonMapping.find { it.typeName == "location" })
     }
 
     void cleanup() {
@@ -57,12 +60,11 @@ class MongoDBFeatureCollectionIteratorSpec extends Specification {
         setup:
             BasicDBObject mapping = jsonMapping.find { it.typeName == "location" }
             Query query = new Query("location", Filter.INCLUDE)
-            featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "location"))
-            def locationFeatureCollectionIterator = new MongoDBFeatureCollectionIterator(dbCursor, featureType, mapping, query)
+            def locationFeatureCollectionIterator = new MongoDBFeatureCollection(dbCursor, featureType, mapping, query, mongoDBFeatureSource)
         when:
-            Feature feature = locationFeatureCollectionIterator.next()
+            Feature feature = locationFeatureCollectionIterator.featuresList.get(0)
         then:
-            !locationFeatureCollectionIterator.hasNext()
+            locationFeatureCollectionIterator.size() == 1
             feature.attributeCount == 17
             feature.getAttribute("id") == "55fac7fde4b0e7f2e3be342c"
             feature.getAttribute("label") == "684704E"
@@ -88,12 +90,11 @@ class MongoDBFeatureCollectionIteratorSpec extends Specification {
         setup:
             BasicDBObject mapping = jsonMapping.find { it.typeName == "location" }
             Query query = new Query("location", Filter.INCLUDE, ["id", "label"] as String[])
-            featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, "location"))
-            def locationFeatureCollectionIterator = new MongoDBFeatureCollectionIterator(dbCursor, featureType, mapping, query)
+            def locationFeatureCollectionIterator = new MongoDBFeatureCollection(dbCursor, featureType, mapping, query, mongoDBFeatureSource)
         when:
-            Feature feature = locationFeatureCollectionIterator.next()
+            Feature feature = locationFeatureCollectionIterator.featuresList.get(0)
         then:
-            !locationFeatureCollectionIterator.hasNext()
+            locationFeatureCollectionIterator.size() == 1
             feature.attributeCount == 17
             feature.getAttribute("id") == "55fac7fde4b0e7f2e3be342c"
             feature.getAttribute("label") == "684704E"

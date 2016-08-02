@@ -1,8 +1,9 @@
-package com.spidasoftware.mongodb.feature
+package com.spidasoftware.mongodb.feature.collection
 
 import com.mongodb.BasicDBObject
 import com.mongodb.DBCursor
 import com.mongodb.DBObject
+import com.spidasoftware.mongodb.data.MongoDBFeatureSource
 import org.bson.types.BasicBSONList
 import org.geotools.data.Query
 import org.geotools.util.logging.Logging
@@ -11,37 +12,15 @@ import org.opengis.feature.type.FeatureType
 
 import java.util.logging.Logger
 
-class MongoDBSubCollectionFeatureCollectionIterator extends AbstractMongoDBFeatureCollectionIterator {
+class MongoDBSubCollectionFeatureCollection extends AbstractMongoDBFeatureCollection {
 
-    List<Feature> featuresList = []
-    private static final Logger log = Logging.getLogger(MongoDBSubCollectionFeatureCollectionIterator.class.getPackage().getName())
+    private static final Logger log = Logging.getLogger(MongoDBSubCollectionFeatureCollection.class.getPackage().getName())
 
-    MongoDBSubCollectionFeatureCollectionIterator(DBCursor dbCursor, FeatureType featureType, BasicDBObject mapping, Query query) {
-        super(dbCursor, featureType, mapping, query)
-        this.initFeaturesList()
+    MongoDBSubCollectionFeatureCollection(DBCursor dbCursor, FeatureType featureType, BasicDBObject mapping, Query query, MongoDBFeatureSource mongoDBFeatureSource) {
+        super(dbCursor, featureType, mapping, query, mongoDBFeatureSource)
     }
 
-    @Override
-    boolean isEmpty() {
-        return featuresList.isEmpty()
-    }
-
-    @Override
-    int size() {
-        return this.featuresList.size()
-    }
-
-    @Override
-    boolean hasNext() {
-        return this.featuresList.size() != 0
-    }
-
-    @Override
-    Feature next() throws NoSuchElementException {
-        return this.featuresList.remove(0)
-    }
-
-    private void initFeaturesList() {
+    void initFeaturesList() {
         int offsetSkipped = 0
 
         while(this.dbCursor.hasNext() && (this.max == null || this.featuresList.size() < this.max)) {

@@ -2,7 +2,8 @@ package com.spidasoftware.mongodb.filter
 
 import com.mongodb.*
 import com.mongodb.util.JSON
-import com.spidasoftware.mongodb.data.SpidaDbDataAccess
+import com.spidasoftware.mongodb.data.MongoDBDataAccess
+import com.spidasoftware.mongodb.data.MongoDBFeatureSource
 import org.geotools.data.Query
 import org.geotools.feature.FeatureCollection
 import org.geotools.feature.NameImpl
@@ -26,8 +27,9 @@ class FilterToDBQuerySpec extends Specification {
     @Shared BasicDBObject designJSON
     @Shared BasicDBObject locationJSON
     @Shared BasicDBList jsonMapping
-    @Shared SpidaDbDataAccess spidaDbDataAccess
+    @Shared MongoDBDataAccess mongoDBDataAccess
     @Shared String namespace = "http://spida/db"
+    @Shared MongoDBFeatureSource mongoDBFeatureSource
 
     void setupSpec() {
         designJSON = JSON.parse(getClass().getResourceAsStream('/design.json').text)
@@ -41,7 +43,7 @@ class FilterToDBQuerySpec extends Specification {
         def serverAddress = new ServerAddress(host, Integer.valueOf(port))
         MongoClient mongoClient = new MongoClient(serverAddress)
         jsonMapping = JSON.parse(getClass().getResourceAsStream('/mapping.json').text)
-        spidaDbDataAccess = new SpidaDbDataAccess(namespace, host, port, databaseName, null, null, jsonMapping)
+        mongoDBDataAccess = new MongoDBDataAccess(namespace, host, port, databaseName, null, null, jsonMapping)
         database = mongoClient.getDB(databaseName)
 
         database.getCollection("locations").remove(new BasicDBObject("id", locationJSON.get("id")))
@@ -1483,9 +1485,11 @@ class FilterToDBQuerySpec extends Specification {
 
     private FilterToDBQuery getFilterToDBQuery(String typeName, String collectionName) {
         DBCollection dbCollection = database.getCollection(collectionName)
-        FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, typeName))
+        FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, typeName))
         BasicDBObject mapping = jsonMapping.find { it.typeName == typeName }
-        return new FilterToDBQuery(dbCollection, featureType, mapping)
+        mongoDBDataAccess = new MongoDBDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, jsonMapping)
+        mongoDBFeatureSource = new MongoDBFeatureSource(mongoDBDataAccess, database, featureType, mapping)
+        return new FilterToDBQuery(dbCollection, featureType, mapping, mongoDBFeatureSource)
     }
 
     void "test location limit and offset"() {
@@ -1503,9 +1507,9 @@ class FilterToDBQuerySpec extends Specification {
             Query query = new Query(typeName, Filter.INCLUDE, 5, Query.ALL_NAMES, null)
             query.setStartIndex(0)
             DBCollection dbCollection = database.getCollection(collectionName)
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, typeName))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, typeName))
             BasicDBObject mapping = jsonMapping.find { it.typeName == typeName }
-            FilterToDBQuery filterToDBQuery = new FilterToDBQuery(dbCollection, featureType, mapping)
+            FilterToDBQuery filterToDBQuery = new FilterToDBQuery(dbCollection, featureType, mapping, mongoDBFeatureSource)
         when:
             FeatureCollection featureCollection = filterToDBQuery.getFeatureCollection(query)
         then:
@@ -1541,9 +1545,9 @@ class FilterToDBQuerySpec extends Specification {
             def filter = CQL.toFilter("id='55fac7fde4b0e7f2e3be342c' AND dateModified=1442498557079 AND clientFile='SCE.client'")
             Query query = new Query(typeName, filter)
             DBCollection dbCollection = database.getCollection(collectionName)
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, typeName))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, typeName))
             BasicDBObject mapping = jsonMapping.find { it.typeName == typeName }
-            FilterToDBQuery filterToDBQuery = new FilterToDBQuery(dbCollection, featureType, mapping)
+            FilterToDBQuery filterToDBQuery = new FilterToDBQuery(dbCollection, featureType, mapping, mongoDBFeatureSource)
         when:
             FeatureCollection featureCollection = filterToDBQuery.getFeatureCollection(query)
         then:
@@ -1570,9 +1574,9 @@ class FilterToDBQuerySpec extends Specification {
             def filter = CQL.toFilter("id='55fac7fde4b0e7f2e3be342c' OR id='${otherId}'")
             Query query = new Query(typeName, filter)
             DBCollection dbCollection = database.getCollection(collectionName)
-            FeatureType featureType = spidaDbDataAccess.getSchema(new NameImpl(namespace, typeName))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, typeName))
             BasicDBObject mapping = jsonMapping.find { it.typeName == typeName }
-            FilterToDBQuery filterToDBQuery = new FilterToDBQuery(dbCollection, featureType, mapping)
+            FilterToDBQuery filterToDBQuery = new FilterToDBQuery(dbCollection, featureType, mapping, mongoDBFeatureSource)
         when:
             FeatureCollection featureCollection = filterToDBQuery.getFeatureCollection(query)
         then:

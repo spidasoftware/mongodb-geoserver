@@ -4,12 +4,12 @@ import com.mongodb.BasicDBList
 import com.mongodb.BasicDBObject
 import com.mongodb.DBCollection
 import com.mongodb.DBCursor
-import com.spidasoftware.mongodb.feature.MongoDBFeatureCollectionIterator
-import com.spidasoftware.mongodb.feature.MongoDBSubCollectionFeatureCollectionIterator
+import com.spidasoftware.mongodb.data.MongoDBFeatureSource
+import com.spidasoftware.mongodb.feature.collection.MongoDBFeatureCollection
+import com.spidasoftware.mongodb.feature.collection.MongoDBSubCollectionFeatureCollection
 import com.vividsolutions.jts.geom.Geometry
 import org.geotools.data.Query
 import org.geotools.feature.FeatureCollection
-import org.geotools.filter.AttributeExpressionImpl
 import org.geotools.util.Converters
 import org.geotools.util.logging.Logging
 import org.opengis.feature.type.FeatureType
@@ -78,13 +78,15 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
     DBCollection dbCollection
     FeatureType featureType
     BasicDBObject mapping
+    MongoDBFeatureSource mongoDBFeatureSource
 
     private static final Logger log = Logging.getLogger(FilterToDBQuery.class.getPackage().getName())
 
-     FilterToDBQuery(DBCollection dbCollection, FeatureType featureType, BasicDBObject mapping) {
+     FilterToDBQuery(DBCollection dbCollection, FeatureType featureType, BasicDBObject mapping, MongoDBFeatureSource mongoDBFeatureSource) {
         this.dbCollection = dbCollection
         this.featureType = featureType
         this.mapping = mapping
+        this.mongoDBFeatureSource = mongoDBFeatureSource
         this.fillTypeMaps(this.mapping)
     }
 
@@ -191,9 +193,9 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
         }
 
         if(mapping.subCollections) {
-            return new MongoDBSubCollectionFeatureCollectionIterator(dbCursor, this.featureType, this.mapping, query)
+            return new MongoDBSubCollectionFeatureCollection(dbCursor, this.featureType, this.mapping, query, this.mongoDBFeatureSource)
         } else {
-            return new MongoDBFeatureCollectionIterator(dbCursor, this.featureType, this.mapping, query)
+            return new MongoDBFeatureCollection(dbCursor, this.featureType, this.mapping, query, this.mongoDBFeatureSource)
         }
     }
 

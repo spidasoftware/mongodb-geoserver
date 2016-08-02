@@ -5,7 +5,6 @@ import com.mongodb.BasicDBObject
 import com.mongodb.DB
 import com.mongodb.DBObject
 import com.mongodb.MongoClient
-import com.mongodb.MongoClientURI
 import com.mongodb.MongoCredential
 import com.mongodb.ServerAddress
 import com.vividsolutions.jts.geom.Point
@@ -24,9 +23,9 @@ import java.util.logging.Logger
 
 
 
-public class SpidaDbDataAccess implements DataAccess<FeatureType, Feature> {
+public class MongoDBDataAccess implements DataAccess<FeatureType, Feature> {
 
-    private static final Logger log = Logging.getLogger(SpidaDbDataAccess.class.getPackage().getName())
+    private static final Logger log = Logging.getLogger(MongoDBDataAccess.class.getPackage().getName())
 
     String namespace
     String host
@@ -40,7 +39,7 @@ public class SpidaDbDataAccess implements DataAccess<FeatureType, Feature> {
     MongoClient mongoClient
     DB database
 
-    SpidaDbDataAccess(String namespace, String host, String port, String databaseName, String username, String password, BasicDBList jsonMapping) {
+    MongoDBDataAccess(String namespace, String host, String port, String databaseName, String username, String password, BasicDBList jsonMapping) {
         this.namespace  = namespace
         this.host = host
         this.port = port
@@ -131,7 +130,7 @@ public class SpidaDbDataAccess implements DataAccess<FeatureType, Feature> {
     @Override
     FeatureSource<FeatureType, Feature> getFeatureSource(Name typeName) throws IOException {
         FeatureType featureType = getSchema(typeName)
-        return new SpidaDbFeatureSource(this, this.database, featureType, getMappingForName(typeName))
+        return new MongoDBFeatureSource(this, this.database, featureType, getMappingForName(typeName))
     }
 
     @Override
