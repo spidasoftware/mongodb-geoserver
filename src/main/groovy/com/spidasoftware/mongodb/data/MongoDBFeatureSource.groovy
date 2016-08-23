@@ -147,7 +147,10 @@ public class MongoDBFeatureSource implements FeatureSource<FeatureType, Feature>
 
     @Override
     public int getCount(Query query) throws IOException {
-        return dbCollection.find().size() // TODO
+        FeatureCollection featureCollection = new FilterToDBQuery(this.dbCollection, this.featureType, this.mapping, this).getFeatureCollection(query)
+        int result = featureCollection.size()
+        featureCollection.dbCursor.close()
+        return result
     }
 
     @Override

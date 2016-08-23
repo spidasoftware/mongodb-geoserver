@@ -161,10 +161,7 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
         def defaultCollectionQueries = getDefaultCollectionQueries(mapping)
         def dbQuery = defaultCollectionQueries
         def filter = query?.getFilter() ?: Filter.INCLUDE
-        def queryFromFilter
-        if(filter != null) {
-            queryFromFilter = visit(filter, "")
-        }
+        def queryFromFilter = visit(filter, "")
 
         if(defaultCollectionQueries.size() > 0 && queryFromFilter != null) {
             andQuery.addAll(defaultCollectionQueries)
@@ -314,7 +311,6 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
                     orQuery <<  new BasicDBObject("${subCollectionPath ? subCollectionPath + '.' : ''}${value}", new BasicDBObject('$exists', true))
                 } else if(attribute.useValue) {
                     orQuery << new BasicDBObject()
-                    // TODO
                 } else if(attribute.stringValue) {
                     orQuery <<  new BasicDBObject(subCollectionPath, value)
                 }
@@ -349,66 +345,6 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
         attributes.unique()
         return attributes
     }
-
-    /*BasicDBObject getPropertyIsEqualToQuery(String propertName, String id) {
-        List<Map> idInfos = getIdInfos(this.mapping)
-        log.info "idInfos = ${idInfos}"
-        BasicDBList orQuery = new BasicDBList()
-        idInfos.each { Map idInfo ->
-            if (idInfo?.idMapping?.concatenate) {
-                def splitId = id.split("_")
-                BasicDBList andQuery = new BasicDBList()
-                idInfo.idMapping.concatenate.eachWithIndex { BasicDBObject concatObject, int index ->
-                    if (index < splitId.size()) {
-                        if (concatObject.path) {
-                            andQuery.add(new BasicDBObject(concatObject.path, splitId[index]))
-                        } else if (concatObject.subCollectionPath) {
-                            andQuery.add(new BasicDBObject("${idInfo.subCollectionPath}.${concatObject.subCollectionPath}", splitId[index]))
-                        } else if (concatObject.currentIndex || concatObject.value) {
-                            // Do nothing hardcoded value will be filtered out later
-                        }
-                    }
-                }
-                if (andQuery.size() == 1) {
-                    orQuery << andQuery.get(0)
-                } else {
-                    orQuery << new BasicDBObject('$and', andQuery)
-                }
-            } else if (idInfo?.idMapping) {
-                orQuery << new BasicDBObject(idInfo?.idMapping.path, id)
-            }
-        }
-
-        orQuery.unique()
-
-        if(orQuery.size() > 1) {
-            return new BasicDBObject('$or', orQuery)
-        } else if(orQuery.size() == 1) {
-            return orQuery.get(0)
-        }
-        return new BasicDBObject("id", id)
-    }
-
-    private List<Map> getIdInfos(BasicDBObject map) {
-        BasicDBObject idMapping =  map.attributes.find {  it.name == "id" }
-        if(idMapping != null) {
-            return [[subCollectionPath: null, idMapping: idMapping]]
-        }
-
-        List<Map> idInfos = []
-        map.subCollections.each { subCollection ->
-            List<Map> ids = getIdInfos(subCollection)
-            ids.each { info ->
-                if(info.subCollectionPath != null) {
-                    info.subCollectionPath = subCollection.subCollectionPath + info.subCollectionPath
-                } else {
-                    info.subCollectionPath = subCollection.subCollectionPath
-                }
-                idInfos << info
-            }
-        }
-        return idInfos
-    }*/
 
     @Override
     Object visit(Not filter, Object extraData) {
@@ -493,7 +429,7 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
     }
 
     protected def convertValueIfNeeded(String dbQueryPath, String valueString) {
-        def convertedValue = valueString // TODO
+        def convertedValue = valueString
         if(doubleQueryKeys.contains(dbQueryPath)) {
             try {
                 convertedValue = valueString.toDouble()
@@ -544,7 +480,7 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    Object visit(BBOX filter, Object extraData) { // TODO: test this
+    Object visit(BBOX filter, Object extraData) {
         BoundingBox boundingBox = filter.getBounds()
         List bottomLeft = [boundingBox.getMinX(), boundingBox.getMinY()]
         List topRight = [ boundingBox.getMaxX(), boundingBox.getMaxY()]

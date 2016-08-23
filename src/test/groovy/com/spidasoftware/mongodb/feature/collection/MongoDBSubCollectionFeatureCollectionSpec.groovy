@@ -21,9 +21,9 @@ import spock.lang.Specification
 import org.geotools.filter.text.cql2.CQL
 import java.util.logging.Logger
 
-class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
+class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
 
-    static final Logger log = Logging.getLogger(MongoDBSubCollectionFeatureCollectionIteratorSpec.class.getPackage().getName())
+    static final Logger log = Logging.getLogger(MongoDBSubCollectionFeatureCollectionSpec.class.getPackage().getName())
 
     @Shared DB database
     @Shared BasicDBObject designJSON
@@ -63,11 +63,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testGetPole() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("pole", "designs", CQL.toFilter("designType='Measured Design'"))
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("pole", "designs", CQL.toFilter("designType='Measured Design'"))
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 16
             feature.getAttribute("designType") == "Measured Design"
             feature.getAttribute("locationLabel") == "684704E"
@@ -89,11 +89,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testGetAnalysis() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("analysis", "designs", CQL.toFilter("actual=1.5677448671814123"))
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("analysis", "designs", CQL.toFilter("actual=1.5677448671814123"))
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 24
             feature.getAttribute("designType") == "Measured Design"
             feature.getAttribute("loadInfo") == "CSA Heavy"
@@ -123,25 +123,25 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testGetAllPoles() {
         when:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("pole", "designs", Filter.INCLUDE)
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("pole", "designs", Filter.INCLUDE)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.size() == 1
+            mongoDBSubCollectionFeatureCollection.size() == 1
     }
 
     void testGetAllAnalysis() {
         when:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("analysis", "designs", Filter.INCLUDE)
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("analysis", "designs", Filter.INCLUDE)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.size() == 3
+            mongoDBSubCollectionFeatureCollection.size() == 3
     }
 
     void testLimitPolePropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("pole", "designs", CQL.toFilter("designType='Measured Design'"), ["id", "designType"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("pole", "designs", CQL.toFilter("designType='Measured Design'"), ["id", "designType"] as String[])
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 16
             feature.getAttribute("designType") == "Measured Design"
             feature.getAttribute("locationLabel") == null
@@ -163,11 +163,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testLimitAnalysisPropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("analysis", "designs", CQL.toFilter("actual=1.5677448671814123"), ["id", "actual"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("analysis", "designs", CQL.toFilter("actual=1.5677448671814123"), ["id", "actual"] as String[])
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 24
             feature.getAttribute("assetType") == null
             feature.getAttribute("designType") == null
@@ -197,11 +197,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testGetForm() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("form", "locations", CQL.toFilter("title='HTA Form'"))
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("form", "locations", CQL.toFilter("title='HTA Form'"))
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 4
             feature.getAttribute("title") == "HTA Form"
             feature.getAttribute("template") == "6ee5fba14760878be22701e1b3b7c05b-HTA Form"
@@ -211,11 +211,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testGetFormLimitPropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("form", "locations", CQL.toFilter("title='HTA Form'"), ["title"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("form", "locations", CQL.toFilter("title='HTA Form'"), ["title"] as String[])
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 4
             feature.getAttribute("title") == "HTA Form"
             feature.getAttribute("template") == null
@@ -225,11 +225,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testGetFormField() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("formField", "locations", CQL.toFilter("name='HTA Pole'"))
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("formField", "locations", CQL.toFilter("name='HTA Pole'"))
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 4
             feature.getAttribute("name") == "HTA Pole"
             feature.getAttribute("value") == "TesterValue123"
@@ -239,11 +239,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testGetFormFieldGroupName() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("formField", "locations", CQL.toFilter("groupName='Group Name'"))
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("formField", "locations", CQL.toFilter("groupName='Group Name'"))
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 4
             feature.getAttribute("name") == "Rework POA"
             feature.getAttribute("value") == "--"
@@ -253,11 +253,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testGetFormFieldLimitPropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("formField", "locations", CQL.toFilter("name='HTA Pole'"), ["name"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("formField", "locations", CQL.toFilter("name='HTA Pole'"), ["name"] as String[])
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 4
             feature.getAttribute("name") == "HTA Pole"
             feature.getAttribute("value") == null
@@ -267,11 +267,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testRemedyFeature() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("remedy", "locations",  CQL.toFilter("value='Duplicate pole from other Windstrean/KDL proposal, do not put on cover map'"))
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("remedy", "locations",  CQL.toFilter("value='Duplicate pole from other Windstrean/KDL proposal, do not put on cover map'"))
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 2
             feature.getAttribute("value") == "Duplicate pole from other Windstrean/KDL proposal, do not put on cover map"
             feature.getAttribute("locationId") == "55fac7fde4b0e7f2e3be342c"
@@ -279,11 +279,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testLimitRemedyPropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("remedy", "locations", CQL.toFilter("value='Duplicate pole from other Windstrean/KDL proposal, do not put on cover map'"), ["value"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("remedy", "locations", CQL.toFilter("value='Duplicate pole from other Windstrean/KDL proposal, do not put on cover map'"), ["value"] as String[])
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 2
             feature.getAttribute("value") == "Duplicate pole from other Windstrean/KDL proposal, do not put on cover map"
             feature.getAttribute("locationId") == null
@@ -291,11 +291,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testGetSummaryNoteFeature() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("summaryNote", "locations",  CQL.toFilter("value='Windstream/KDL install down guy for span to the W'"))
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("summaryNote", "locations",  CQL.toFilter("value='Windstream/KDL install down guy for span to the W'"))
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 2
             feature.getAttribute("value") == "Windstream/KDL install down guy for span to the W"
             feature.getAttribute("locationId") == "55fac7fde4b0e7f2e3be342c"
@@ -303,11 +303,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testLimitSummaryNotePropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("summaryNote", "locations", CQL.toFilter("value='Windstream/KDL install down guy for span to the W'"), ["value"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("summaryNote", "locations", CQL.toFilter("value='Windstream/KDL install down guy for span to the W'"), ["value"] as String[])
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 2
             feature.getAttribute("value") == "Windstream/KDL install down guy for span to the W"
             feature.getAttribute("locationId") == null
@@ -315,11 +315,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testGetWireFeature() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("wire", "designs", CQL.toFilter("owner='AEP'"))
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("wire", "designs", CQL.toFilter("owner='AEP'"))
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 12
             feature.getAttribute("owner") == "AEP"
             feature.getAttribute("size") == "1/0 AAAC"
@@ -337,11 +337,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testLimitWirePropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("wire", "designs", CQL.toFilter("owner='AEP'"), ["owner"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("wire", "designs", CQL.toFilter("owner='AEP'"), ["owner"] as String[])
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 12
             feature.getAttribute("owner") == "AEP"
             feature.getAttribute("size") == null
@@ -359,11 +359,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testGetSpanPointFeature() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("spanPoint", "designs", Filter.INCLUDE)
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("spanPoint", "designs", Filter.INCLUDE)
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 4
             feature.getAttribute("distance") == 88
             feature.getAttribute("distanceUnit") == "FOOT"
@@ -373,11 +373,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testLimitSpanPointPropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("spanPoint", "designs",CQL.toFilter("distance=88"), ["distance"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("spanPoint", "designs",CQL.toFilter("distance=88"), ["distance"] as String[])
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 4
             feature.getAttribute("distance") == 88
             feature.getAttribute("distanceUnit") == null
@@ -387,11 +387,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testGetSpanGuyFeature() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("spanGuy", "designs", Filter.INCLUDE)
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("spanGuy", "designs", Filter.INCLUDE)
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 11
             feature.getAttribute("owner") == "AEP"
             feature.getAttribute("size") == "3/8\" EHS"
@@ -408,11 +408,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testLimitSpanGuyPropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("spanGuy", "designs", CQL.toFilter("owner='AEP'"), ["owner"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("spanGuy", "designs", CQL.toFilter("owner='AEP'"), ["owner"] as String[])
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 11
             feature.getAttribute("owner") == "AEP"
             feature.getAttribute("size") == null
@@ -429,11 +429,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testGetGuyFeature() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("guy", "designs", Filter.INCLUDE)
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("guy", "designs", Filter.INCLUDE)
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 7
             feature.getAttribute("owner") == "AEP"
             feature.getAttribute("size") == "3/8\" EHS"
@@ -446,11 +446,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testLimitGuyPropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("guy", "designs", CQL.toFilter("owner='AEP'"), ["owner"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("guy", "designs", CQL.toFilter("owner='AEP'"), ["owner"] as String[])
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 7
             feature.getAttribute("owner") == "AEP"
             feature.getAttribute("size") == null
@@ -463,11 +463,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testGetInsulatorFeature() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("insulator", "designs", Filter.INCLUDE)
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("insulator", "designs", Filter.INCLUDE)
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 9
             feature.getAttribute("owner") == "AEP"
             feature.getAttribute("type") == "15kV Dead End Insulator"
@@ -482,11 +482,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testLimitInsulatorPropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("insulator", "designs", CQL.toFilter("owner='AEP'"), ["owner"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("insulator", "designs", CQL.toFilter("owner='AEP'"), ["owner"] as String[])
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 9
             feature.getAttribute("owner") == "AEP"
             feature.getAttribute("type") == null
@@ -501,11 +501,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testGetEquipmentFeature() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("equipment", "designs", Filter.INCLUDE)
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("equipment", "designs", Filter.INCLUDE)
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 9
             feature.getAttribute("owner") == "AEP"
             feature.getAttribute("size") == "1 Cutout"
@@ -520,11 +520,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testLimitEquipmentPropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("equipment", "designs", CQL.toFilter("size='1 Cutout'"), ["size"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("equipment", "designs", CQL.toFilter("size='1 Cutout'"), ["size"] as String[])
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 9
             feature.getAttribute("owner") == null
             feature.getAttribute("size") == "1 Cutout"
@@ -539,11 +539,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testGetDamageFeature() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("damage", "designs", Filter.INCLUDE)
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("damage", "designs", Filter.INCLUDE)
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 25
             feature.getAttribute("attachHeight") == 3
             feature.getAttribute("attachHeightUnit") == "FOOT"
@@ -574,11 +574,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testLimitDamagePropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("damage", "designs", CQL.toFilter("attachHeight=3"), ["attachHeight"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("damage", "designs", CQL.toFilter("attachHeight=3"), ["attachHeight"] as String[])
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 25
             feature.getAttribute("attachHeight") == 3
             feature.getAttribute("attachHeightUnit") == null
@@ -609,11 +609,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testCrossArmGetFeature() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("crossArm", "designs", Filter.INCLUDE)
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("crossArm", "designs", Filter.INCLUDE)
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 9
             feature.getAttribute("owner") == "AEP"
             feature.getAttribute("type") == "8 Foot Cross Arm"
@@ -628,11 +628,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testLimitCrossArmPropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("crossArm", "designs", Filter.INCLUDE, ["owner"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("crossArm", "designs", Filter.INCLUDE, ["owner"] as String[])
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 9
             feature.getAttribute("owner") == "AEP"
             feature.getAttribute("type") == null
@@ -647,11 +647,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testGetAnchorFeature() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("anchor", "designs", Filter.INCLUDE)
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("anchor", "designs", Filter.INCLUDE)
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 9
             feature.getAttribute("distance") == 12
             feature.getAttribute("distanceUnit") == "FOOT"
@@ -666,11 +666,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testLimitAnchorPropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("anchor", "designs", Filter.INCLUDE, ["owner"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("anchor", "designs", Filter.INCLUDE, ["owner"] as String[])
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 9
             feature.getAttribute("distance") == null
             feature.getAttribute("distanceUnit") == null
@@ -685,11 +685,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testGetWireEndPointFeature() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("wireEndPoint", "designs", Filter.INCLUDE)
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("wireEndPoint", "designs", Filter.INCLUDE)
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 8
             feature.getAttribute("distance") == 62
             feature.getAttribute("distanceUnit") == "FOOT"
@@ -703,11 +703,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testLimitWireEndPointPropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("wireEndPoint", "designs", Filter.INCLUDE, ["distance"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("wireEndPoint", "designs", Filter.INCLUDE, ["distance"] as String[])
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 8
             feature.getAttribute("distance") == 62
             feature.getAttribute("distanceUnit") == null
@@ -721,11 +721,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testGetNotePointFeature() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("notePoint", "designs", Filter.INCLUDE)
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("notePoint", "designs", Filter.INCLUDE)
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 7
             feature.getAttribute("distance") == 62
             feature.getAttribute("distanceUnit") == "FOOT"
@@ -738,11 +738,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testLimitNotePointPropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("notePoint", "designs", Filter.INCLUDE, ["distance"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("notePoint", "designs", Filter.INCLUDE, ["distance"] as String[])
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 7
             feature.getAttribute("distance") == 62
             feature.getAttribute("distanceUnit") == null
@@ -755,11 +755,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testGetPointLoadFeature() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("pointLoad", "designs", Filter.INCLUDE)
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("pointLoad", "designs", Filter.INCLUDE)
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.size() == 1
+            mongoDBSubCollectionFeatureCollection.size() == 1
             feature.attributeCount == 26
             feature.getAttribute("owner") == "SCE"
             feature.getAttribute("elevation") == 0
@@ -791,11 +791,11 @@ class MongoDBSubCollectionFeatureCollectionIteratorSpec extends Specification {
 
     void testLimitPointLoadPropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollectionIterator = getFeatureIterator("pointLoad", "designs", Filter.INCLUDE, ["owner"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("pointLoad", "designs", Filter.INCLUDE, ["owner"] as String[])
         when:
-            Feature feature = mongoDBSubCollectionFeatureCollectionIterator.featuresList.get(0)
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
-            mongoDBSubCollectionFeatureCollectionIterator.featuresList.size() == 1
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 26
             feature.getAttribute("owner") == "SCE"
             feature.getAttribute("elevation") == null

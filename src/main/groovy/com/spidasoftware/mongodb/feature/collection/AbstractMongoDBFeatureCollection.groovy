@@ -217,18 +217,15 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
 
     @Override
     void accepts(FeatureVisitor visitor, ProgressListener progress) throws IOException {
-        // TODO
     }
 
     @Override
     SimpleFeatureCollection subCollection(Filter filter) {
-        return  // TODO
     }
 
     @Override
     SimpleFeatureCollection sort(SortBy order) {
-        log.info("order = ${order}")
-        return null // TODO
+        return null
     }
 
     @Override
