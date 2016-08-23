@@ -1,0 +1,145 @@
+{
+    "dateModified": 1442498557079,
+    "id": "55fac7fde4b0e7f2e3be342c",
+    "projectLabel": "IJUS-44-2015-08-26-053",
+    "projectId": "55fac7fde4b0e7f2e3be344f",
+    "clientFile": "SCE.client",
+    "clientFileVersion": "6ee5fba14760878be22701e1b3b7c05b",
+    "calcLocation": {
+        "label": "684704E",
+        "mapNumber": "ROME AVE.",
+        "comments": "Two transformers connected to lower two cross arms",
+        "address": {
+            "number" : "8812",
+            "street" : "Eberhart Rd NW",
+            "city" : "Bolivar",
+            "county" : "Tuscarawas",
+            "state" : "OH",
+            "zip_code" : "44622"
+        },
+        "technician": "Arle Rodriguez",
+        "crossStreet1": "",
+        "crossStreet2": "",
+        "geographicCoordinate": {
+            "type": "Point",
+            "coordinates": [-118.3824234008789,
+                33.80541229248047
+            ]
+        },
+        "remedies": [
+            {
+                "description" : "Duplicate pole from other Windstrean/KDL proposal, do not put on cover map"
+            }
+        ],
+        "poleTags": [{
+            "type": "FOREIGN",
+            "value": "NT"
+        }, {
+            "type": "FOREIGN",
+            "value": "34-63D"
+        }, {
+            "type": "MAP",
+            "value": "684704E"
+        }],
+        "userDefinedValues": {
+            "stationId": "ff8081814c5ca491014c5cacaf1853c7"
+        },
+        "summaryNotes": [
+            "Windstream/KDL install down guy for span to the W",
+            "Windstream/KDL install down guy for span to the NW",
+            "OK to Attach at 31'3\" for span NW, 30'11\" for span W",
+            "AEP broken down guy for span N"],
+        "forms": [{
+            "title": "HTA Form",
+            "template": "6ee5fba14760878be22701e1b3b7c05b-HTA Form",
+            "fields": {
+                "HTA Pole": "TesterValue123",
+                "HTA Details": []
+            }
+        }, {
+            "title": "Group Name Form",
+            "template": "6ee5fba14760878be22701e1b3b7c05b-SAP",
+            "fields": {
+                "Group Name" : {
+                    "Rework POA": "--"
+                }
+            }
+        }],
+        "images": [{
+            "url": "684704E-1.jpg",
+            "link": {
+                "id": "4a1782da-a0fc-4fdd-aa4e-3a40f583d56b",
+                "source": "filefortAssetService"
+            }
+        }, {
+            "url": "684704E-2.jpg",
+            "link": {
+                "id": "fdd11e8e-b664-4b88-a0c2-ffe714a9ae72",
+                "source": "filefortAssetService"
+            }
+        }, {
+            "url": "684704E-3.jpg",
+            "link": {
+                "id": "2597ce78-4ec5-4435-8ad0-7d5bb7302df8",
+                "source": "filefortAssetService"
+            }
+        }, {
+            "url": "684704E-4.jpg",
+            "link": {
+                "id": "820a6ec9-8c9f-4c86-9f13-cd366dfe326c",
+                "source": "filefortAssetService"
+            }
+        }, {
+            "url": "684704E-5.jpg",
+            "link": {
+                "id": "8338d9d8-7f2d-48f7-8577-c36d31ee4c70",
+                "source": "filefortAssetService"
+            }
+        }, {
+            "url": "684704E-6.jpg",
+            "link": {
+                "id": "49b16d3e-5094-4b89-af44-f235d14852d3",
+                "source": "filefortAssetService"
+            }
+        }, {
+            "url": "684704E-7.jpg",
+            "link": {
+                "id": "7b321c56-1a75-446f-bb5c-87894356b7a4",
+                "source": "filefortAssetService"
+            }
+        }, {
+            "url": "684704E-8.jpg",
+            "link": {
+                "id": "84d792eb-d09b-4751-949b-dcb9020cba97",
+                "source": "filefortAssetService"
+            }
+        }, {
+            "url": "684704E-9.jpg",
+            "link": {
+                "id": "3fe9b957-6481-45f4-b783-85a21be0f131",
+                "source": "filefortAssetService"
+            }
+        }, {
+            "url": "684704E-10.jpg",
+            "link": {
+                "id": "85291c88-6cd4-4bc3-8c06-c6a15c74a7fd",
+                "source": "filefortAssetService"
+            }
+        }, {
+            "url": "684704E-11.jpg",
+            "link": {
+                "id": "b1482bf5-5ef0-44dc-a1b0-1b50c2afd857",
+                "source": "filefortAssetService"
+            }
+        }],
+        "designs": [{
+            "id": "55fac7fde4b0e7f2e3be342b",
+            "label": "As Is"
+        }],
+        "id": "55fac7fde4b0e7f2e3be342c"
+    },
+    "user": {
+        "id": "279",
+        "email": "test@test.com"
+    }
+}

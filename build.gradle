@@ -1,0 +1,148 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// General Gradle Settings
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'maven'
+apply plugin: 'idea'
+apply plugin: 'project-report'
+apply plugin: 'java-library-distribution'
+
+group = 'com.spidasoftware'
+version = '0.1' 
+description = "mongodb-geoserver-plugin"
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Dependencies
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+buildscript {
+
+	try {
+		project.ext.m2Settings = [exposed:"https://dev.spidasoftware.com/artifactory/exposed-repo"]//default
+		def m2Root = new XmlSlurper().parse(new File(System.getProperty("user.home"), ".m2/settings.xml"))
+		def m2Spida = m2Root.servers.server.find{ it.id.text() == "spida" }
+		def m2Repos = m2Root.profiles.profile.find{ it.id.text() == "artifactory" }.properties
+		if(m2Spida && m2Repos){
+			project.ext.m2Settings = [username: m2Spida.username.text(), password: m2Spida.password.text(), exposed: m2Repos.exposedLocation.text()]
+		}
+	} catch(ex){
+		println ex.message //use ex.printStackTrace() if you want to show the full stacktrace
+	}
+
+	//uncomment to print out maven settings
+	//println "m2Settings: ${m2Settings}"
+
+	repositories {
+		mavenCentral()
+		maven { url m2Settings.exposed }
+	}
+
+	dependencies {
+	}
+}
+
+repositories {
+    mavenCentral()
+    maven { url m2Settings.exposed }
+    maven { url "http://download.osgeo.org/webdav/geotools" }
+    maven { url "http://repo.boundlessgeo.com/main/" }
+}
+
+task sourcesZip(type: Zip, dependsOn: classes) {
+    classifier = 'sources'
+    into ('') {
+		from { 'build.gradle' }
+		from { 'gradlew' }
+		from { 'gradlew.bat' }
+		from { 'LICENSE' }
+		from { 'README.md' }
+        		
+	}
+	into ('src') {
+		from { 'src' }
+	}
+	into ('gradle') {
+		from { 'gradle' }
+	}
+} 
+
+distributions {
+    main {
+        contents {
+        	from sourcesZip
+        	from jar
+        	into ('') {
+        		from { 'LICENSE' }
+        		from { 'README.md' }
+        	}
+            exclude { override ->
+                override.file.path.matches('.*(gt|net|gs|jts|jscience|wicket|htmlvalidator|slf4j|log4j|gs|spring|bcprov|srvlet|json|commons|freemarker|xstream|guava|jsr|jasypt|jai|servlet|imageio|jdom|postgres|xpp|aopalliance|cglib|hsqldb|xmlpull|xpp|vecmath|jgrdidshift|org.w3|common|ecore|picocontainer|xsd|xml|jgridshift|core).*.jar')
+            }
+        }
+    }
+}
+
+artifacts { archives distZip }
+
+uploadArchives {
+	repositories.mavenDeployer {
+		repository(url: m2Settings.exposed) {
+			authentication(userName: m2Settings.username, password: m2Settings.password)
+		}
+	}
+}
+
+def geotoolsVersion = '14.3'
+def geoserverVersion = '2.8.3'
+dependencies {
+    compile group: 'org.geotools', name: 'gt-main', version:"${geotoolsVersion}", transitive: false
+    compile group: 'org.geotools', name: 'gt-data', version:"${geotoolsVersion}", transitive: false
+    compile group: 'org.geotools', name: 'gt-opengis', version:"${geotoolsVersion}", transitive: false
+    compile group: 'org.geotools', name: 'gt-api', version:"${geotoolsVersion}", transitive: false
+    compile group: 'org.geotools', name: 'gt-complex', version:"${geotoolsVersion}", transitive: false
+    compile group: 'org.geotools', name: 'gt-referencing', version:"${geotoolsVersion}", transitive: false
+    compile group: 'org.geotools', name: 'gt-metadata', version:"${geotoolsVersion}", transitive: false
+    compile group: 'org.geotools.xsd', name: 'gt-xsd-core', version:"${geotoolsVersion}", transitive: false
+    compile group: 'org.geotools.ogc', name: 'net.opengis.wfs', version:"${geotoolsVersion}", transitive: false
+    compile(group: 'org.geoserver.web', name: 'gs-web-core', version:"${geoserverVersion}") {
+        exclude module: 'jai_core'
+    }
+    compile group: 'org.mongodb', name:'mongo-java-driver', version:'3.2.2'
+    compile group: 'com.vividsolutions', name:'jts', version:'1.13', transitive: false
+    compile group: 'org.jscience', name:'jscience', version:'4.3.1', transitive: false
+
+    compile "org.codehaus.groovy:groovy-all:2.4.1"
+    testCompile "org.spockframework:spock-core:1.0-groovy-2.4"
+    testCompile "cglib:cglib:2.2"
+    testCompile 'org.objenesis:objenesis:1.4'
+
+}
+
+test {
+    testLogging.showStandardStreams = true
+    systemProperty "mongoHost", "localhost"
+    systemProperty "mongoPort", "27017"
+    systemProperty "mongoDatabase", "test_calcdb"
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Command Line Tools
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+task wrapper(type: Wrapper) {
+	/*****************************************************************************************
+		NOTES:
+		1) This will also change gradle version for all subprojects.
+		2) Setting url with "-all" so that the download includes gradle documentation.
+		3) If you only set gradleVersion, it will append "-bin".
+		http://www.gradle.org/docs/current/dsl/org.gradle.api.tasks.wrapper.Wrapper.html
+ 	 *****************************************************************************************/
+	distributionUrl = 'http://services.gradle.org/distributions/gradle-1.11-all.zip'
+}
+
