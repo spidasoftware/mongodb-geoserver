@@ -483,11 +483,16 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
     Object visit(BBOX filter, Object extraData) {
         BoundingBox boundingBox = filter.getBounds()
         List bottomLeft = [boundingBox.getMinX(), boundingBox.getMinY()]
-        List topRight = [ boundingBox.getMaxX(), boundingBox.getMaxY()]
-        List box = [bottomLeft, topRight]
-        return new BasicDBObject(filter.getExpression1().accept(this, null), new BasicDBObject('$geoWithin', new BasicDBObject('$box', box)))
+        List bottomRight = [boundingBox.getMaxX(), boundingBox.getMinY()]
+        List topRight = [boundingBox.getMaxX(), boundingBox.getMaxY()]
+        List topLeft = [boundingBox.getMinX(), boundingBox.getMaxY()]
+        List ring = [bottomLeft, bottomRight, topRight, topLeft, bottomLeft]
+        BasicDBObject geometry = new BasicDBObject()
+        geometry.put("type", "Polygon")
+        geometry.put("coordinates", [ring])
+        return new BasicDBObject(filter.getExpression1().accept(this, null), new BasicDBObject('$geoWithin', new BasicDBObject('$geometry', geometry)))
     }
-
+    
     @Override
     Object visit(Beyond filter, Object extraData) {
         throw new UnsupportedOperationException()

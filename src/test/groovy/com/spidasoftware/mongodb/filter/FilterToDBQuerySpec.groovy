@@ -1492,6 +1492,39 @@ class FilterToDBQuerySpec extends Specification {
         return new FilterToDBQuery(dbCollection, featureType, mapping, mongoDBFeatureSource)
     }
 
+    void "test location bounding box query"() {
+        setup:
+            String typeName = "location"
+            String collectionName = "locations"
+            def minLng = -119
+            def maxLng = -118
+            def minLat = 33
+            def maxLat = 34
+            def filter = CQL.toFilter("BBOX(geographicCoordinate,$minLng,$minLat,$maxLng,$maxLat,'EPSG:4326')")
+            Query query = new Query(typeName, filter)
+            DBCollection dbCollection = database.getCollection(collectionName)
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, typeName))
+            BasicDBObject mapping = jsonMapping.find { it.typeName == typeName }
+            FilterToDBQuery filterToDBQuery = new FilterToDBQuery(dbCollection, featureType, mapping, mongoDBFeatureSource)
+        when:
+            FeatureCollection featureCollection = filterToDBQuery.getFeatureCollection(query)
+        then:
+            featureCollection.dbCursor.size() == 1
+            featureCollection.size() == 1
+        when:
+            minLng = -120
+            maxLng = -119
+            minLat = 31
+            maxLat = 32
+
+            filter = CQL.toFilter("BBOX(geographicCoordinate,$minLng,$minLat,$maxLng,$maxLat,'EPSG:4326')")
+            query = new Query(typeName, filter)
+            featureCollection = filterToDBQuery.getFeatureCollection(query)
+        then:
+            featureCollection.dbCursor.size() == 0
+            featureCollection.size() == 0
+    }
+
     void "test location limit and offset"() {
         setup:
             String typeName = "location"
