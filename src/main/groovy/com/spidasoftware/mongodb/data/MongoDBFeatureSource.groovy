@@ -115,20 +115,22 @@ public class MongoDBFeatureSource implements FeatureSource<FeatureType, Feature>
 
     @Override
     public ReferencedEnvelope getBounds() throws IOException {
-        BasicDBList aggregateList = new BasicDBList()
-        aggregateList.add(new BasicDBObject('$unwind': '$' + mapping.geometry.path + '.coordinates'))
-        aggregateList.add(new BasicDBObject('$group': new BasicDBObject('_id': '$_id',
-                'lng': new BasicDBObject('$first': '$' + mapping.geometry.path + '.coordinates'),
-                'lat': new BasicDBObject('$last': '$' + mapping.geometry.path + '.coordinates'))))
-        aggregateList.add(new BasicDBObject('$group': new BasicDBObject('_id': null,
-                'minLat': new BasicDBObject('$min': '$lat'),
-                'minLng': new BasicDBObject('$min': '$lng'),
-                'maxLat': new BasicDBObject('$max': '$lat'),
-                'maxLng': new BasicDBObject('$max': '$lng'))))
-        def iterator = dbCollection.aggregate(aggregateList)?.results()?.iterator()
-        if(iterator.hasNext()) {
-            DBObject dbObject = iterator.next()
-            return new ReferencedEnvelope(dbObject.get("minLng"), dbObject.get("maxLng"), dbObject.get("minLat"), dbObject.get("maxLat"), DefaultGeographicCRS.WGS84)
+        if(mapping.geometry?.path) {
+            BasicDBList aggregateList = new BasicDBList()
+            aggregateList.add(new BasicDBObject('$unwind': '$' + mapping.geometry.path + '.coordinates'))
+            aggregateList.add(new BasicDBObject('$group': new BasicDBObject('_id': '$_id',
+                    'lng': new BasicDBObject('$first': '$' + mapping.geometry.path + '.coordinates'),
+                    'lat': new BasicDBObject('$last': '$' + mapping.geometry.path + '.coordinates'))))
+            aggregateList.add(new BasicDBObject('$group': new BasicDBObject('_id': null,
+                    'minLat': new BasicDBObject('$min': '$lat'),
+                    'minLng': new BasicDBObject('$min': '$lng'),
+                    'maxLat': new BasicDBObject('$max': '$lat'),
+                    'maxLng': new BasicDBObject('$max': '$lng'))))
+            def iterator = dbCollection.aggregate(aggregateList)?.results()?.iterator()
+            if(iterator.hasNext()) {
+                DBObject dbObject = iterator.next()
+                return new ReferencedEnvelope(dbObject.get("minLng"), dbObject.get("maxLng"), dbObject.get("minLat"), dbObject.get("maxLat"), DefaultGeographicCRS.WGS84)
+            }
         }
         return null
     }
