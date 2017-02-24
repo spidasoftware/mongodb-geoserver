@@ -24,8 +24,10 @@ class FilterToDBQuerySpec extends Specification {
     static final Logger log = Logging.getLogger(FilterToDBQuerySpec.class.getPackage().getName())
 
     @Shared DB database
-    @Shared BasicDBObject designJSON
     @Shared BasicDBObject locationJSON
+    @Shared BasicDBObject designJSON
+    @Shared BasicDBObject structureJSON
+    @Shared BasicDBObject analysisJSON
     @Shared BasicDBList jsonMapping
     @Shared MongoDBDataAccess mongoDBDataAccess
     @Shared String namespace = "http://spida/db"
@@ -34,6 +36,8 @@ class FilterToDBQuerySpec extends Specification {
     void setupSpec() {
         designJSON = JSON.parse(getClass().getResourceAsStream('/design.json').text)
         locationJSON = JSON.parse(getClass().getResourceAsStream('/location.json').text)
+        structureJSON = JSON.parse(getClass().getResourceAsStream('/structure.json').text)
+        analysisJSON = JSON.parse(getClass().getResourceAsStream('/analysis.json').text)
 
         jsonMapping = JSON.parse(getClass().getResourceAsStream('/mapping.json').text)
 
@@ -51,11 +55,19 @@ class FilterToDBQuerySpec extends Specification {
 
         database.getCollection("designs").remove(new BasicDBObject("id", designJSON.get("id")))
         database.getCollection("designs").insert(designJSON)
+
+        database.getCollection("structures").remove(new BasicDBObject("id", structureJSON.get("id")))
+        database.getCollection("structures").insert(structureJSON)
+
+        database.getCollection("analysis").remove(new BasicDBObject("id", analysisJSON.get("id")))
+        database.getCollection("analysis").insert(analysisJSON)
     }
 
     void cleanupSpec() {
         database.getCollection("locations").remove(new BasicDBObject("id", locationJSON.get("id")))
         database.getCollection("designs").remove(new BasicDBObject("id", designJSON.get("id")))
+        database.getCollection("structures").remove(new BasicDBObject("id", structureJSON.get("id")))
+        database.getCollection("analysis").remove(new BasicDBObject("id", analysisJSON.get("id")))
     }
 
     @Unroll("test get #typeName Features no query or filter")
@@ -1483,13 +1495,12 @@ class FilterToDBQuerySpec extends Specification {
             CQL.toFilter("comments like '%connected to lower two cross arm'")     | 0
     }
 
-    private FilterToDBQuery getFilterToDBQuery(String typeName, String collectionName) {
-        DBCollection dbCollection = database.getCollection(collectionName)
+    private FilterToDBQuery getFilterToDBQuery(String typeName) {
         FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, typeName))
         BasicDBObject mapping = jsonMapping.find { it.typeName == typeName }
         mongoDBDataAccess = new MongoDBDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, jsonMapping)
         mongoDBFeatureSource = new MongoDBFeatureSource(mongoDBDataAccess, database, featureType, mapping)
-        return new FilterToDBQuery(dbCollection, featureType, mapping, mongoDBFeatureSource)
+        return new FilterToDBQuery(database, featureType, mapping, mongoDBFeatureSource)
     }
 
     void "test location bounding box query"() {

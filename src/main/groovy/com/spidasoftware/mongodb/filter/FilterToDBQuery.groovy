@@ -183,8 +183,7 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
         if (supportsMaxAndOffsetQueries() && query?.getStartIndex() != null) {
             dbCursor?.skip(query.getStartIndex())
         }
-        //log.info "dbQuery = ${dbQuery}"
-        //log.info "dbCursor.size() = ${dbCursor.size()}"
+
         if (log.isLoggable(Level.FINE)) {
             log.fine "dbCursor.size() = ${dbCursor.size()}"
         }

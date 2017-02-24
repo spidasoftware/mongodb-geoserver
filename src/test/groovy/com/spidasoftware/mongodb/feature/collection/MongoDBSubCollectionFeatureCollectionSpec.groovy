@@ -26,16 +26,20 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
     static final Logger log = Logging.getLogger(MongoDBSubCollectionFeatureCollectionSpec.class.getPackage().getName())
 
     @Shared DB database
-    @Shared BasicDBObject designJSON
     @Shared BasicDBObject locationJSON
+    @Shared BasicDBObject designJSON
+    @Shared BasicDBObject structureJSON
+    @Shared BasicDBObject analysisJSON
     @Shared BasicDBList jsonMapping
     @Shared MongoDBDataAccess mongoDBDataAccess
     @Shared String namespace = "http://spida/db"
     MongoDBFeatureSource mongoDBFeatureSource
 
     void setupSpec() {
-        designJSON = JSON.parse(getClass().getResourceAsStream('/design.json').text)
         locationJSON = JSON.parse(getClass().getResourceAsStream('/location.json').text)
+        designJSON = JSON.parse(getClass().getResourceAsStream('/design.json').text)
+        structureJSON = JSON.parse(getClass().getResourceAsStream('/structure.json').text)
+        analysisJSON = JSON.parse(getClass().getResourceAsStream('/analysis.json').text)
 
         jsonMapping = JSON.parse(getClass().getResourceAsStream('/mapping.json').text)
         mongoDBDataAccess = new MongoDBDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, jsonMapping)
@@ -54,11 +58,19 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
 
         database.getCollection("designs").remove(new BasicDBObject("id", designJSON.get("id")))
         database.getCollection("designs").insert(designJSON)
+
+        database.getCollection("structures").remove(new BasicDBObject("id", structureJSON.get("id")))
+        database.getCollection("structures").insert(structureJSON)
+
+        database.getCollection("analysis").remove(new BasicDBObject("id", analysisJSON.get("id")))
+        database.getCollection("analysis").insert(analysisJSON)
     }
 
     void cleanupSpec() {
         database.getCollection("locations").remove(new BasicDBObject("id", locationJSON.get("id")))
         database.getCollection("designs").remove(new BasicDBObject("id", designJSON.get("id")))
+        database.getCollection("structures").remove(new BasicDBObject("id", structureJSON.get("id")))
+        database.getCollection("analysis").remove(new BasicDBObject("id", analysisJSON.get("id")))
     }
 
     void testGetPole() {
