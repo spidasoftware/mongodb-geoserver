@@ -20,6 +20,10 @@ Top level fields in the mapping.json file:
 * idAsAttribute: (Required) Whether or not to include the id of the object as an attribute for the features.
 * geometry: (Not Required) The geometry for the collection, must include the name, crs and path.
 * displayGeometry: (Not Required) Whether or not to add the geometry to the feature.
+* joinTo: (Not Required) Join (aggregate) to this collection.
+	+ collection: The collection to join to.
+	+ parentJoin: Join field for the parent.
+	+ childJoin: Join field for the child (this) collection.
 * attributes: (Not Required) Must add the name for the attribute and the path to the value,  can also add a class([Double](https://github.com/spidasoftware/mongodb-geoserver/blob/mongodb-geoserver-plugin/src/test/resources/mapping.json#L692), [Long](https://github.com/spidasoftware/mongodb-geoserver/blob/mongodb-geoserver-plugin/src/test/resources/mapping.json#L32) or [Boolean](https://github.com/spidasoftware/mongodb-geoserver/blob/mongodb-geoserver-plugin/src/test/resources/mapping.json#L311))
 * subCollections: (Not Required)
      + subCollectionPath: (Required) path to the subcollection.
