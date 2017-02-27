@@ -78,7 +78,12 @@ public class MongoDBDataAccessFactory implements DataAccessFactory {
 
     void validateMappingAttributes(BasicDBObject mapping, boolean isSubCollection = false) {
         assert mapping.attributes.findAll { it.useObjectKey }.size() <= 1
-        assert !(isSubCollection && mapping.joinTo)
+        if(mapping.joinTo) {
+            assert !isSubCollection
+            assert mapping.joinTo.collection &&
+                   mapping.joinTo.parentJoin &&
+                   mapping.joinTo.childJoin
+        }
         mapping.attributes.each { attr ->
             assert attr.name != null
             assert attr.path != null ||
