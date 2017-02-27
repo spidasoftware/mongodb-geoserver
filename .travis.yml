@@ -9,6 +9,3 @@ addons:
     - mongodb-org-server
     - mongodb-org-shell
 sudo: false
-before_script:
-  - mongo test_calcdb --eval 'db.createCollection("locations");'
-  - mongo test_calcdb --eval 'db.createCollection("designs");'
