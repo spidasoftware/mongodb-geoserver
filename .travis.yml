@@ -1,5 +1,11 @@
 language: groovy
 services: mongodb
+addons:
+  apt:
+    sources:
+    - mongodb-3.0-precise
+    packages:
+    - mongodb-org-server
 sudo: false
 before_script:
   - mongo test_calcdb --eval 'db.createCollection("locations");'
