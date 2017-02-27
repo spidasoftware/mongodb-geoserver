@@ -26,6 +26,7 @@ class MongoDBDataAccessSpec extends Specification {
     void testGetNames() {
         when:
             List<Name> names = mongoDBDataAccess.getNames()
+            log.info("names = ${names}")
         then:
             names.size() == 20
             names.findAll { it.localPart == "location" }.size() == 1
