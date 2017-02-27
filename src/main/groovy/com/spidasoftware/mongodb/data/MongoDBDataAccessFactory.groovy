@@ -76,9 +76,9 @@ public class MongoDBDataAccessFactory implements DataAccessFactory {
         return true
     }
 
-    void validateMappingAttributes(BasicDBObject mapping) { 
+    void validateMappingAttributes(BasicDBObject mapping, boolean isSubCollection = false) {
         assert mapping.attributes.findAll { it.useObjectKey }.size() <= 1
-
+        assert !(isSubCollection && mapping.joinTo)
         mapping.attributes.each { attr ->
             assert attr.name != null
             assert attr.path != null ||
@@ -93,7 +93,7 @@ public class MongoDBDataAccessFactory implements DataAccessFactory {
         mapping.subCollections.each { subCollection ->
             assert subCollection.subCollectionPath != null
             assert subCollection.includeInDefaultQuery != null
-            validateMappingAttributes(subCollection)
+            validateMappingAttributes(subCollection, true)
         }
     }
 

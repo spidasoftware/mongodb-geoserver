@@ -1,9 +1,11 @@
 package com.spidasoftware.mongodb.filter
 
+import com.mongodb.AggregationOutput
 import com.mongodb.BasicDBList
 import com.mongodb.BasicDBObject
 import com.mongodb.DBCollection
 import com.mongodb.DBCursor
+import com.mongodb.DBObject
 import com.spidasoftware.mongodb.data.MongoDBFeatureSource
 import com.spidasoftware.mongodb.feature.collection.MongoDBFeatureCollection
 import com.spidasoftware.mongodb.feature.collection.MongoDBSubCollectionFeatureCollection
@@ -80,14 +82,19 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
     BasicDBObject mapping
     MongoDBFeatureSource mongoDBFeatureSource
 
+    boolean aggregateQuery = false
     private static final Logger log = Logging.getLogger(FilterToDBQuery.class.getPackage().getName())
 
-     FilterToDBQuery(DBCollection dbCollection, FeatureType featureType, BasicDBObject mapping, MongoDBFeatureSource mongoDBFeatureSource) {
+    FilterToDBQuery(DBCollection dbCollection, FeatureType featureType, BasicDBObject mapping, MongoDBFeatureSource mongoDBFeatureSource) {
         this.dbCollection = dbCollection
         this.featureType = featureType
         this.mapping = mapping
         this.mongoDBFeatureSource = mongoDBFeatureSource
         this.fillTypeMaps(this.mapping)
+
+        if(mapping.joinTo) {
+            aggregateQuery = true
+        }
     }
 
     List doubleQueryKeys = []
@@ -102,25 +109,25 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
     private void fillTypeMaps(BasicDBObject map, String subCollectionPath = "") {
         map.attributes.each { attr ->
             String path = attr.path
-            if(attr.path == null) {
+            if (attr.path == null) {
                 path = "${subCollectionPath ? subCollectionPath + '.' : ''}${attr.subCollectionPath}"
             }
 
             allQueryPaths << path
 
-            if(attr.class == "Double") {
+            if (attr.class == "Double") {
                 doubleQueryKeys << path
-            } else if(attr.class == "Long") {
+            } else if (attr.class == "Long") {
                 doubleQueryKeys << path
-            } else if(attr.class == "Boolean") {
+            } else if (attr.class == "Boolean") {
                 booleanQueryKeys << path
-            } else if(attr.concatenate) {
+            } else if (attr.concatenate) {
                 concatenateQueryNames << attr.name
-            } else if(attr.useKey || attr.useObjectKey) {
+            } else if (attr.useKey || attr.useObjectKey) {
                 useKeyQueryNames << attr.name
-            } else if(attr.useValue) {
+            } else if (attr.useValue) {
                 useValueQueryNames << attr.name
-            } else if(attr.stringValue) {
+            } else if (attr.stringValue) {
                 stringValueQueryNames << attr.name
             }
         }
@@ -131,20 +138,19 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
         }
     }
 
-
     // Only query for objects with geometries and if the object has the sub collection object
     List getDefaultCollectionQueries(BasicDBObject objectMapping, String currentPath = null) {
         List defaultQueries = []
-        if(objectMapping.geometry) {
-            defaultQueries.add(new BasicDBObject(objectMapping.geometry.path , new BasicDBObject('$exists', true)))
+        if (objectMapping.geometry) {
+            defaultQueries.add(new BasicDBObject(objectMapping.geometry.path, new BasicDBObject('$exists', true)))
         }
         objectMapping.subCollections?.each { subCollection ->
-            if(subCollection.includeInDefaultQuery) {
-                defaultQueries.add(new BasicDBObject('$where', "this.${currentPath ? currentPath + '.' : ''}${subCollection.subCollectionPath}.length > 0".toString()))
+            if (subCollection.includeInDefaultQuery) {
+                defaultQueries.add(new BasicDBObject(("${currentPath ? currentPath + '.' : ''}${subCollection.subCollectionPath}.0".toString()): new BasicDBObject('$exists': true)))
             }
             subCollection.subCollections.each {
                 def nestedQueries = getDefaultCollectionQueries(it, it.subCollectionPath)
-                if(nestedQueries.size() > 0) {
+                if (nestedQueries.size() > 0) {
                     defaultQueries.addAll(nestedQueries)
                 }
             }
@@ -163,11 +169,11 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
         def filter = query?.getFilter() ?: Filter.INCLUDE
         def queryFromFilter = visit(filter, "")
 
-        if(defaultCollectionQueries.size() > 0 && queryFromFilter != null) {
+        if (defaultCollectionQueries.size() > 0 && queryFromFilter != null) {
             andQuery.addAll(defaultCollectionQueries)
             andQuery.add(queryFromFilter)
             dbQuery = new BasicDBObject('$and', andQuery)
-        } else if(defaultCollectionQueries.size() == 0 && queryFromFilter != null) {
+        } else if (defaultCollectionQueries.size() == 0 && queryFromFilter != null) {
             dbQuery = queryFromFilter
         }
 
@@ -175,30 +181,56 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
             log.fine "dbQuery = ${dbQuery}"
         }
 
-        DBCursor dbCursor = this.dbCollection.find(dbQuery)
-        if(supportsMaxAndOffsetQueries() &&  query?.getMaxFeatures() != null) {
-            dbCursor?.limit(query.getMaxFeatures())
-        }
+        DBCursor dbCursor
+        Iterator<DBObject> results
 
-        if (supportsMaxAndOffsetQueries() && query?.getStartIndex() != null) {
-            dbCursor?.skip(query.getStartIndex())
-        }
+        if(aggregateQuery) {
+            BasicDBObject lookup = new BasicDBObject('$lookup': new BasicDBObject( from: mapping.joinTo.collection,
+                                                                                   localField: mapping.joinTo.parentJoin,
+                                                                                   foreignField: mapping.joinTo.childJoin,
+                                                                                   as: mapping.joinTo.parentJoin))
+            BasicDBObject unwind = new BasicDBObject('$unwind':  "\$${mapping.joinTo.parentJoin}".toString())
+            BasicDBObject match = new BasicDBObject('$match': dbQuery)
+            List aggregate = [lookup, unwind, match]
+            if (supportsMaxAndOffsetQueries() && query?.getMaxFeatures() != null) {
+                aggregate.add(new BasicDBObject('$limit': query?.getMaxFeatures()))
+            }
 
-        if (log.isLoggable(Level.FINE)) {
-            log.fine "dbCursor.size() = ${dbCursor.size()}"
-        }
+            if (supportsMaxAndOffsetQueries() && query?.getStartIndex() != null) {
+                aggregate.add(new BasicDBObject('skip': query?.getStartIndex()))
+            }
 
-        if(mapping.subCollections) {
-            return new MongoDBSubCollectionFeatureCollection(dbCursor, this.featureType, this.mapping, query, this.mongoDBFeatureSource)
+            if (log.isLoggable(Level.FINE)) {
+                log.fine "aggregate = ${aggregate}"
+            }
+
+            AggregationOutput aggregationOutput = this.dbCollection.aggregate(aggregate)
+            results = aggregationOutput.results().iterator()
         } else {
-            return new MongoDBFeatureCollection(dbCursor, this.featureType, this.mapping, query, this.mongoDBFeatureSource)
+            dbCursor = this.dbCollection.find(dbQuery)
+
+            if (supportsMaxAndOffsetQueries() && query?.getMaxFeatures() != null) {
+                dbCursor?.limit(query.getMaxFeatures())
+            }
+
+            if (supportsMaxAndOffsetQueries() && query?.getStartIndex() != null) {
+                dbCursor?.skip(query.getStartIndex())
+            }
+            results = dbCursor.iterator()
+        }
+
+
+        if (mapping.subCollections) {
+            return new MongoDBSubCollectionFeatureCollection(dbCursor, results, this.featureType, this.mapping, query, this.mongoDBFeatureSource)
+        } else {
+            return new MongoDBFeatureCollection(dbCursor, results, this.featureType, this.mapping, query, this.mongoDBFeatureSource)
         }
     }
 
     @Override
     Object visit(Literal expression, Object extraData) {
         def literal = expression.getValue()
-        if(literal instanceof Geometry) {
+        if (literal instanceof Geometry) {
             def coordinates = new BasicDBList()
             coordinates.addAll(((Geometry) literal).coordinates.collect {
                 def latLng = new BasicDBList()
@@ -219,20 +251,20 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
     }
 
     String getDBQueryPathForPropertyName(String propertyName, BasicDBObject map, String subCollectionPath = null) {
-        def attr =  map.attributes.find {  it.name == propertyName }
-        if(attr?.path) {
+        def attr = map.attributes.find { it.name == propertyName }
+        if (attr?.path) {
             return attr.path
-        } else if(attr?.subCollectionPath) {
+        } else if (attr?.subCollectionPath) {
             return "${subCollectionPath}.${attr?.subCollectionPath}"
-        } else if(map.geometry?.name == propertyName) {
+        } else if (map.geometry?.name == propertyName) {
             return map.geometry.path
-        } else if(attr?.concatenate || attr?.useKey || attr?.useValue || attr?.value) {
+        } else if (attr?.concatenate || attr?.useKey || attr?.useValue || attr?.value) {
             return null // Can't query on a constant value or concatenate
         }
         String path = null
         map.subCollections.each { subCollection ->
             def pathFromSubCollection = getDBQueryPathForPropertyName(propertyName, subCollection, "${subCollectionPath ? subCollectionPath + '.' : ''}${subCollection.subCollectionPath}")
-            if(pathFromSubCollection) {
+            if (pathFromSubCollection) {
                 path = pathFromSubCollection
             }
         }
@@ -268,7 +300,7 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
         filter.getIDs()*.toString().each { String id ->
             orQuery.add(getPropertyIsEqualToQuery("id", id))
         }
-        if(orQuery.size() == 1) {
+        if (orQuery.size() == 1) {
             return orQuery.get(0)
         } else {
             return new BasicDBObject('$or', orQuery)
@@ -277,17 +309,17 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
 
     BasicDBObject getPropertyIsEqualToQuery(String propertyName, String value) {
         String dbQueryPath = getDBQueryPathForPropertyName(propertyName, this.mapping)
-        if(dbQueryPath) {
+        if (dbQueryPath) {
             return new BasicDBObject(propertyName, value)
         }
 
-        if(concatenateQueryNames.contains(propertyName) || useKeyQueryNames.contains(propertyName) || useValueQueryNames.contains(propertyName) || stringValueQueryNames.contains(propertyName)) {
+        if (concatenateQueryNames.contains(propertyName) || useKeyQueryNames.contains(propertyName) || useValueQueryNames.contains(propertyName) || stringValueQueryNames.contains(propertyName)) {
             List<Map> attributeObjects = getAttributeObjects(propertyName, this.mapping)
             BasicDBList orQuery = new BasicDBList()
             attributeObjects.each { attributeObject ->
                 BasicDBObject attribute = attributeObject.attribute
                 String subCollectionPath = attributeObject.subCollectionPath
-                if(attribute.concatenate) {
+                if (attribute.concatenate) {
                     def splitValue = value.split("_")
                     BasicDBList andQuery = new BasicDBList()
                     attribute.concatenate.eachWithIndex { BasicDBObject concatObject, int index ->
@@ -306,20 +338,20 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
                     } else {
                         orQuery << new BasicDBObject('$and', andQuery)
                     }
-                } else if(attribute.useKey || attribute.useObjectKey) {
-                    orQuery <<  new BasicDBObject("${subCollectionPath ? subCollectionPath + '.' : ''}${value}", new BasicDBObject('$exists', true))
-                } else if(attribute.useValue) {
+                } else if (attribute.useKey || attribute.useObjectKey) {
+                    orQuery << new BasicDBObject("${subCollectionPath ? subCollectionPath + '.' : ''}${value}", new BasicDBObject('$exists', true))
+                } else if (attribute.useValue) {
                     orQuery << new BasicDBObject()
-                } else if(attribute.stringValue) {
-                    orQuery <<  new BasicDBObject(subCollectionPath, value)
+                } else if (attribute.stringValue) {
+                    orQuery << new BasicDBObject(subCollectionPath, value)
                 }
             }
 
             orQuery.unique()
 
-            if(orQuery.size() > 1) {
+            if (orQuery.size() > 1) {
                 return new BasicDBObject('$or', orQuery)
-            } else if(orQuery.size() == 1) {
+            } else if (orQuery.size() == 1) {
                 return orQuery.get(0)
             }
             return new BasicDBObject(propertyName, value)
@@ -328,8 +360,8 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
     }
 
     List<Map> getAttributeObjects(String propertyName, BasicDBObject map) {
-        BasicDBObject attribute =  map.attributes.find {  it.name == propertyName }
-        if(attribute != null) {
+        BasicDBObject attribute = map.attributes.find { it.name == propertyName }
+        if (attribute != null) {
             return [[subCollectionPath: null, attribute: attribute]]
         }
 
@@ -348,7 +380,7 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
     @Override
     Object visit(Not filter, Object extraData) {
         BasicDBObject expr = (BasicDBObject) filter.getFilter().accept(this, null)
-        if(filter.getFilter() instanceof PropertyIsEqualTo) {
+        if (filter.getFilter() instanceof PropertyIsEqualTo) {
             def key = expr.keySet().first()
             return new BasicDBObject(key, new BasicDBObject('$ne', expr.get(key)))
         }
@@ -404,7 +436,7 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
     }
 
     protected BasicDBObject getBinaryComparisonQuery(BinaryComparisonOperator filter, String mongoOperator = null) {
-         def propertyName = filter.getExpression1().accept(this, null)
+        def propertyName = filter.getExpression1().accept(this, null)
         def value = filter.getExpression2().accept(this, null)
         // can be 2 < actual or it can be actual < 2, find when 2 < actual format and reverse
         if (!allQueryPaths.contains(propertyName) && allQueryPaths.contains(value)) {
@@ -413,8 +445,8 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
             value = tmp
         }
 
-        if(propertyName == null) {
-            if(filter.getExpression1().respondsTo("getPropertyName") && filter.getExpression1().getPropertyName() != null && mongoOperator == null) {
+        if (propertyName == null) {
+            if (filter.getExpression1().respondsTo("getPropertyName") && filter.getExpression1().getPropertyName() != null && mongoOperator == null) {
                 return getPropertyIsEqualToQuery(filter.getExpression1().getPropertyName(), filter.getExpression2().accept(this, null))
             } else {
                 return new BasicDBObject() // Can't be queried, will be filtered after found
@@ -429,15 +461,15 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
 
     protected def convertValueIfNeeded(String dbQueryPath, String valueString) {
         def convertedValue = valueString
-        if(doubleQueryKeys.contains(dbQueryPath)) {
+        if (doubleQueryKeys.contains(dbQueryPath)) {
             try {
                 convertedValue = valueString.toDouble()
-            } catch(e) {
-                if(log.isLoggable(Level.FINE)) {
+            } catch (e) {
+                if (log.isLoggable(Level.FINE)) {
                     log.fine "error converting ${valueString} to double"
                 }
             }
-        } else if(longQueryKeys.contains(dbQueryPath)) {
+        } else if (longQueryKeys.contains(dbQueryPath)) {
             try {
                 convertedValue = valueString.toLong()
             } catch (e) {
@@ -445,7 +477,7 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
                     log.fine "error converting ${valueString} to long"
                 }
             }
-        } else if(booleanQueryKeys.contains(dbQueryPath)) {
+        } else if (booleanQueryKeys.contains(dbQueryPath)) {
             try {
                 convertedValue = valueString.toBoolean()
             } catch (e) {
@@ -491,7 +523,7 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
         geometry.put("coordinates", [ring])
         return new BasicDBObject(filter.getExpression1().accept(this, null), new BasicDBObject('$geoWithin', new BasicDBObject('$geometry', geometry)))
     }
-    
+
     @Override
     Object visit(Beyond filter, Object extraData) {
         throw new UnsupportedOperationException()
