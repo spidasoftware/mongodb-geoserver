@@ -276,11 +276,6 @@
 }, {
     "typeName": "analysis",
     "collection": "designs",
-    "joinTo": {
-        "collection": "analyses",
-        "parentJoin": "calcDesign.analysis",
-        "childJoin": "hashValue"
-    },
     "idAsAttribute": true,
     "attributes": [{
         "name": "designType",
@@ -306,7 +301,7 @@
         "path": "id"
     }],
     "subCollections": [{
-        "subCollectionPath": "calcDesign.analysis.analysis",
+        "subCollectionPath": "analysisSummary",
         "includeInDefaultQuery": false,
         "attributes": [{
             "name": "loadInfo",

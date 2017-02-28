@@ -10,7 +10,7 @@ apply plugin: 'project-report'
 apply plugin: 'java-library-distribution'
 
 group = 'com.spidasoftware'
-version = '0.3'
+version = '0.5'
 description = "mongodb-geoserver-plugin"
 
 sourceCompatibility = 1.7
