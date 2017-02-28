@@ -277,6 +277,11 @@
     "typeName": "analysis",
     "collection": "designs",
     "idAsAttribute": true,
+    "joinTo": {
+        "collection": "structures",
+        "parentJoin": "calcDesign.structure",
+        "childJoin": "hashValue"
+    },
     "attributes": [{
         "name": "designType",
         "path": "calcDesign.label"
@@ -296,6 +301,36 @@
         "name": "dateModified",
         "path": "dateModified",
         "class": "Long"
+    }, {
+        "name": "glc",
+        "path": "calcDesign.structure.pole.glc.value",
+        "class": "Double"
+    }, {
+        "name": "glcUnit",
+        "path": "calcDesign.structure.pole.glc.unit"
+    }, {
+        "name": "agl",
+        "path": "calcDesign.structure.pole.agl.value",
+        "class": "Double"
+    }, {
+        "name": "aglUnit",
+        "path": "calcDesign.structure.pole.agl.unit"
+    }, {
+        "name": "species",
+        "path": "calcDesign.structure.pole.clientItem.species"
+    }, {
+        "name": "class",
+        "path": "calcDesign.structure.pole.clientItem.classOfPole"
+    }, {
+        "name": "length",
+        "path": "calcDesign.structure.pole.clientItem.height.value",
+        "class": "Double"
+    }, {
+        "name": "lengthUnit",
+        "path": "calcDesign.structure.pole.clientItem.height.unit"
+    }, {
+        "name": "owner",
+        "path": "calcDesign.structure.pole.owner.id"
     }, {
         "name": "poleId",
         "path": "id"

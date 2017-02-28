@@ -108,7 +108,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 15
+            feature.attributeCount == 24
             feature.getAttribute("designType") == "Measured Design"
             feature.getAttribute("loadInfo") == "CSA Heavy"
             feature.getAttribute("locationLabel") == "684704E"
@@ -116,6 +116,15 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             feature.getAttribute("clientFile") == "SCE.client"
             feature.getAttribute("clientFileVersion") == "6ee5fba14760878be22701e1b3b7c05b"
             feature.getAttribute("dateModified") == 1442498557079
+            feature.getAttribute("glc") == 2.8990375130504664
+            feature.getAttribute("glcUnit") == "FOOT"
+            feature.getAttribute("agl") == 38.5
+            feature.getAttribute("aglUnit") == "FOOT"
+            feature.getAttribute("species") == "Southern Yellow Pine"
+            feature.getAttribute("class") == "4"
+            feature.getAttribute("length") == 45
+            feature.getAttribute("lengthUnit") == "FOOT"
+            feature.getAttribute("owner") == "Acme Power"
             feature.getAttribute("actual") == 1.5677448671814123
             feature.getAttribute("allowable") == 100
             feature.getAttribute("unit") == "PERCENT"
@@ -173,7 +182,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 15
+            feature.attributeCount == 24
             feature.getAttribute("assetType") == null
             feature.getAttribute("designType") == null
             feature.getAttribute("loadInfo") ==null
@@ -182,6 +191,15 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             feature.getAttribute("clientFile") == null
             feature.getAttribute("clientFileVersion") == null
             feature.getAttribute("dateModified") == null
+            feature.getAttribute("glc") == null
+            feature.getAttribute("glcUnit") == null
+            feature.getAttribute("agl") == null
+            feature.getAttribute("aglUnit") == null
+            feature.getAttribute("species") == null
+            feature.getAttribute("class") == null
+            feature.getAttribute("length") == null
+            feature.getAttribute("lengthUnit") == null
+            feature.getAttribute("owner") == null
             feature.getAttribute("actual") == 1.5677448671814123
             feature.getAttribute("allowable") == null
             feature.getAttribute("unit") == null
@@ -834,11 +852,11 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             DBCursor dbCursor = dbCollection.find(dbQuery)
             return new MongoDBSubCollectionFeatureCollection(dbCursor, dbCursor.iterator(), featureType, mapping, query, mongoDBFeatureSource)
         } else {
-            BasicDBObject lookup = new BasicDBObject('$lookup': new BasicDBObject( from: (typeName == "analysis" ? "analyses": "structures"),
-                    localField: (typeName == "analysis" ? "calcDesign.analysis": "calcDesign.structure"),
+            BasicDBObject lookup = new BasicDBObject('$lookup': new BasicDBObject( from: "structures",
+                    localField: "calcDesign.structure",
                     foreignField: "hashValue",
-                    as: (typeName == "analysis" ? "calcDesign.analysis": "calcDesign.structure")))
-            BasicDBObject unwind = new BasicDBObject('$unwind':  (typeName == "analysis" ? '$calcDesign.analysis': '$calcDesign.structure'))
+                    as: "calcDesign.structure"))
+            BasicDBObject unwind = new BasicDBObject('$unwind': '$calcDesign.structure')
             BasicDBObject match = new BasicDBObject('$match': dbQuery)
             List aggregate = [lookup, unwind, match]
             AggregationOutput aggregationOutput = dbCollection.aggregate(aggregate)
