@@ -24,6 +24,35 @@
             "passes": true
         }
     },
+    "analysisSummary":
+    [{
+        "id": "CSA Heavy",
+        "results": [{
+            "actual": 1.5677448671814123,
+            "allowable": 100,
+            "unit": "PERCENT",
+            "analysisDate": 1446037442824,
+            "component": "Pole-Buckling",
+            "loadInfo": "CSA Heavy",
+            "passes": true
+        }, {
+            "actual": 6.69240843504981,
+            "allowable": 100,
+            "unit": "PERCENT",
+            "analysisDate": 1446037442824,
+            "component": "Pole-Deflection",
+            "loadInfo": "CSA Heavy",
+            "passes": true
+        }, {
+            "actual": 6.376646157670578,
+            "allowable": 100,
+            "unit": "PERCENT",
+            "analysisDate": 1446037442824,
+            "component": "Pole",
+            "loadInfo": "CSA Heavy",
+            "passes": true
+        }]
+    }],
     "user": {
         "id": "123",
         "email": "test@email.com"
