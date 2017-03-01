@@ -12,11 +12,9 @@ class MongoDBFeatureIterator implements SimpleFeatureIterator {
 
     private static final Logger log = Logging.getLogger(MongoDBFeatureIterator.class.getPackage().getName())
 
-    Iterator<DBObject> results
     List<SimpleFeature> featuresList = []
 
-    MongoDBFeatureIterator(DBCursor dbCursor, List<SimpleFeature> featuresList) {
-        this.results = results
+    MongoDBFeatureIterator(List<SimpleFeature> featuresList) {
         this.featuresList = featuresList
     }
 

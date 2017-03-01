@@ -1455,14 +1455,12 @@ class FilterToDBQuerySpec extends Specification {
     }
 
     private FilterToDBQuery getFilterToDBQuery(String typeName, String collectionName) {
-        try {
             DBCollection dbCollection = database.getCollection(collectionName)
             FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, typeName))
             BasicDBObject mapping = jsonMapping.find { it.typeName == typeName }
             mongoDBDataAccess = new MongoDBDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, jsonMapping)
             mongoDBFeatureSource = new MongoDBFeatureSource(mongoDBDataAccess, database, featureType, mapping)
             return new FilterToDBQuery(dbCollection, featureType, mapping, mongoDBFeatureSource)
-        }catch(e) { log.error("ERRROR", e)}
     }
 
     void "test location bounding box query"() {

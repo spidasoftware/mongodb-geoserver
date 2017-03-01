@@ -206,7 +206,7 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
 
     @Override
     SimpleFeatureIterator features() {
-        return new MongoDBFeatureIterator(this.results, this.featuresList)
+        return new MongoDBFeatureIterator(this.featuresList)
     }
 
     @Override
