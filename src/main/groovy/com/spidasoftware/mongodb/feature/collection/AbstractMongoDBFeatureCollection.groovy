@@ -158,6 +158,8 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
     }
 
     protected Object getObjectFromPath(DBObject dbObject, String path) {
+        log.info("dbObject = ${dbObject}")
+        log.info("path = ${path}")
         Object result = dbObject
         path.split("\\.").each { String key ->
             if(!StringUtils.isBlank(key)) {

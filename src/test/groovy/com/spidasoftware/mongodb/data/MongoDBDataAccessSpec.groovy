@@ -26,7 +26,6 @@ class MongoDBDataAccessSpec extends Specification {
     void testGetNames() {
         when:
             List<Name> names = mongoDBDataAccess.getNames()
-            log.info("names = ${names}")
         then:
             names.size() == 20
             names.findAll { it.localPart == "location" }.size() == 1
@@ -157,6 +156,15 @@ class MongoDBDataAccessSpec extends Specification {
             featureType.getDescriptor("clientFile").type.binding == String
             featureType.getDescriptor("clientFileVersion").type.binding == String
             featureType.getDescriptor("dateModified").type.binding == Long
+            featureType.getDescriptor("glc").type.binding == Double
+            featureType.getDescriptor("glcUnit").type.binding == String
+            featureType.getDescriptor("agl").type.binding == Double
+            featureType.getDescriptor("aglUnit").type.binding == String
+            featureType.getDescriptor("species").type.binding == String
+            featureType.getDescriptor("class").type.binding == String
+            featureType.getDescriptor("length").type.binding == Double
+            featureType.getDescriptor("lengthUnit").type.binding == String
+            featureType.getDescriptor("owner").type.binding == String
             featureType.getDescriptor("actual").type.binding == Double
             featureType.getDescriptor("allowable").type.binding == Double
             featureType.getDescriptor("unit").type.binding == String

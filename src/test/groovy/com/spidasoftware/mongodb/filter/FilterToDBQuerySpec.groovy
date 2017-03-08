@@ -1496,7 +1496,7 @@ class FilterToDBQuerySpec extends Specification {
             featureCollection.size() == 0
     }
 
-    void testTest() { //"test location limit and offset"() {
+    void "test location limit and offset"() {
         setup:
             String typeName = "location"
             String collectionName = "locations"

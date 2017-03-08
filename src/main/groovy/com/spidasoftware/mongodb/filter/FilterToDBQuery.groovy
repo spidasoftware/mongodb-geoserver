@@ -185,6 +185,7 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
         Iterator<DBObject> results
 
         if(aggregateQuery) {
+            log.info("this.dbCollection 1 = ${this.dbCollection}")
             BasicDBObject lookup = new BasicDBObject('$lookup': new BasicDBObject( from: mapping.joinTo.collection,
                                                                                    localField: mapping.joinTo.parentJoin,
                                                                                    foreignField: mapping.joinTo.childJoin,
@@ -207,6 +208,7 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
             AggregationOutput aggregationOutput = this.dbCollection.aggregate(aggregate)
             results = aggregationOutput.results().iterator()
         } else {
+            log.info("this.dbCollection 2 = ${this.dbCollection}")
             dbCursor = this.dbCollection.find(dbQuery)
 
             if (supportsMaxAndOffsetQueries() && query?.getMaxFeatures() != null) {
