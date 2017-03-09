@@ -42,7 +42,6 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
     private static final Logger log = Logging.getLogger(AbstractMongoDBFeatureCollection.class.getPackage().getName())
 
     DBCursor dbCursor // Can be null
-    Iterator<DBObject> results
     FeatureType featureType
     BasicDBObject mapping
     List propertyNames
@@ -60,9 +59,8 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
     static final int LONGITUDE_POSITION = 0
     static final int LATITUDE_POSITION = 1
 
-    AbstractMongoDBFeatureCollection(DBCursor dbCursor, Iterator<DBObject> results, FeatureType featureType, BasicDBObject mapping, Query query, MongoDBFeatureSource mongoDBFeatureSource) {
+    AbstractMongoDBFeatureCollection(DBCursor dbCursor, FeatureType featureType, BasicDBObject mapping, Query query, MongoDBFeatureSource mongoDBFeatureSource) {
         this.dbCursor = dbCursor
-        this.results = results
         this.featureType = featureType
         this.mapping = mapping
         this.query = query
@@ -198,13 +196,12 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
                 geometryDescriptor = complexFeatureTypeFactory.createGeometryDescriptor(geometryType, pointName, 1, 1, false, "")
             }
             simpleFeatureBuilder.set(new NameImpl(namespace, this.mapping.geometry.name), new GeometryAttributeImpl(point, geometryDescriptor, null))
-
         }
     }
 
     @Override
     SimpleFeatureIterator features() {
-        return new MongoDBFeatureIterator(this.featuresList)
+        return new MongoDBFeatureIterator(this.dbCursor, this.featuresList)
     }
 
     @Override

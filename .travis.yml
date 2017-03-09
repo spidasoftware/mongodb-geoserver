@@ -12,5 +12,3 @@ sudo: false
 before_script:
   - mongo test_calcdb --eval 'db.createCollection("locations");'
   - mongo test_calcdb --eval 'db.createCollection("designs");'
-  - mongo test_calcdb --eval 'db.createCollection("structures");'
-  - mongo test_calcdb --eval 'db.createCollection("analyses");'

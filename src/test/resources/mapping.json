@@ -214,11 +214,6 @@
 }, {
     "typeName": "pole",
     "collection": "designs",
-    "joinTo": {
-        "collection": "structures",
-        "parentJoin": "calcDesign.structure",
-        "childJoin": "hashValue"
-    },
     "idAsAttribute": true,
     "attributes": [{
         "name": "designType",
@@ -277,11 +272,6 @@
     "typeName": "analysis",
     "collection": "designs",
     "idAsAttribute": true,
-    "joinTo": {
-        "collection": "structures",
-        "parentJoin": "calcDesign.structure",
-        "childJoin": "hashValue"
-    },
     "attributes": [{
         "name": "designType",
         "path": "calcDesign.label"
@@ -388,11 +378,6 @@
 },{
     "typeName": "wire",
     "collection": "designs",
-    "joinTo": {
-        "collection": "structures",
-        "parentJoin": "calcDesign.structure",
-        "childJoin": "hashValue"
-    },
     "idAsAttribute": false,
     "attributes": [{
         "name": "poleId",
@@ -451,11 +436,6 @@
 }, {
     "typeName": "spanPoint",
     "collection": "designs",
-    "joinTo": {
-        "collection": "structures",
-        "parentJoin": "calcDesign.structure",
-        "childJoin": "hashValue"
-    },
     "idAsAttribute": false,
     "attributes": [{
         "name": "poleId",
@@ -486,11 +466,6 @@
 }, {
     "typeName": "spanGuy",
     "collection": "designs",
-    "joinTo": {
-        "collection": "structures",
-        "parentJoin": "calcDesign.structure",
-        "childJoin": "hashValue"
-    },
     "idAsAttribute": false,
     "attributes": [{
         "name": "poleId",
@@ -546,11 +521,6 @@
 }, {
     "typeName": "guy",
     "collection": "designs",
-    "joinTo": {
-        "collection": "structures",
-        "parentJoin": "calcDesign.structure",
-        "childJoin": "hashValue"
-    },
     "idAsAttribute": false,
     "attributes": [{
         "name": "poleId",
@@ -592,11 +562,6 @@
 }, {
     "typeName": "insulator",
     "collection": "designs",
-    "joinTo": {
-        "collection": "structures",
-        "parentJoin": "calcDesign.structure",
-        "childJoin": "hashValue"
-    },
     "idAsAttribute": false,
     "attributes": [{
         "name": "poleId",
@@ -645,11 +610,6 @@
 }, {
     "typeName": "equipment",
     "collection": "designs",
-    "joinTo": {
-        "collection": "structures",
-        "parentJoin": "calcDesign.structure",
-        "childJoin": "hashValue"
-    },
     "idAsAttribute": false,
     "attributes": [{
         "name": "poleId",
@@ -697,11 +657,6 @@
 }, {
     "typeName": "damage",
     "collection": "designs",
-    "joinTo": {
-        "collection": "structures",
-        "parentJoin": "calcDesign.structure",
-        "childJoin": "hashValue"
-    },
     "idAsAttribute": false,
     "attributes": [{
         "name": "poleId",
@@ -806,11 +761,6 @@
 }, {
     "typeName": "crossArm",
     "collection": "designs",
-    "joinTo": {
-        "collection": "structures",
-        "parentJoin": "calcDesign.structure",
-        "childJoin": "hashValue"
-    },
     "idAsAttribute": false,
     "attributes": [{
         "name": "poleId",
@@ -858,11 +808,6 @@
 }, {
     "typeName": "anchor",
     "collection": "designs",
-    "joinTo": {
-        "collection": "structures",
-        "parentJoin": "calcDesign.structure",
-        "childJoin": "hashValue"
-    },
     "idAsAttribute": false,
     "attributes": [{
         "name": "poleId",
@@ -910,11 +855,6 @@
 }, {
     "typeName": "wireEndPoint",
     "collection": "designs",
-    "joinTo": {
-        "collection": "structures",
-        "parentJoin": "calcDesign.structure",
-        "childJoin": "hashValue"
-    },
     "idAsAttribute": false,
     "attributes": [{
         "name": "poleId",
@@ -959,11 +899,6 @@
 }, {
     "typeName": "notePoint",
     "collection": "designs",
-    "joinTo": {
-        "collection": "structures",
-        "parentJoin": "calcDesign.structure",
-        "childJoin": "hashValue"
-    },
     "idAsAttribute": false,
     "attributes": [{
         "name": "poleId",
@@ -1005,11 +940,6 @@
 }, {
     "typeName": "pointLoad",
     "collection": "designs",
-    "joinTo": {
-        "collection": "structures",
-        "parentJoin": "calcDesign.structure",
-        "childJoin": "hashValue"
-    },
     "idAsAttribute": false,
     "attributes": [{
         "name": "poleId",

@@ -30,8 +30,6 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
     @Shared DB database
     @Shared BasicDBObject locationJSON
     @Shared BasicDBObject designJSON
-    @Shared BasicDBObject structureJSON
-    @Shared BasicDBObject analysisJSON
     @Shared BasicDBList jsonMapping
     @Shared MongoDBDataAccess mongoDBDataAccess
     @Shared String namespace = "http://spida/db"
@@ -40,8 +38,6 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
     void setupSpec() {
         locationJSON = JSON.parse(getClass().getResourceAsStream('/location.json').text)
         designJSON = JSON.parse(getClass().getResourceAsStream('/design.json').text)
-        structureJSON = JSON.parse(getClass().getResourceAsStream('/structure.json').text)
-        analysisJSON = JSON.parse(getClass().getResourceAsStream('/analysis.json').text)
 
         jsonMapping = JSON.parse(getClass().getResourceAsStream('/mapping.json').text)
         mongoDBDataAccess = new MongoDBDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, jsonMapping)
@@ -60,19 +56,11 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
 
         database.getCollection("designs").remove(new BasicDBObject("id", designJSON.get("id")))
         database.getCollection("designs").insert(designJSON)
-
-        database.getCollection("structures").remove(new BasicDBObject("id", structureJSON.get("id")))
-        database.getCollection("structures").insert(structureJSON)
-
-        database.getCollection("analyses").remove(new BasicDBObject("id", analysisJSON.get("id")))
-        database.getCollection("analyses").insert(analysisJSON)
     }
 
     void cleanupSpec() {
         database.getCollection("locations").remove(new BasicDBObject("id", locationJSON.get("id")))
         database.getCollection("designs").remove(new BasicDBObject("id", designJSON.get("id")))
-        database.getCollection("structures").remove(new BasicDBObject("id", structureJSON.get("id")))
-        database.getCollection("analyses").remove(new BasicDBObject("id", analysisJSON.get("id")))
     }
 
     void testGetPole() {
@@ -840,28 +828,11 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
     }
 
     private MongoDBSubCollectionFeatureCollection getFeatureIterator(String typeName, String collectionName, Filter filter, String[] propertyNames = null) {
-        BasicDBObject dbQuery = new BasicDBObject("id", collectionName == "designs" ? designJSON.get("id") : locationJSON.get("id"))
+        DBCursor dbCursor = database.getCollection(collectionName).find(new BasicDBObject("id", collectionName == "designs" ? designJSON.get("id") : locationJSON.get("id")))
         FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, typeName))
         Query query = new Query(typeName, filter, propertyNames)
         BasicDBObject mapping = jsonMapping.find { it.typeName == typeName }
         mongoDBFeatureSource = new MongoDBFeatureSource(mongoDBDataAccess, database, featureType, mapping)
-
-        DBCollection dbCollection = database.getCollection(collectionName)
-        if(!["pole", "analysis", "pointLoad", "notePoint", "wireEndPoint", "anchor", "crossArm",
-             "damage", "equipment", "insulator", "guy","spanGuy", "spanPoint", "wire"].contains(typeName)) {
-            DBCursor dbCursor = dbCollection.find(dbQuery)
-            return new MongoDBSubCollectionFeatureCollection(dbCursor, dbCursor.iterator(), featureType, mapping, query, mongoDBFeatureSource)
-        } else {
-            BasicDBObject lookup = new BasicDBObject('$lookup': new BasicDBObject( from: "structures",
-                    localField: "calcDesign.structure",
-                    foreignField: "hashValue",
-                    as: "calcDesign.structure"))
-            BasicDBObject unwind = new BasicDBObject('$unwind': '$calcDesign.structure')
-            BasicDBObject match = new BasicDBObject('$match': dbQuery)
-            List aggregate = [lookup, unwind, match]
-            AggregationOutput aggregationOutput = dbCollection.aggregate(aggregate)
-            Iterator iterator = aggregationOutput.results().iterator()
-            return new MongoDBSubCollectionFeatureCollection(null, iterator.iterator(), featureType, mapping, query, mongoDBFeatureSource)
-        }
+        return new MongoDBSubCollectionFeatureCollection(dbCursor, featureType, mapping, query, mongoDBFeatureSource)
     }
 }

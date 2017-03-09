@@ -42,7 +42,5 @@ class MongoDBDataAccessFactorySpec extends Specification {
             6      | '[{"typeName": "T", "collection": "T", "idAsAttribute": false, "attributes": [{"name": "T", "path": "T"}]}]'                        | "localhost" | "27017" | "test-calcdb" | null              | false
             7      | '[]'                                                                                                                                | "localhost" | "27017" | "test-calcdb" | "http://spida/db" | false
             8      | null                                                                                                                                | "localhost" | "27017" | "test-calcdb" | "http://spida/db" | false
-            9      | '[{"typeName": "T", "collection": "T", "idAsAttribute": false, "joinTo":{"collection": "A", "parentJoin": "B", "childJoin": "C"}}]' | "localhost" | "27017" | "test-calcdb" | "http://spida/db" | true
-            10     | '[{"typeName": "T", "collection": "T", "idAsAttribute": false, "joinTo":{"parentJoin": "B", "childJoin": "C"}}]'                    | "localhost" | "27017" | "test-calcdb" | "http://spida/db" | false
     }
 }

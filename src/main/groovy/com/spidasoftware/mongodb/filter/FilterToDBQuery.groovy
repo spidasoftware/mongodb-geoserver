@@ -181,49 +181,20 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
             log.fine "dbQuery = ${dbQuery}"
         }
 
-        DBCursor dbCursor
-        Iterator<DBObject> results
+        DBCursor dbCursor = this.dbCollection.find(dbQuery)
 
-        if(aggregateQuery) {
-            BasicDBObject lookup = new BasicDBObject('$lookup': new BasicDBObject( from: mapping.joinTo.collection,
-                                                                                   localField: mapping.joinTo.parentJoin,
-                                                                                   foreignField: mapping.joinTo.childJoin,
-                                                                                   as: mapping.joinTo.parentJoin))
-            BasicDBObject unwind = new BasicDBObject('$unwind':  "\$${mapping.joinTo.parentJoin}".toString())
-            BasicDBObject match = new BasicDBObject('$match': dbQuery)
-            List aggregate = [lookup, unwind, match]
-            if (supportsMaxAndOffsetQueries() && query?.getMaxFeatures() != null) {
-                aggregate.add(new BasicDBObject('$limit': query?.getMaxFeatures()))
-            }
-
-            if (supportsMaxAndOffsetQueries() && query?.getStartIndex() != null) {
-                aggregate.add(new BasicDBObject('skip': query?.getStartIndex()))
-            }
-
-            if (log.isLoggable(Level.FINE)) {
-                log.fine "aggregate = ${aggregate}"
-            }
-
-            AggregationOutput aggregationOutput = this.dbCollection.aggregate(aggregate)
-            results = aggregationOutput.results().iterator()
-        } else {
-            dbCursor = this.dbCollection.find(dbQuery)
-
-            if (supportsMaxAndOffsetQueries() && query?.getMaxFeatures() != null) {
-                dbCursor?.limit(query.getMaxFeatures())
-            }
-
-            if (supportsMaxAndOffsetQueries() && query?.getStartIndex() != null) {
-                dbCursor?.skip(query.getStartIndex())
-            }
-            results = dbCursor.iterator()
+        if (supportsMaxAndOffsetQueries() && query?.getMaxFeatures() != null) {
+            dbCursor?.limit(query.getMaxFeatures())
         }
 
+        if (supportsMaxAndOffsetQueries() && query?.getStartIndex() != null) {
+            dbCursor?.skip(query.getStartIndex())
+        }
 
         if (mapping.subCollections) {
-            return new MongoDBSubCollectionFeatureCollection(dbCursor, results, this.featureType, this.mapping, query, this.mongoDBFeatureSource)
+            return new MongoDBSubCollectionFeatureCollection(dbCursor, this.featureType, this.mapping, query, this.mongoDBFeatureSource)
         } else {
-            return new MongoDBFeatureCollection(dbCursor, results, this.featureType, this.mapping, query, this.mongoDBFeatureSource)
+            return new MongoDBFeatureCollection(dbCursor, this.featureType, this.mapping, query, this.mongoDBFeatureSource)
         }
     }
 

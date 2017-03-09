@@ -16,14 +16,14 @@ class MongoDBSubCollectionFeatureCollection extends AbstractMongoDBFeatureCollec
 
     private static final Logger log = Logging.getLogger(MongoDBSubCollectionFeatureCollection.class.getPackage().getName())
 
-    MongoDBSubCollectionFeatureCollection(DBCursor dbCursor, Iterator<DBObject> results, FeatureType featureType, BasicDBObject mapping, Query query, MongoDBFeatureSource mongoDBFeatureSource) {
-        super(dbCursor, results, featureType, mapping, query, mongoDBFeatureSource)
+    MongoDBSubCollectionFeatureCollection(DBCursor dbCursor, FeatureType featureType, BasicDBObject mapping, Query query, MongoDBFeatureSource mongoDBFeatureSource) {
+        super(dbCursor, featureType, mapping, query, mongoDBFeatureSource)
     }
 
     void initFeaturesList() {
         int offsetSkipped = 0
-        while(this.results.hasNext() && (this.max == null || this.featuresList.size() < this.max)) {
-            DBObject dbObject =  results.next()
+        while(this.dbCursor.hasNext() && (this.max == null || this.featuresList.size() < this.max)) {
+            DBObject dbObject =  this.dbCursor.next()
             List<Feature> features = getFeatures([:], dbObject, this.mapping) - null
             features.each { Feature feature ->
                 if (this.filter == null || this.filter.evaluate(feature)) {
@@ -35,7 +35,6 @@ class MongoDBSubCollectionFeatureCollection extends AbstractMongoDBFeatureCollec
                 }
             }
         }
-        dbCursor?.close()
     }
 
     private List<Feature> getFeatures(Map attributes, DBObject dbObject, BasicDBObject objectMapping, Object subCollectionObject = null, Integer index = null) {

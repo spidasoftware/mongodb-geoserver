@@ -60,7 +60,7 @@ class MongoDBFeatureCollectionSpec extends Specification {
         setup:
             BasicDBObject mapping = jsonMapping.find { it.typeName == "location" }
             Query query = new Query("location", Filter.INCLUDE)
-            def locationFeatureCollectionIterator = new MongoDBFeatureCollection(dbCursor, dbCursor.iterator(), featureType, mapping, query, mongoDBFeatureSource)
+            def locationFeatureCollectionIterator = new MongoDBFeatureCollection(dbCursor, featureType, mapping, query, mongoDBFeatureSource)
         when:
             Feature feature = locationFeatureCollectionIterator.featuresList.get(0)
         then:
@@ -90,7 +90,7 @@ class MongoDBFeatureCollectionSpec extends Specification {
         setup:
             BasicDBObject mapping = jsonMapping.find { it.typeName == "location" }
             Query query = new Query("location", Filter.INCLUDE, ["id", "label"] as String[])
-            def locationFeatureCollectionIterator = new MongoDBFeatureCollection(dbCursor, dbCursor.iterator(), featureType, mapping, query, mongoDBFeatureSource)
+            def locationFeatureCollectionIterator = new MongoDBFeatureCollection(dbCursor, featureType, mapping, query, mongoDBFeatureSource)
         when:
             Feature feature = locationFeatureCollectionIterator.featuresList.get(0)
         then:

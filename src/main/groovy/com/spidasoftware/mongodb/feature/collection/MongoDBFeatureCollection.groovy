@@ -15,15 +15,15 @@ class MongoDBFeatureCollection extends AbstractMongoDBFeatureCollection {
 
     private static final Logger log = Logging.getLogger(MongoDBFeatureCollection.class.getPackage().getName())
 
-    MongoDBFeatureCollection(DBCursor dbCursor, Iterator<DBObject> results, FeatureType featureType, BasicDBObject mapping, Query query, MongoDBFeatureSource mongoDBFeatureSource) {
-        super(dbCursor, results, featureType, mapping, query, mongoDBFeatureSource)
+    MongoDBFeatureCollection(DBCursor dbCursor, FeatureType featureType, BasicDBObject mapping, Query query, MongoDBFeatureSource mongoDBFeatureSource) {
+        super(dbCursor, featureType, mapping, query, mongoDBFeatureSource)
     }
 
     @Override
     void initFeaturesList() {
-        while(this.results.hasNext()) {
+        while(this.dbCursor.hasNext()) {
             SimpleFeatureBuilder simpleFeatureBuilder = new SimpleFeatureBuilder(this.featureType)
-            DBObject dbObject =  results.next()
+            DBObject dbObject =  this.dbCursor.next()
             addGeometry(simpleFeatureBuilder, dbObject)
 
             Map attributes = [:]
@@ -32,6 +32,5 @@ class MongoDBFeatureCollection extends AbstractMongoDBFeatureCollection {
             }
             this.featuresList.add(buildFromAttributes(attributes, dbObject))
         }
-        dbCursor?.close()
     }
 }

@@ -13,8 +13,10 @@ class MongoDBFeatureIterator implements SimpleFeatureIterator {
     private static final Logger log = Logging.getLogger(MongoDBFeatureIterator.class.getPackage().getName())
 
     List<SimpleFeature> featuresList = []
+    DBCursor dbCursor
 
-    MongoDBFeatureIterator(List<SimpleFeature> featuresList) {
+    MongoDBFeatureIterator(DBCursor dbCursor, List<SimpleFeature> featuresList) {
+        this.dbCursor = dbCursor
         this.featuresList = featuresList
     }
 
@@ -33,6 +35,6 @@ class MongoDBFeatureIterator implements SimpleFeatureIterator {
 
     @Override
     void close() {
-
+        this.dbCursor.close()
     }
 }
