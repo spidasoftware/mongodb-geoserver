@@ -82,7 +82,6 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
     BasicDBObject mapping
     MongoDBFeatureSource mongoDBFeatureSource
 
-    boolean aggregateQuery = false
     private static final Logger log = Logging.getLogger(FilterToDBQuery.class.getPackage().getName())
 
     FilterToDBQuery(DBCollection dbCollection, FeatureType featureType, BasicDBObject mapping, MongoDBFeatureSource mongoDBFeatureSource) {
@@ -91,10 +90,6 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
         this.mapping = mapping
         this.mongoDBFeatureSource = mongoDBFeatureSource
         this.fillTypeMaps(this.mapping)
-
-        if(mapping.joinTo) {
-            aggregateQuery = true
-        }
     }
 
     List doubleQueryKeys = []
@@ -146,7 +141,7 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
         }
         objectMapping.subCollections?.each { subCollection ->
             if (subCollection.includeInDefaultQuery) {
-                defaultQueries.add(new BasicDBObject(("${currentPath ? currentPath + '.' : ''}${subCollection.subCollectionPath}.0".toString()): new BasicDBObject('$exists': true)))
+                defaultQueries.add(new BasicDBObject('$where', "this.${currentPath ? currentPath + '.' : ''}${subCollection.subCollectionPath}.length > 0".toString()))
             }
             subCollection.subCollections.each {
                 def nestedQueries = getDefaultCollectionQueries(it, it.subCollectionPath)

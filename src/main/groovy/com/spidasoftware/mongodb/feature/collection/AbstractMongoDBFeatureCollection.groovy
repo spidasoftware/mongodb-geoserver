@@ -41,7 +41,7 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
 
     private static final Logger log = Logging.getLogger(AbstractMongoDBFeatureCollection.class.getPackage().getName())
 
-    DBCursor dbCursor // Can be null
+    DBCursor dbCursor
     FeatureType featureType
     BasicDBObject mapping
     List propertyNames
