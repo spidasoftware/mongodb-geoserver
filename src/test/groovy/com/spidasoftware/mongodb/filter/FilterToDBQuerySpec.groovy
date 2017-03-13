@@ -6,6 +6,7 @@ import com.spidasoftware.mongodb.data.MongoDBDataAccess
 import com.spidasoftware.mongodb.data.MongoDBFeatureSource
 import org.geotools.data.Query
 import org.geotools.feature.FeatureCollection
+import org.geotools.feature.FeatureIterator
 import org.geotools.feature.NameImpl
 import org.geotools.filter.FilterFactoryImpl
 import org.geotools.filter.identity.FeatureIdImpl
@@ -24,8 +25,8 @@ class FilterToDBQuerySpec extends Specification {
     static final Logger log = Logging.getLogger(FilterToDBQuerySpec.class.getPackage().getName())
 
     @Shared DB database
-    @Shared BasicDBObject designJSON
     @Shared BasicDBObject locationJSON
+    @Shared BasicDBObject designJSON
     @Shared BasicDBList jsonMapping
     @Shared MongoDBDataAccess mongoDBDataAccess
     @Shared String namespace = "http://spida/db"
@@ -489,8 +490,8 @@ class FilterToDBQuerySpec extends Specification {
             "design type that exists"              | CQL.toFilter("designType='Measured Design'")                         | new BasicDBObject("calcDesign.label", "Measured Design")                                                | 3
             "design type that doesn't exist"       | CQL.toFilter("designType='Existing Design'")                         | new BasicDBObject("calcDesign.label", "Existing Design")                                                | 0
 
-            "loadInfo that exists"                 | CQL.toFilter("loadInfo='CSA Heavy'")                                 | new BasicDBObject("calcDesign.analysis.id", "CSA Heavy")                                                | 3
-            "loadInfo that doesn't exist"          | CQL.toFilter("loadInfo='TEST'")                                      | new BasicDBObject("calcDesign.analysis.id", "TEST")                                                     | 0
+            "loadInfo that exists"                 | CQL.toFilter("loadInfo='CSA Heavy'")                                 | new BasicDBObject("analysisSummary.id", "CSA Heavy")                                                | 3
+            "loadInfo that doesn't exist"          | CQL.toFilter("loadInfo='TEST'")                                      | new BasicDBObject("analysisSummary.id", "TEST")                                                     | 0
 
             "location label that exists"           | CQL.toFilter("locationLabel='684704E'")                              | new BasicDBObject("locationLabel", "684704E")                                                           | 3
             "location label that doesn't exist"    | CQL.toFilter("locationLabel='TEST'")                                 | new BasicDBObject("locationLabel", "TEST")                                                              | 0
@@ -515,89 +516,47 @@ class FilterToDBQuerySpec extends Specification {
             "dateModified lte exists"              | CQL.toFilter("dateModified<=1442498557079")                          | new BasicDBObject("dateModified", new BasicDBObject('$lte', 1442498557079))                             | 3
             "dateModified lte doesn't exist"       | CQL.toFilter("dateModified<=1442498557078")                          | new BasicDBObject("dateModified", new BasicDBObject('$lte', 1442498557078))                             | 0
 
-            "glc that exists"                      | CQL.toFilter("glc=2.8990375130504664")                               | new BasicDBObject("calcDesign.structure.pole.glc.value", 2.8990375130504664)                            | 3
-            "glc that doesn't exist"               | CQL.toFilter("glc=3333333")                                          | new BasicDBObject("calcDesign.structure.pole.glc.value", 3333333)                                       | 0
-            "glc gt exists"                        | CQL.toFilter("glc>2")                                                | new BasicDBObject("calcDesign.structure.pole.glc.value", new BasicDBObject('$gt', 2))                   | 3
-            "glc gt doesn't exist"                 | CQL.toFilter("glc>3")                                                | new BasicDBObject("calcDesign.structure.pole.glc.value", new BasicDBObject('$gt', 3))                   | 0
-            "glc gte exists"                       | CQL.toFilter("glc>=2.8990375130504664")                              | new BasicDBObject("calcDesign.structure.pole.glc.value", new BasicDBObject('$gte', 2.8990375130504664)) | 3
-            "glc gte doesn't exist"                | CQL.toFilter("glc>=3")                                               | new BasicDBObject("calcDesign.structure.pole.glc.value", new BasicDBObject('$gte', 3))                  | 0
-            "glc lt exists"                        | CQL.toFilter("glc<3")                                                | new BasicDBObject("calcDesign.structure.pole.glc.value", new BasicDBObject('$lt', 3))                   | 3
-            "glc lt doesn't exist"                 | CQL.toFilter("glc<2")                                                | new BasicDBObject("calcDesign.structure.pole.glc.value", new BasicDBObject('$lt', 2))                   | 0
-            "glc lte exists"                       | CQL.toFilter("glc<=2.8990375130504664")                              | new BasicDBObject("calcDesign.structure.pole.glc.value", new BasicDBObject('$lte', 2.8990375130504664)) | 3
-            "glc lte doesn't exist"                | CQL.toFilter("glc<=2")                                               | new BasicDBObject("calcDesign.structure.pole.glc.value", new BasicDBObject('$lte', 2))                  | 0
+            "actual that exists"                   | CQL.toFilter("actual=1.5677448671814123")                            | new BasicDBObject("analysisSummary.results.actual", 1.5677448671814123)                             | 1
+            "actual that doesn't exist"            | CQL.toFilter("actual=1")                                             | new BasicDBObject("analysisSummary.results.actual", 1)                                              | 0
+            "actual gt exists"                     | CQL.toFilter("actual>1")                                             | new BasicDBObject("analysisSummary.results.actual", new BasicDBObject('$gt', 1))                    | 3
+            "actual gt doesn't exist"              | CQL.toFilter("actual>45")                                            | new BasicDBObject("analysisSummary.results.actual", new BasicDBObject('$gt', 45))                   | 0
+            "actual gte exists"                    | CQL.toFilter("actual>=1.5677448671814123")                           | new BasicDBObject("analysisSummary.results.actual", new BasicDBObject('$gte', 1.5677448671814123))  | 3
+            "actual gte doesn't exist"             | CQL.toFilter("actual>=45")                                           | new BasicDBObject("analysisSummary.results.actual", new BasicDBObject('$gte', 45))                  | 0
+            "actual lt exists"                     | CQL.toFilter("actual<10")                                            | new BasicDBObject("analysisSummary.results.actual", new BasicDBObject('$lt', 10))                   | 3
+            "actual lt doesn't exist"              | CQL.toFilter("actual<1")                                             | new BasicDBObject("analysisSummary.results.actual", new BasicDBObject('$lt', 1))                    | 0
+            "actual lte exists"                    | CQL.toFilter("actual<=1.5677448671814123")                           | new BasicDBObject("analysisSummary.results.actual", new BasicDBObject('$lte', 1.5677448671814123))  | 1
+            "actual lte doesn't exist"             | CQL.toFilter("actual<=1")                                            | new BasicDBObject("analysisSummary.results.actual", new BasicDBObject('$lte', 1))                   | 0
 
-            "agl that exists"                      | CQL.toFilter("agl=38.5")                                             | new BasicDBObject("calcDesign.structure.pole.agl.value", 38.5)                                          | 3
-            "agl that doesn't exist"               | CQL.toFilter("agl=3333333")                                          | new BasicDBObject("calcDesign.structure.pole.agl.value", 3333333)                                       | 0
-            "agl gt exists"                        | CQL.toFilter("agl>2")                                                | new BasicDBObject("calcDesign.structure.pole.agl.value", new BasicDBObject('$gt', 2))                   | 3
-            "agl gt doesn't exist"                 | CQL.toFilter("agl>40")                                               | new BasicDBObject("calcDesign.structure.pole.agl.value", new BasicDBObject('$gt', 40))                  | 0
-            "agl gte exists"                       | CQL.toFilter("agl>=38.5")                                            | new BasicDBObject("calcDesign.structure.pole.agl.value", new BasicDBObject('$gte', 38.5))               | 3
-            "agl gte doesn't exist"                | CQL.toFilter("agl>=40")                                              | new BasicDBObject("calcDesign.structure.pole.agl.value", new BasicDBObject('$gte', 40))                 | 0
-            "agl lt exists"                        | CQL.toFilter("agl<40")                                               | new BasicDBObject("calcDesign.structure.pole.agl.value", new BasicDBObject('$lt', 40))                  | 3
-            "agl lt doesn't exist"                 | CQL.toFilter("agl<30")                                               | new BasicDBObject("calcDesign.structure.pole.agl.value", new BasicDBObject('$lt', 30))                  | 0
-            "agl lte exists"                       | CQL.toFilter("agl<=38.5")                                            | new BasicDBObject("calcDesign.structure.pole.agl.value", new BasicDBObject('$lte', 38.5))               | 3
-            "agl lte doesn't exist"                | CQL.toFilter("agl<=30")                                              | new BasicDBObject("calcDesign.structure.pole.agl.value", new BasicDBObject('$lte', 30))                 | 0
+            "allowable that exists"                | CQL.toFilter("allowable=100")                                        | new BasicDBObject("analysisSummary.results.allowable", 100)                                         | 3
+            "allowable that doesn't exist"         | CQL.toFilter("allowable=3333333")                                    | new BasicDBObject("analysisSummary.results.allowable", 3333333)                                     | 0
+            "allowable gt exists"                  | CQL.toFilter("allowable>99")                                         | new BasicDBObject("analysisSummary.results.allowable", new BasicDBObject('$gt', 99))                | 3
+            "allowable gt doesn't exist"           | CQL.toFilter("allowable>110")                                        | new BasicDBObject("analysisSummary.results.allowable", new BasicDBObject('$gt', 110))               | 0
+            "allowable gte exists"                 | CQL.toFilter("allowable>=100")                                       | new BasicDBObject("analysisSummary.results.allowable", new BasicDBObject('$gte', 100))              | 3
+            "allowable gte doesn't exist"          | CQL.toFilter("allowable>=110")                                       | new BasicDBObject("analysisSummary.results.allowable", new BasicDBObject('$gte', 110))              | 0
+            "allowable lt exists"                  | CQL.toFilter("allowable<110")                                        | new BasicDBObject("analysisSummary.results.allowable", new BasicDBObject('$lt', 110))               | 3
+            "allowable lt doesn't exist"           | CQL.toFilter("allowable<90")                                         | new BasicDBObject("analysisSummary.results.allowable", new BasicDBObject('$lt', 90))                | 0
+            "allowable lte exists"                 | CQL.toFilter("allowable<=100")                                       | new BasicDBObject("analysisSummary.results.allowable", new BasicDBObject('$lte', 100))              | 3
+            "allowable lte doesn't exist"          | CQL.toFilter("allowable<=90")                                        | new BasicDBObject("analysisSummary.results.allowable", new BasicDBObject('$lte', 90))               | 0
 
-            "species does exist"                   | CQL.toFilter("species='Southern Yellow Pine'")                       | new BasicDBObject("calcDesign.structure.pole.clientItem.species", "Southern Yellow Pine")               | 3
-            "species doesn't exist"                | CQL.toFilter("species='TEST'")                                       | new BasicDBObject("calcDesign.structure.pole.clientItem.species", "TEST")                               | 0
+            "unit that exists"                     | CQL.toFilter("unit='PERCENT'")                                       | new BasicDBObject("analysisSummary.results.unit", "PERCENT")                                        | 3
+            "unit that doesn't exist"              | CQL.toFilter("unit='TEST'")                                          | new BasicDBObject("analysisSummary.results.unit", "TEST")                                           | 0
 
-            "class does exist"                     | CQL.toFilter("class='4'")                                            | new BasicDBObject("calcDesign.structure.pole.clientItem.classOfPole", "4")                              | 3
-            "class doesn't exist"                  | CQL.toFilter("class='5'")                                            | new BasicDBObject("calcDesign.structure.pole.clientItem.classOfPole", "5")                              | 0
+            "analysisDate that exists"             | CQL.toFilter("analysisDate=1446037442824")                           | new BasicDBObject("analysisSummary.results.analysisDate", 1446037442824)                            | 3
+            "analysisDate that doesn't exist"      | CQL.toFilter("analysisDate=3333333")                                 | new BasicDBObject("analysisSummary.results.analysisDate", 3333333)                                  | 0
+            "analysisDate gt exists"               | CQL.toFilter("analysisDate>1446037442823")                           | new BasicDBObject("analysisSummary.results.analysisDate", new BasicDBObject('$gt', 1446037442823))  | 3
+            "analysisDate gt doesn't exist"        | CQL.toFilter("analysisDate>1446037442825")                           | new BasicDBObject("analysisSummary.results.analysisDate", new BasicDBObject('$gt', 1446037442825))  | 0
+            "analysisDate gte exists"              | CQL.toFilter("analysisDate>=1446037442824")                          | new BasicDBObject("analysisSummary.results.analysisDate", new BasicDBObject('$gte', 1446037442824)) | 3
+            "analysisDate gte doesn't exist"       | CQL.toFilter("analysisDate>=1446037442825")                          | new BasicDBObject("analysisSummary.results.analysisDate", new BasicDBObject('$gte', 1446037442825)) | 0
+            "analysisDate lt exists"               | CQL.toFilter("analysisDate<1446037442825")                           | new BasicDBObject("analysisSummary.results.analysisDate", new BasicDBObject('$lt', 1446037442825))  | 3
+            "analysisDate lt doesn't exist"        | CQL.toFilter("analysisDate<1446037442823")                           | new BasicDBObject("analysisSummary.results.analysisDate", new BasicDBObject('$lt', 1446037442823))  | 0
+            "analysisDate lte exists"              | CQL.toFilter("analysisDate<=1446037442824")                          | new BasicDBObject("analysisSummary.results.analysisDate", new BasicDBObject('$lte', 1446037442824)) | 3
+            "analysisDate lte doesn't exist"       | CQL.toFilter("analysisDate<=1446037442823")                          | new BasicDBObject("analysisSummary.results.analysisDate", new BasicDBObject('$lte', 1446037442823)) | 0
 
-            "length that exists"                   | CQL.toFilter("length=45")                                            | new BasicDBObject("calcDesign.structure.pole.clientItem.height.value", 45)                              | 3
-            "length that doesn't exist"            | CQL.toFilter("length=3333333")                                       | new BasicDBObject("calcDesign.structure.pole.clientItem.height.value", 3333333)                         | 0
-            "length gt exists"                     | CQL.toFilter("length>40")                                            | new BasicDBObject("calcDesign.structure.pole.clientItem.height.value", new BasicDBObject('$gt', 40))    | 3
-            "length gt doesn't exist"              | CQL.toFilter("length>50")                                            | new BasicDBObject("calcDesign.structure.pole.clientItem.height.value", new BasicDBObject('$gt', 50))    | 0
-            "length gte exists"                    | CQL.toFilter("length>=45")                                           | new BasicDBObject("calcDesign.structure.pole.clientItem.height.value", new BasicDBObject('$gte', 45))   | 3
-            "length gte doesn't exist"             | CQL.toFilter("length>=50")                                           | new BasicDBObject("calcDesign.structure.pole.clientItem.height.value", new BasicDBObject('$gte', 50))   | 0
-            "length lt exists"                     | CQL.toFilter("length<46")                                            | new BasicDBObject("calcDesign.structure.pole.clientItem.height.value", new BasicDBObject('$lt', 46))    | 3
-            "length lt doesn't exist"              | CQL.toFilter("length<40")                                            | new BasicDBObject("calcDesign.structure.pole.clientItem.height.value", new BasicDBObject('$lt', 40))    | 0
-            "length lte exists"                    | CQL.toFilter("length<=45")                                           | new BasicDBObject("calcDesign.structure.pole.clientItem.height.value", new BasicDBObject('$lte', 45))   | 3
-            "length lte doesn't exist"             | CQL.toFilter("length<=40")                                           | new BasicDBObject("calcDesign.structure.pole.clientItem.height.value", new BasicDBObject('$lte', 40))   | 0
+            "component that exists"                | CQL.toFilter("component='Pole'")                                     | new BasicDBObject("analysisSummary.results.component", "Pole")                                      | 1
+            "component that doesn't exist"         | CQL.toFilter("component='Strength'")                                 | new BasicDBObject("analysisSummary.results.component", "Strength")                                  | 0
 
-            "owner does exist"                     | CQL.toFilter("owner='Acme Power'")                                   | new BasicDBObject("calcDesign.structure.pole.owner.id", "Acme Power")                                   | 3
-            "owner doesn't exist"                  | CQL.toFilter("owner='TEST'")                                         | new BasicDBObject("calcDesign.structure.pole.owner.id", "TEST")                                         | 0
-
-            "actual that exists"                   | CQL.toFilter("actual=1.5677448671814123")                            | new BasicDBObject("calcDesign.analysis.results.actual", 1.5677448671814123)                             | 1
-            "actual that doesn't exist"            | CQL.toFilter("actual=1")                                             | new BasicDBObject("calcDesign.analysis.results.actual", 1)                                              | 0
-            "actual gt exists"                     | CQL.toFilter("actual>1")                                             | new BasicDBObject("calcDesign.analysis.results.actual", new BasicDBObject('$gt', 1))                    | 3
-            "actual gt doesn't exist"              | CQL.toFilter("actual>45")                                            | new BasicDBObject("calcDesign.analysis.results.actual", new BasicDBObject('$gt', 45))                   | 0
-            "actual gte exists"                    | CQL.toFilter("actual>=1.5677448671814123")                           | new BasicDBObject("calcDesign.analysis.results.actual", new BasicDBObject('$gte', 1.5677448671814123))  | 3
-            "actual gte doesn't exist"             | CQL.toFilter("actual>=45")                                           | new BasicDBObject("calcDesign.analysis.results.actual", new BasicDBObject('$gte', 45))                  | 0
-            "actual lt exists"                     | CQL.toFilter("actual<10")                                            | new BasicDBObject("calcDesign.analysis.results.actual", new BasicDBObject('$lt', 10))                   | 3
-            "actual lt doesn't exist"              | CQL.toFilter("actual<1")                                             | new BasicDBObject("calcDesign.analysis.results.actual", new BasicDBObject('$lt', 1))                    | 0
-            "actual lte exists"                    | CQL.toFilter("actual<=1.5677448671814123")                           | new BasicDBObject("calcDesign.analysis.results.actual", new BasicDBObject('$lte', 1.5677448671814123))  | 1
-            "actual lte doesn't exist"             | CQL.toFilter("actual<=1")                                            | new BasicDBObject("calcDesign.analysis.results.actual", new BasicDBObject('$lte', 1))                   | 0
-
-            "allowable that exists"                | CQL.toFilter("allowable=100")                                        | new BasicDBObject("calcDesign.analysis.results.allowable", 100)                                         | 3
-            "allowable that doesn't exist"         | CQL.toFilter("allowable=3333333")                                    | new BasicDBObject("calcDesign.analysis.results.allowable", 3333333)                                     | 0
-            "allowable gt exists"                  | CQL.toFilter("allowable>99")                                         | new BasicDBObject("calcDesign.analysis.results.allowable", new BasicDBObject('$gt', 99))                | 3
-            "allowable gt doesn't exist"           | CQL.toFilter("allowable>110")                                        | new BasicDBObject("calcDesign.analysis.results.allowable", new BasicDBObject('$gt', 110))               | 0
-            "allowable gte exists"                 | CQL.toFilter("allowable>=100")                                       | new BasicDBObject("calcDesign.analysis.results.allowable", new BasicDBObject('$gte', 100))              | 3
-            "allowable gte doesn't exist"          | CQL.toFilter("allowable>=110")                                       | new BasicDBObject("calcDesign.analysis.results.allowable", new BasicDBObject('$gte', 110))              | 0
-            "allowable lt exists"                  | CQL.toFilter("allowable<110")                                        | new BasicDBObject("calcDesign.analysis.results.allowable", new BasicDBObject('$lt', 110))               | 3
-            "allowable lt doesn't exist"           | CQL.toFilter("allowable<90")                                         | new BasicDBObject("calcDesign.analysis.results.allowable", new BasicDBObject('$lt', 90))                | 0
-            "allowable lte exists"                 | CQL.toFilter("allowable<=100")                                       | new BasicDBObject("calcDesign.analysis.results.allowable", new BasicDBObject('$lte', 100))              | 3
-            "allowable lte doesn't exist"          | CQL.toFilter("allowable<=90")                                        | new BasicDBObject("calcDesign.analysis.results.allowable", new BasicDBObject('$lte', 90))               | 0
-
-            "unit that exists"                     | CQL.toFilter("unit='PERCENT'")                                       | new BasicDBObject("calcDesign.analysis.results.unit", "PERCENT")                                        | 3
-            "unit that doesn't exist"              | CQL.toFilter("unit='TEST'")                                          | new BasicDBObject("calcDesign.analysis.results.unit", "TEST")                                           | 0
-
-            "analysisDate that exists"             | CQL.toFilter("analysisDate=1446037442824")                           | new BasicDBObject("calcDesign.analysis.results.analysisDate", 1446037442824)                            | 3
-            "analysisDate that doesn't exist"      | CQL.toFilter("analysisDate=3333333")                                 | new BasicDBObject("calcDesign.analysis.results.analysisDate", 3333333)                                  | 0
-            "analysisDate gt exists"               | CQL.toFilter("analysisDate>1446037442823")                           | new BasicDBObject("calcDesign.analysis.results.analysisDate", new BasicDBObject('$gt', 1446037442823))  | 3
-            "analysisDate gt doesn't exist"        | CQL.toFilter("analysisDate>1446037442825")                           | new BasicDBObject("calcDesign.analysis.results.analysisDate", new BasicDBObject('$gt', 1446037442825))  | 0
-            "analysisDate gte exists"              | CQL.toFilter("analysisDate>=1446037442824")                          | new BasicDBObject("calcDesign.analysis.results.analysisDate", new BasicDBObject('$gte', 1446037442824)) | 3
-            "analysisDate gte doesn't exist"       | CQL.toFilter("analysisDate>=1446037442825")                          | new BasicDBObject("calcDesign.analysis.results.analysisDate", new BasicDBObject('$gte', 1446037442825)) | 0
-            "analysisDate lt exists"               | CQL.toFilter("analysisDate<1446037442825")                           | new BasicDBObject("calcDesign.analysis.results.analysisDate", new BasicDBObject('$lt', 1446037442825))  | 3
-            "analysisDate lt doesn't exist"        | CQL.toFilter("analysisDate<1446037442823")                           | new BasicDBObject("calcDesign.analysis.results.analysisDate", new BasicDBObject('$lt', 1446037442823))  | 0
-            "analysisDate lte exists"              | CQL.toFilter("analysisDate<=1446037442824")                          | new BasicDBObject("calcDesign.analysis.results.analysisDate", new BasicDBObject('$lte', 1446037442824)) | 3
-            "analysisDate lte doesn't exist"       | CQL.toFilter("analysisDate<=1446037442823")                          | new BasicDBObject("calcDesign.analysis.results.analysisDate", new BasicDBObject('$lte', 1446037442823)) | 0
-
-            "component that exists"                | CQL.toFilter("component='Pole'")                                     | new BasicDBObject("calcDesign.analysis.results.component", "Pole")                                      | 1
-            "component that doesn't exist"         | CQL.toFilter("component='Strength'")                                 | new BasicDBObject("calcDesign.analysis.results.component", "Strength")                                  | 0
-
-            "passes that exists"                   | CQL.toFilter("passes='true'")                                        | new BasicDBObject("calcDesign.analysis.results.passes", true)                                           | 3
-            "passes that doesn't exist"            | CQL.toFilter("passes='false'")                                       | new BasicDBObject("calcDesign.analysis.results.passes", false)                                          | 0
+            "passes that exists"                   | CQL.toFilter("passes='true'")                                        | new BasicDBObject("analysisSummary.results.passes", true)                                           | 3
+            "passes that doesn't exist"            | CQL.toFilter("passes='false'")                                       | new BasicDBObject("analysisSummary.results.passes", false)                                          | 0
 
             "poleId that exists"                   | CQL.toFilter("poleId='56e9b7137d84511d8dd0f13c'")                    | new BasicDBObject("id", "56e9b7137d84511d8dd0f13c")                                                     | 3
             "poleId that doesn't exist"            | CQL.toFilter("poleId='TEST'")                                        | new BasicDBObject("id", "TEST")                                                                         | 0
@@ -1546,24 +1505,24 @@ class FilterToDBQuerySpec extends Specification {
         when:
             FeatureCollection featureCollection = filterToDBQuery.getFeatureCollection(query)
         then:
-            featureCollection.dbCursor.size() == 5
             featureCollection.size() == 5
         when:
             query = new Query(typeName, Filter.INCLUDE, 5, Query.ALL_NAMES, null)
             query.setStartIndex(5)
+            FeatureIterator featureIterator = featureCollection.features()
             def firstFiveLocationIds = []
-            while (featureCollection.dbCursor.hasNext()) {
-                firstFiveLocationIds << featureCollection.dbCursor.next().get("id")
+            while (featureIterator.hasNext()) {
+                firstFiveLocationIds << featureIterator.next().getProperty("id").value
             }
             featureCollection = filterToDBQuery.getFeatureCollection(query)
+            int featureCollectionSize = featureCollection.size()
             def nextFiveLocationIds = []
-            DBCursor clonedDbCursor = featureCollection.dbCursor.copy()
-            while (clonedDbCursor.hasNext()) {
-                nextFiveLocationIds << clonedDbCursor.next().get("id")
+            featureIterator = featureCollection.features()
+            while (featureIterator.hasNext()) {
+                nextFiveLocationIds << featureIterator.next().getProperty("id").value
             }
         then:
-            featureCollection.dbCursor.size() == 5
-            featureCollection.size() == 5
+            featureCollectionSize == 5
             nextFiveLocationIds.every { !firstFiveLocationIds.contains(it) }
         cleanup:
             otherLocations.each { BasicDBObject location ->

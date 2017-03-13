@@ -1,8 +1,10 @@
 package com.spidasoftware.mongodb.feature.collection
 
+import com.mongodb.AggregationOutput
 import com.mongodb.BasicDBList
 import com.mongodb.BasicDBObject
 import com.mongodb.DB
+import com.mongodb.DBCollection
 import com.mongodb.DBCursor
 import com.mongodb.MongoClient
 import com.mongodb.ServerAddress
@@ -26,16 +28,16 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
     static final Logger log = Logging.getLogger(MongoDBSubCollectionFeatureCollectionSpec.class.getPackage().getName())
 
     @Shared DB database
-    @Shared BasicDBObject designJSON
     @Shared BasicDBObject locationJSON
+    @Shared BasicDBObject designJSON
     @Shared BasicDBList jsonMapping
     @Shared MongoDBDataAccess mongoDBDataAccess
     @Shared String namespace = "http://spida/db"
     MongoDBFeatureSource mongoDBFeatureSource
 
     void setupSpec() {
-        designJSON = JSON.parse(getClass().getResourceAsStream('/design.json').text)
         locationJSON = JSON.parse(getClass().getResourceAsStream('/location.json').text)
+        designJSON = JSON.parse(getClass().getResourceAsStream('/design.json').text)
 
         jsonMapping = JSON.parse(getClass().getResourceAsStream('/mapping.json').text)
         mongoDBDataAccess = new MongoDBDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, jsonMapping)

@@ -196,7 +196,6 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
                 geometryDescriptor = complexFeatureTypeFactory.createGeometryDescriptor(geometryType, pointName, 1, 1, false, "")
             }
             simpleFeatureBuilder.set(new NameImpl(namespace, this.mapping.geometry.name), new GeometryAttributeImpl(point, geometryDescriptor, null))
-
         }
     }
 

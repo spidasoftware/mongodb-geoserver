@@ -5,6 +5,7 @@ import com.mongodb.BasicDBObject
 import com.mongodb.util.JSON
 import org.geotools.data.DataAccess
 import org.geotools.data.DataAccessFactory
+import org.geotools.data.Parameter
 import org.geotools.util.logging.Logging
 import org.opengis.feature.Feature
 import org.opengis.feature.type.FeatureType
@@ -20,7 +21,7 @@ public class MongoDBDataAccessFactory implements DataAccessFactory {
     final DataAccessFactory.Param PORT = new DataAccessFactory.Param("port", String.class, "MongoDB port", true)
     final DataAccessFactory.Param DATABASE_NAME = new DataAccessFactory.Param("databaseName", String.class, "MongoDB database name", true)
     final DataAccessFactory.Param USERNAME = new DataAccessFactory.Param("username", String.class, "MongoDB username", false)
-    final DataAccessFactory.Param PASSWORD = new DataAccessFactory.Param("password", String.class, "MongoDB passsword", false)
+    final DataAccessFactory.Param PASSWORD = new DataAccessFactory.Param("password", String.class, "MongoDB passsword", false, '', [(Parameter.IS_PASSWORD): true])
     final DataAccessFactory.Param NAMESPACE = new DataAccessFactory.Param("namespace", String.class, "Namespace", true)
     final DataAccessFactory.Param FEATURE_TYPE_MAPPING_FILE = new DataAccessFactory.Param("featureTypeMappingFile", String.class, "FEATURE_TYPE_MAPPING_FILE", true)
 
@@ -75,9 +76,8 @@ public class MongoDBDataAccessFactory implements DataAccessFactory {
         return true
     }
 
-    void validateMappingAttributes(BasicDBObject mapping) { 
+    void validateMappingAttributes(BasicDBObject mapping) {
         assert mapping.attributes.findAll { it.useObjectKey }.size() <= 1
-
         mapping.attributes.each { attr ->
             assert attr.name != null
             assert attr.path != null ||

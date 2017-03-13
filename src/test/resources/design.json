@@ -42,26 +42,26 @@
                     "externalId": "43e130a1-3c21-41c9-b420-0e5b966eb2f2"
                 }
             },
-            "wireEndPoints" : [
+            "wireEndPoints": [
                 {
-                    "id" : "WEP#1",
-                    "externalId" : "e0ed62c2-8305-46a1-9c71-226474d51250",
-                    "distance" : {
-                        "unit" : "FOOT",
-                        "value" : 62
+                    "id": "WEP#1",
+                    "externalId": "e0ed62c2-8305-46a1-9c71-226474d51250",
+                    "distance": {
+                        "unit": "FOOT",
+                        "value": 62
                     },
-                    "direction" : 302,
-                    "inclination" : {
-                        "unit" : "DEGREE_ANGLE",
-                        "value" : 0
+                    "direction": 302,
+                    "inclination": {
+                        "unit": "DEGREE_ANGLE",
+                        "value": 0
                     },
-                    "type" : "PREVIOUS_POLE",
-                    "comments" : "someComments",
-                    "wires" : [
+                    "type": "PREVIOUS_POLE",
+                    "comments": "someComments",
+                    "wires": [
                         "Wire#1"
                     ],
-                    "spanGuys" : [ ],
-                    "spanPoints" : [ ]
+                    "spanGuys": [],
+                    "spanPoints": []
                 }
             ],
             "spanPoints": [
@@ -73,224 +73,237 @@
                         "value": 88
                     },
                     "environment": "STREET",
-                    "heights": [{
-                        "wireId": "Wire#16",
-                        "height": {
-                            "unit": "FOOT",
-                            "value": 0
+                    "heights": [
+                        {
+                            "wireId": "Wire#16",
+                            "height": {
+                                "unit": "FOOT",
+                                "value": 0
+                            }
                         }
-                    }]
+                    ]
                 }
             ],
-            "anchors": [{
-                "id" : "Anchor#1",
-                "externalId" : "31542b51-899b-47d0-969c-ff630da7f680",
-                "distance" : {
-                    "unit" : "FOOT",
-                    "value" : 12
-                },
-                "direction" : 122,
-                "owner" : {
-                    "id" : "AEP",
-                    "industry" : "UTILITY",
-                    "externalId" : "098e6dbc-b6df-470a-b7d1-5624f2ba89e2"
-                },
-                "height" : {
-                    "unit" : "FOOT",
-                    "value" : 0
-                },
-                "supportType" : "Other",
-                "clientItem" : "Single",
-                "guys" : [
-                    "Guy#1"
-                ]
-            }],
-            "notePoints" : [
+            "anchors": [
                 {
-                    "id" : "NotePoint#1",
-                    "externalId" : "58bcff48-15cf-4e30-b81d-ba24c472c319",
-                    "distance" : {
-                        "unit" : "FOOT",
-                        "value" : 62
+                    "id": "Anchor#1",
+                    "externalId": "31542b51-899b-47d0-969c-ff630da7f680",
+                    "distance": {
+                        "unit": "FOOT",
+                        "value": 12
                     },
-                    "direction" : 302,
-                    "note" : "Residential Driveway",
-                    "height" : {
-                        "unit" : "FOOT",
-                        "value" : 23
-                    }
+                    "direction": 122,
+                    "owner": {
+                        "id": "AEP",
+                        "industry": "UTILITY",
+                        "externalId": "098e6dbc-b6df-470a-b7d1-5624f2ba89e2"
+                    },
+                    "height": {
+                        "unit": "FOOT",
+                        "value": 0
+                    },
+                    "supportType": "Other",
+                    "clientItem": "Single",
+                    "guys": [
+                        "Guy#1"
+                    ]
                 }
             ],
-            "pointLoads" : [
+            "notePoints": [
                 {
-                    "id" : "PointLoad#1",
-                    "externalId" : "55d21d2e3cdf3541ec622adb",
-                    "owner" : {
-                        "id" : "SCE",
-                        "industry" : "UTILITY",
-                        "externalId" : "b2ad09d4-7ddb-4c68-be8e-60c57cd3bcd0"
+                    "id": "NotePoint#1",
+                    "externalId": "58bcff48-15cf-4e30-b81d-ba24c472c319",
+                    "distance": {
+                        "unit": "FOOT",
+                        "value": 62
                     },
-                    "elevation" : {
-                        "unit" : "DEGREE_ANGLE",
-                        "value" : 0
-                    },
-                    "attachmentHeight" : {
-                        "unit" : "FOOT",
-                        "value" : 32
-                    },
-                    "rotation" : {
-                        "unit" : "DEGREE_ANGLE",
-                        "value" : 0
-                    },
-                    "x" : {
-                        "unit" : "FOOT",
-                        "value" : 0
-                    },
-                    "y" : {
-                        "unit" : "FOOT",
-                        "value" : 0
-                    },
-                    "z" : {
-                        "unit" : "FOOT",
-                        "value" : 32.666666666666664
-                    },
-                    "fx" : {
-                        "unit" : "POUND_FORCE",
-                        "value" : 73.92457179425563
-                    },
-                    "fy" : {
-                        "unit" : "POUND_FORCE",
-                        "value" : 241.92570549706124
-                    },
-                    "fz" : {
-                        "unit" : "POUND_FORCE",
-                        "value" : -7.177126069505941
-                    },
-                    "mx" : {
-                        "unit" : "POUND_FORCE_FOOT",
-                        "value" : 0
-                    },
-                    "my" : {
-                        "unit" : "POUND_FORCE_FOOT",
-                        "value" : 0
-                    },
-                    "mz" : {
-                        "unit" : "POUND_FORCE_FOOT",
-                        "value" : 0
+                    "direction": 302,
+                    "note": "Residential Driveway",
+                    "height": {
+                        "unit": "FOOT",
+                        "value": 23
                     }
                 }
             ],
-            "damages": [{
-                    "id" : "Damage#1",
-                    "externalId" : "-143058154",
-                    "attachHeight" : {
-                        "unit" : "FOOT",
-                        "value" : 3
+            "pointLoads": [
+                {
+                    "id": "PointLoad#1",
+                    "externalId": "55d21d2e3cdf3541ec622adb",
+                    "owner": {
+                        "id": "SCE",
+                        "industry": "UTILITY",
+                        "externalId": "b2ad09d4-7ddb-4c68-be8e-60c57cd3bcd0"
                     },
-                    "damageHeight" : {
-                        "unit" : "FOOT",
-                        "value" : 2.3
+                    "elevation": {
+                        "unit": "DEGREE_ANGLE",
+                        "value": 0
                     },
-                    "damageType" : "SLICE",
-                    "direction" : 299,
-                    "width" : {
-                        "unit" : "INCH",
-                        "value" : 7
+                    "attachmentHeight": {
+                        "unit": "FOOT",
+                        "value": 32
+                    },
+                    "rotation": {
+                        "unit": "DEGREE_ANGLE",
+                        "value": 0
+                    },
+                    "x": {
+                        "unit": "FOOT",
+                        "value": 0
+                    },
+                    "y": {
+                        "unit": "FOOT",
+                        "value": 0
+                    },
+                    "z": {
+                        "unit": "FOOT",
+                        "value": 32.666666666666664
+                    },
+                    "fx": {
+                        "unit": "POUND_FORCE",
+                        "value": 73.92457179425563
+                    },
+                    "fy": {
+                        "unit": "POUND_FORCE",
+                        "value": 241.92570549706124
+                    },
+                    "fz": {
+                        "unit": "POUND_FORCE",
+                        "value": -7.177126069505941
+                    },
+                    "mx": {
+                        "unit": "POUND_FORCE_FOOT",
+                        "value": 0
+                    },
+                    "my": {
+                        "unit": "POUND_FORCE_FOOT",
+                        "value": 0
+                    },
+                    "mz": {
+                        "unit": "POUND_FORCE_FOOT",
+                        "value": 0
                     }
-            }],
-            "wires": [{
-                "id": "Wire#1",
-                "externalId": "b698f022-f778-402b-a715-6fc12c289699",
-                "owner": {
-                    "id": "AEP",
-                    "industry": "UTILITY",
-                    "externalId": "e2f14a58-2b07-4238-a16b-46d0333e56dc"
-                },
-                "clientItem": {
-                    "size": "1/0 AAAC",
-                    "coreStrands": 4,
-                    "conductorStrands": 7
-                },
-                "attachmentHeight": {
-                    "unit": "FOOT",
-                    "value": 33.25
-                },
-                "usageGroup": "NEUTRAL",
-                "tensionGroup": "Full",
-                "midspanHeight": {
-                    "unit": "FOOT",
-                    "value": 27.5
-                },
-                "tensionAdjustment": 0.9
-            }, {
-                "id": "Wire#2",
-                "externalId": "4cd45e68-5b1b-49a0-9433-27d76939aac0",
-                "owner": {
-                    "id": "AT&T",
-                    "industry": "UTILITY",
-                    "externalId": "17ee4790-404a-4af2-910b-f51b499da490"
-                },
-                "clientItem": {
-                    "size": "4/0 AAAC",
-                    "coreStrands": 1,
-                    "conductorStrands": 2
-                },
-                "attachmentHeight": {
-                    "unit": "FOOT",
-                    "value": 38.604166666666664
-                },
-                "usageGroup": "PRIMARY",
-                "tensionGroup": "Full",
-                "midspanHeight": {
-                    "unit": "FOOT",
-                    "value": 2
-                },
-                "tensionAdjustment": 1
-            }],
-            "spanGuys": [{
-                "id" : "SpanGuy#1",
-                "externalId" : "625061e6-a895-4f9b-b4f5-9e7609f451de",
-                "owner" : {
-                    "id" : "AEP",
-                    "industry" : "UTILITY",
-                    "externalId" : "098e6dbc-b6df-470a-b7d1-5624f2ba89e2"
-                },
-                "clientItem" : {
-                    "size" : "3/8\" EHS",
-                    "coreStrands" : 1,
-                    "conductorStrands" : 7
-                },
-                "attachmentHeight" : {
-                    "unit" : "FOOT",
-                    "value" : 32.666666666666664
-                },
-                "midspanHeight" : {
-                    "unit" : "FOOT",
-                    "value" : 28.916666666666668
-                },
-                "height" : {
-                    "unit" : "FOOT",
-                    "value" : 27.25
                 }
-            }],
-            "guys": [{
-                "id" : "Guy#1",
-                "externalId" : "9d37cef8-669a-42af-b260-7fe7731aace6",
-                "owner" : {
-                    "id" : "AEP",
-                    "industry" : "UTILITY",
-                    "externalId" : "098e6dbc-b6df-470a-b7d1-5624f2ba89e2"
-                },
-                "clientItem" : {
-                    "size" : "3/8\" EHS",
-                    "coreStrands" : 1,
-                    "conductorStrands" : 7
-                },
-                "attachmentHeight" : {
-                    "unit" : "FOOT",
-                    "value" : 28.25
+            ],
+            "damages": [
+                {
+                    "id": "Damage#1",
+                    "externalId": "-143058154",
+                    "attachHeight": {
+                        "unit": "FOOT",
+                        "value": 3
+                    },
+                    "damageHeight": {
+                        "unit": "FOOT",
+                        "value": 2.3
+                    },
+                    "damageType": "SLICE",
+                    "direction": 299,
+                    "width": {
+                        "unit": "INCH",
+                        "value": 7
+                    }
                 }
-            }],
+            ],
+            "wires": [
+                {
+                    "id": "Wire#1",
+                    "externalId": "b698f022-f778-402b-a715-6fc12c289699",
+                    "owner": {
+                        "id": "AEP",
+                        "industry": "UTILITY",
+                        "externalId": "e2f14a58-2b07-4238-a16b-46d0333e56dc"
+                    },
+                    "clientItem": {
+                        "size": "1/0 AAAC",
+                        "coreStrands": 4,
+                        "conductorStrands": 7
+                    },
+                    "attachmentHeight": {
+                        "unit": "FOOT",
+                        "value": 33.25
+                    },
+                    "usageGroup": "NEUTRAL",
+                    "tensionGroup": "Full",
+                    "midspanHeight": {
+                        "unit": "FOOT",
+                        "value": 27.5
+                    },
+                    "tensionAdjustment": 0.9
+                },
+                {
+                    "id": "Wire#2",
+                    "externalId": "4cd45e68-5b1b-49a0-9433-27d76939aac0",
+                    "owner": {
+                        "id": "AT&T",
+                        "industry": "UTILITY",
+                        "externalId": "17ee4790-404a-4af2-910b-f51b499da490"
+                    },
+                    "clientItem": {
+                        "size": "4/0 AAAC",
+                        "coreStrands": 1,
+                        "conductorStrands": 2
+                    },
+                    "attachmentHeight": {
+                        "unit": "FOOT",
+                        "value": 38.604166666666664
+                    },
+                    "usageGroup": "PRIMARY",
+                    "tensionGroup": "Full",
+                    "midspanHeight": {
+                        "unit": "FOOT",
+                        "value": 2
+                    },
+                    "tensionAdjustment": 1
+                }
+            ],
+            "spanGuys": [
+                {
+                    "id": "SpanGuy#1",
+                    "externalId": "625061e6-a895-4f9b-b4f5-9e7609f451de",
+                    "owner": {
+                        "id": "AEP",
+                        "industry": "UTILITY",
+                        "externalId": "098e6dbc-b6df-470a-b7d1-5624f2ba89e2"
+                    },
+                    "clientItem": {
+                        "size": "3/8\" EHS",
+                        "coreStrands": 1,
+                        "conductorStrands": 7
+                    },
+                    "attachmentHeight": {
+                        "unit": "FOOT",
+                        "value": 32.666666666666664
+                    },
+                    "midspanHeight": {
+                        "unit": "FOOT",
+                        "value": 28.916666666666668
+                    },
+                    "height": {
+                        "unit": "FOOT",
+                        "value": 27.25
+                    }
+                }
+            ],
+            "guys": [
+                {
+                    "id": "Guy#1",
+                    "externalId": "9d37cef8-669a-42af-b260-7fe7731aace6",
+                    "owner": {
+                        "id": "AEP",
+                        "industry": "UTILITY",
+                        "externalId": "098e6dbc-b6df-470a-b7d1-5624f2ba89e2"
+                    },
+                    "clientItem": {
+                        "size": "3/8\" EHS",
+                        "coreStrands": 1,
+                        "conductorStrands": 7
+                    },
+                    "attachmentHeight": {
+                        "unit": "FOOT",
+                        "value": 28.25
+                    }
+                }
+            ],
             "equipments": [
                 {
                     "id": "Equip#1",
@@ -308,93 +321,103 @@
                         "unit": "FOOT",
                         "value": 24.75
                     },
-                    "bottomHeight" : {
-                        "unit" : "FOOT",
-                        "value" : 24.75
+                    "bottomHeight": {
+                        "unit": "FOOT",
+                        "value": 24.75
                     },
-                    "direction" : 108
+                    "direction": 108
                 }
             ],
-            "crossArms": [{
-                "id" : "CrossArm#1",
-                "externalId" : "7e93af09-d08e-4574-88d8-34df8291e6f2",
-                "owner" : {
-                    "id" : "AEP",
-                    "industry" : "UTILITY",
-                    "externalId" : "098e6dbc-b6df-470a-b7d1-5624f2ba89e2"
-                },
-                "clientItem" : "8 Foot Cross Arm",
-                "attachmentHeight" : {
-                    "unit" : "FOOT",
-                    "value" : 32.666666666666664
-                },
-                "offset" : {
-                    "unit" : "INCH",
-                    "value" : 48
-                },
-                "direction" : 57,
-                "associatedBacking" : "Other",
-                "insulators" : [
-                    "Insulator#4",
-                    "Insulator#7",
-                    "Insulator#8"
-                ]
-            }],
-            "insulators": [{
-                "id" : "Insulator#1",
-                "externalId" : "7d749c41-900e-48e0-b668-36e286910b27",
-                "owner" : {
-                    "id" : "AEP",
-                    "industry" : "UTILITY",
-                    "externalId" : "aea214c9-38f9-4c33-928d-eab8b876e777"
-                },
-                "clientItem" : "15kV Dead End Insulator",
-                "attachmentHeight" : {
-                    "unit" : "FOOT",
-                    "value" : 27.083333333333332
-                },
-                "offset" : {
-                    "unit" : "INCH",
-                    "value" : 325
-                },
-                "direction" : 95,
-                "doubleInsulator" : false,
-                "wires" : [
-                    "Wire#9"
-                ]
-            }],
+            "crossArms": [
+                {
+                    "id": "CrossArm#1",
+                    "externalId": "7e93af09-d08e-4574-88d8-34df8291e6f2",
+                    "owner": {
+                        "id": "AEP",
+                        "industry": "UTILITY",
+                        "externalId": "098e6dbc-b6df-470a-b7d1-5624f2ba89e2"
+                    },
+                    "clientItem": "8 Foot Cross Arm",
+                    "attachmentHeight": {
+                        "unit": "FOOT",
+                        "value": 32.666666666666664
+                    },
+                    "offset": {
+                        "unit": "INCH",
+                        "value": 48
+                    },
+                    "direction": 57,
+                    "associatedBacking": "Other",
+                    "insulators": [
+                        "Insulator#4",
+                        "Insulator#7",
+                        "Insulator#8"
+                    ]
+                }
+            ],
+            "insulators": [
+                {
+                    "id": "Insulator#1",
+                    "externalId": "7d749c41-900e-48e0-b668-36e286910b27",
+                    "owner": {
+                        "id": "AEP",
+                        "industry": "UTILITY",
+                        "externalId": "aea214c9-38f9-4c33-928d-eab8b876e777"
+                    },
+                    "clientItem": "15kV Dead End Insulator",
+                    "attachmentHeight": {
+                        "unit": "FOOT",
+                        "value": 27.083333333333332
+                    },
+                    "offset": {
+                        "unit": "INCH",
+                        "value": 325
+                    },
+                    "direction": 95,
+                    "doubleInsulator": false,
+                    "wires": [
+                        "Wire#9"
+                    ]
+                }
+            ],
             "pushBraces": [],
             "sidewalkBraces": [],
             "foundations": []
         },
-        "analysis": [{
-            "id": "CSA Heavy",
-            "results": [{
-                "actual": 1.5677448671814123,
-                "allowable": 100,
-                "unit": "PERCENT",
-                "analysisDate": 1446037442824,
-                "component": "Pole-Buckling",
-                "loadInfo": "CSA Heavy",
-                "passes": true
-            }, {
-                "actual": 6.69240843504981,
-                "allowable": 100,
-                "unit": "PERCENT",
-                "analysisDate": 1446037442824,
-                "component": "Pole-Deflection",
-                "loadInfo": "CSA Heavy",
-                "passes": true
-            }, {
-                "actual": 6.376646157670578,
-                "allowable": 100,
-                "unit": "PERCENT",
-                "analysisDate": 1446037442824,
-                "component": "Pole",
-                "loadInfo": "CSA Heavy",
-                "passes": true
-            }]
-        }],
+        "analysis": [
+            {
+                "id": "CSA Heavy",
+                "results": [
+                    {
+                        "actual": 1.5677448671814123,
+                        "allowable": 100,
+                        "unit": "PERCENT",
+                        "analysisDate": 1446037442824,
+                        "component": "Pole-Buckling",
+                        "loadInfo": "CSA Heavy",
+                        "passes": true
+                    },
+                    {
+                        "actual": 6.69240843504981,
+                        "allowable": 100,
+                        "unit": "PERCENT",
+                        "analysisDate": 1446037442824,
+                        "component": "Pole-Deflection",
+                        "loadInfo": "CSA Heavy",
+                        "passes": true
+                    },
+                    {
+                        "actual": 6.376646157670578,
+                        "allowable": 100,
+                        "unit": "PERCENT",
+                        "analysisDate": 1446037442824,
+                        "component": "Pole",
+                        "loadInfo": "CSA Heavy",
+                        "passes": true
+                    }
+                ]
+            }
+        ],
         "id": "56e9b7137d84511d8dd0f13c"
     },
     "worstCaseAnalysisResults": {
@@ -408,6 +431,35 @@
             "passes": true
         }
     },
+    "analysisSummary":
+    [{
+        "id": "CSA Heavy",
+        "results": [{
+            "actual": 1.5677448671814123,
+            "allowable": 100,
+            "unit": "PERCENT",
+            "analysisDate": 1446037442824,
+            "component": "Pole-Buckling",
+            "loadInfo": "CSA Heavy",
+            "passes": true
+        }, {
+            "actual": 6.69240843504981,
+            "allowable": 100,
+            "unit": "PERCENT",
+            "analysisDate": 1446037442824,
+            "component": "Pole-Deflection",
+            "loadInfo": "CSA Heavy",
+            "passes": true
+        }, {
+            "actual": 6.376646157670578,
+            "allowable": 100,
+            "unit": "PERCENT",
+            "analysisDate": 1446037442824,
+            "component": "Pole",
+            "loadInfo": "CSA Heavy",
+            "passes": true
+        }]
+    }],
     "user": {
         "id": "123",
         "email": "test@email.com"

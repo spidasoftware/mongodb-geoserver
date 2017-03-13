@@ -22,9 +22,8 @@ class MongoDBSubCollectionFeatureCollection extends AbstractMongoDBFeatureCollec
 
     void initFeaturesList() {
         int offsetSkipped = 0
-
         while(this.dbCursor.hasNext() && (this.max == null || this.featuresList.size() < this.max)) {
-            DBObject dbObject =  dbCursor.next()
+            DBObject dbObject =  this.dbCursor.next()
             List<Feature> features = getFeatures([:], dbObject, this.mapping) - null
             features.each { Feature feature ->
                 if (this.filter == null || this.filter.evaluate(feature)) {

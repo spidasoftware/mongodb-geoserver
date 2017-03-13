@@ -1,3 +1,4 @@
+
 [{
     "typeName": "location",
     "collection": "locations",
@@ -325,7 +326,7 @@
         "path": "id"
     }],
     "subCollections": [{
-        "subCollectionPath": "calcDesign.analysis",
+        "subCollectionPath": "analysisSummary",
         "includeInDefaultQuery": false,
         "attributes": [{
             "name": "loadInfo",

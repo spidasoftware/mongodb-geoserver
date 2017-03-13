@@ -23,7 +23,7 @@ class MongoDBFeatureCollection extends AbstractMongoDBFeatureCollection {
     void initFeaturesList() {
         while(this.dbCursor.hasNext()) {
             SimpleFeatureBuilder simpleFeatureBuilder = new SimpleFeatureBuilder(this.featureType)
-            DBObject dbObject =  dbCursor.next()
+            DBObject dbObject =  this.dbCursor.next()
             addGeometry(simpleFeatureBuilder, dbObject)
 
             Map attributes = [:]
