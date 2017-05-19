@@ -4,6 +4,7 @@ import com.mongodb.*
 import com.mongodb.util.JSON
 import com.spidasoftware.mongodb.data.MongoDBDataAccess
 import com.spidasoftware.mongodb.data.MongoDBFeatureSource
+import java.util.regex.Pattern
 import org.geotools.data.Query
 import org.geotools.feature.FeatureCollection
 import org.geotools.feature.FeatureIterator
@@ -291,7 +292,7 @@ class FilterToDBQuerySpec extends Specification {
         when:
             BasicDBObject dbQuery = filterToDBQuery.visit(filter, null)
         then:
-            dbQuery == expectedQuery
+            dbQuery == expectedQuery || dbQuery.toString() == expectedQuery.toString() // Pattern objects are not easily comparable, but their string representations are
         when:
             FeatureCollection featureCollection = filterToDBQuery.getFeatureCollection(query)
         then:
@@ -302,6 +303,8 @@ class FilterToDBQuerySpec extends Specification {
             "value doesn't exist"      | CQL.toFilter("value='TEST'")                                              | new BasicDBObject("calcLocation.summaryNotes", "TEST")                                              | 0
             "locationId exists"        | CQL.toFilter("locationId='55fac7fde4b0e7f2e3be342c'")                     | new BasicDBObject("id", "55fac7fde4b0e7f2e3be342c")                                                 | 4
             "locationId doesn't exist" | CQL.toFilter("locationId='TEST'")                                         | new BasicDBObject("id", "TEST")                                                                     | 0
+            "value like"               | CQL.toFilter("value LIKE 'Windstream%'")                                  | new BasicDBObject("calcLocation.summaryNotes", Pattern.compile("^Windstream.*\$"))                  | 2
+            "value like"               | CQL.toFilter("value LIKE 'Test%'")                                        | new BasicDBObject("calcLocation.summaryNotes", Pattern.compile("^Test.*\$"))                        | 0
     }
 
     @Unroll("Test remedy property query for #description")
@@ -480,7 +483,7 @@ class FilterToDBQuerySpec extends Specification {
         when:
             BasicDBObject dbQuery = filterToDBQuery.visit(filter, null)
         then:
-            dbQuery == expectedQuery
+            dbQuery == expectedQuery || dbQuery.toString() == expectedQuery.toString() // Pattern objects are not easily comparable, but their string representations are
         when:
             FeatureCollection featureCollection = filterToDBQuery.getFeatureCollection(query)
         then:
@@ -554,6 +557,8 @@ class FilterToDBQuerySpec extends Specification {
 
             "component that exists"                | CQL.toFilter("component='Pole'")                                     | new BasicDBObject("analysisSummary.results.component", "Pole")                                      | 1
             "component that doesn't exist"         | CQL.toFilter("component='Strength'")                                 | new BasicDBObject("analysisSummary.results.component", "Strength")                                  | 0
+            "component like"                       | CQL.toFilter("component LIKE 'Pole-%'")                              | new BasicDBObject("analysisSummary.results.component", Pattern.compile("^Pole-.*\$"))               | 2
+            "component not like"                   | CQL.toFilter("component LIKE 'Guy%'")                                | new BasicDBObject("analysisSummary.results.component", Pattern.compile("^Guy.*\$"))                 | 0
 
             "passes that exists"                   | CQL.toFilter("passes='true'")                                        | new BasicDBObject("analysisSummary.results.passes", true)                                           | 3
             "passes that doesn't exist"            | CQL.toFilter("passes='false'")                                       | new BasicDBObject("analysisSummary.results.passes", false)                                          | 0

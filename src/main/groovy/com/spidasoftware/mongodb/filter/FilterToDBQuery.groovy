@@ -101,11 +101,16 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
     List stringValueQueryNames = []
     List allQueryPaths = []
 
+    private String joinWithDot(String string1, String string2) {
+        boolean dotNeeded = (string1 && string2)
+        return "${string1 ?: ''}${dotNeeded ? '.' : ''}${string2 ?: ''}".toString()
+    }
+
     private void fillTypeMaps(BasicDBObject map, String subCollectionPath = "") {
         map.attributes.each { attr ->
             String path = attr.path
             if (attr.path == null) {
-                path = "${subCollectionPath ? subCollectionPath + '.' : ''}${attr.subCollectionPath}"
+                path = joinWithDot(subCollectionPath, attr.subCollectionPath)
             }
 
             allQueryPaths << path
@@ -128,7 +133,7 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
         }
 
         map.subCollections.each { subCollection ->
-            def subPath = "${subCollectionPath}${subCollectionPath ? '.' : ''}${subCollection.subCollectionPath}"
+            def subPath = joinWithDot(subCollectionPath, subCollection.subCollectionPath)
             fillTypeMaps(subCollection, subPath)
         }
     }
@@ -141,7 +146,10 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
         }
         objectMapping.subCollections?.each { subCollection ->
             if (subCollection.includeInDefaultQuery) {
-                defaultQueries.add(new BasicDBObject('$where', "this.${currentPath ? currentPath + '.' : ''}${subCollection.subCollectionPath}.length > 0".toString()))
+                def queryPath = joinWithDot(currentPath, subCollection.subCollectionPath)
+                def lengthCondition = "this.${queryPath}.length > 0".toString()
+                def query = new BasicDBObject('$where', lengthCondition)
+                defaultQueries.add(query)
             }
             subCollection.subCollections.each {
                 def nestedQueries = getDefaultCollectionQueries(it, it.subCollectionPath)
@@ -218,10 +226,10 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
 
     String getDBQueryPathForPropertyName(String propertyName, BasicDBObject map, String subCollectionPath = null) {
         def attr = map.attributes.find { it.name == propertyName }
-        if (attr?.path) {
+        if (attr?.path != null) {
             return attr.path
-        } else if (attr?.subCollectionPath) {
-            return "${subCollectionPath}.${attr?.subCollectionPath}"
+        } else if (attr?.subCollectionPath != null) {
+            return joinWithDot(subCollectionPath, attr?.subCollectionPath)
         } else if (map.geometry?.name == propertyName) {
             return map.geometry.path
         } else if (attr?.concatenate || attr?.useKey || attr?.useValue || attr?.value) {
@@ -229,7 +237,8 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
         }
         String path = null
         map.subCollections.each { subCollection ->
-            def pathFromSubCollection = getDBQueryPathForPropertyName(propertyName, subCollection, "${subCollectionPath ? subCollectionPath + '.' : ''}${subCollection.subCollectionPath}")
+            def nestedPath = joinWithDot(subCollectionPath, subCollection.subCollectionPath)
+            def pathFromSubCollection = getDBQueryPathForPropertyName(propertyName, subCollection, nestedPath)
             if (pathFromSubCollection) {
                 path = pathFromSubCollection
             }
@@ -291,9 +300,12 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
                     attribute.concatenate.eachWithIndex { BasicDBObject concatObject, int index ->
                         if (index < splitValue.size()) {
                             if (concatObject.path) {
-                                andQuery.add(new BasicDBObject(concatObject.path, splitValue[index]))
+                                def andClause = new BasicDBObject(concatObject.path, splitValue[index])
+                                andQuery << andClause
                             } else if (concatObject.subCollectionPath) {
-                                andQuery.add(new BasicDBObject("${subCollectionPath}.${concatObject.subCollectionPath}", splitValue[index]))
+                                def andPath = joinWithDot(subCollectionPath, concatObject.subCollectionPath)
+                                def andClause = new BasicDBObject(andPath, splitValue[index])
+                                andQuery << andClause
                             } else if (concatObject.currentIndex || concatObject.value) {
                                 // Do nothing hardcoded value will be filtered out later
                             }
@@ -305,7 +317,10 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
                         orQuery << new BasicDBObject('$and', andQuery)
                     }
                 } else if (attribute.useKey || attribute.useObjectKey) {
-                    orQuery << new BasicDBObject("${subCollectionPath ? subCollectionPath + '.' : ''}${value}", new BasicDBObject('$exists', true))
+                    def valuePath = joinWithDot(subCollectionPath, value)
+                    def existsClause = new BasicDBObject('$exists', true)
+                    def orClause = new BasicDBObject(valuePath, existsClause)
+                    orQuery << orClause
                 } else if (attribute.useValue) {
                     orQuery << new BasicDBObject()
                 } else if (attribute.stringValue) {
@@ -335,7 +350,7 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
         map.subCollections.each { subCollection ->
             List<Map> subCollectionAttributes = getAttributeObjects(propertyName, subCollection)
             subCollectionAttributes.each { subCollectionAttribute ->
-                subCollectionAttribute.subCollectionPath = "${subCollection.subCollectionPath}${subCollectionAttribute.subCollectionPath ? '.' + subCollectionAttribute.subCollectionPath : ''}".toString()
+                subCollectionAttribute.subCollectionPath = joinWithDot(subCollection.subCollectionPath, subCollectionAttribute.subCollectionPath)
                 attributes << subCollectionAttribute
             }
         }
@@ -461,7 +476,8 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
 
         String regex = '^' + filter.getLiteral().replace(filter.getWildCard(), ".*").replace(filter.getSingleChar(), ".") + '$'
 
-        Pattern pattern = Pattern.compile(regex, (filter.isMatchingCase() ? 0 : Pattern.CASE_INSENSITIVE))
+        def flags = filter.isMatchingCase() ? 0 : Pattern.CASE_INSENSITIVE
+        Pattern pattern = Pattern.compile(regex, flags)
         return new BasicDBObject(propertyName, pattern)
     }
 

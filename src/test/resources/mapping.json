@@ -120,7 +120,8 @@
         "includeInDefaultQuery": true,
         "attributes": [{
             "name": "value",
-            "stringValue": true
+            "stringValue": true,
+            "subCollectionPath": ""
         }]
     }]
 }, {
