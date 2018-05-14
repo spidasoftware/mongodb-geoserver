@@ -73,7 +73,6 @@ public class MongoDBDataAccess implements DataAccess<FeatureType, Feature> {
     List<Name> getNames() throws IOException {
         List<Name> names = []
         this.jsonMapping.each { mapping ->
-            log.info("mapping = ${mapping}")
             String collection = mapping.collection
             if (this.database.getCollectionNames().contains(collection)) {
                 names << new NameImpl(this.namespace, mapping.typeName)
@@ -81,7 +80,6 @@ public class MongoDBDataAccess implements DataAccess<FeatureType, Feature> {
                 log.info("${collection} collection doesn't exist for typeName: ${mapping.typeName}")
             }
         }
-        log.info("names = ${names}")
         return names
     }
 
