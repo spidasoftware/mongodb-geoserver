@@ -10,5 +10,5 @@ addons:
     - mongodb-org-shell
 sudo: false
 before_script:
-  - mongo test_calcdb --eval 'db.createCollection("locations");'
-  - mongo test_calcdb --eval 'db.createCollection("designs");'
+  - mongo test_spidadb_wfs --eval 'db.createCollection("locations");'
+  - mongo test_spidadb_wfs --eval 'db.createCollection("designs");'
