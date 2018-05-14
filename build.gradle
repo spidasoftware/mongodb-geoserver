@@ -23,13 +23,14 @@ targetCompatibility = 1.7
 buildscript {
 
 	try {
-		project.ext.m2Settings = [exposed:"https://dev.spidasoftware.com/artifactory/exposed-repo"]//default
-		def m2Root = new XmlSlurper().parse(new File(System.getProperty("user.home"), ".m2/settings.xml"))
-		def m2Spida = m2Root.servers.server.find{ it.id.text() == "spida" }
-		def m2Repos = m2Root.profiles.profile.find{ it.id.text() == "artifactory" }.properties
-		if(m2Spida && m2Repos){
-			project.ext.m2Settings = [username: m2Spida.username.text(), password: m2Spida.password.text(), exposed: m2Repos.exposedLocation.text()]
-		}
+		project.ext.m2Settings = [
+			username: System.getenv('ARTIFACTORY_USERNAME'),
+			password: System.getenv('ARTIFACTORY_PASSWORD'),
+			repo: System.getenv('ARTIFACTORY_URL'),
+			exposed: System.getenv('ARTIFACTORY_URL_EXPOSED'),
+			snapshots: System.getenv('ARTIFACTORY_URL'),
+			releases: System.getenv('ARTIFACTORY_URL')
+		]
 	} catch(ex){
 		println ex.message //use ex.printStackTrace() if you want to show the full stacktrace
 	}
@@ -49,8 +50,8 @@ buildscript {
 repositories {
     mavenCentral()
     maven { url m2Settings.exposed }
-    maven { url "http://download.osgeo.org/webdav/geotools" }
-    maven { url "http://repo.boundlessgeo.com/main/" }
+    maven { url "https://dev.spidasoftware.com/artifactory/list/boundlessgeo" }
+     maven { url "https://download.osgeo.org/webdav/geotools" }
 }
 
 task sourcesZip(type: Zip, dependsOn: classes) {
@@ -127,7 +128,7 @@ test {
     testLogging.showStandardStreams = true
     systemProperty "mongoHost", "localhost"
     systemProperty "mongoPort", "27017"
-    systemProperty "mongoDatabase", "test_calcdb"
+    systemProperty "mongoDatabase", "test_spidadb_wfs"
 }
 
 

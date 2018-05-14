@@ -120,7 +120,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             feature.getAttribute("component") ==  "Pole-Buckling"
             feature.getAttribute("passes") == true
             feature.getAttribute("poleId") == "56e9b7137d84511d8dd0f13c"
-            feature.getAttribute("id") == "56e9b7137d84511d8dd0f13c_ANALYSIS_0"
+            feature.getAttribute("id") == "56e9b7137d84511d8dd0f13c_ANALYSIS_0_0"
     }
 
     void testGetAllPoles() {
@@ -134,7 +134,13 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
         when:
             def mongoDBSubCollectionFeatureCollection = getFeatureIterator("analysis", "designs", Filter.INCLUDE)
         then:
-            mongoDBSubCollectionFeatureCollection.size() == 3
+            mongoDBSubCollectionFeatureCollection.size() == 6
+            mongoDBSubCollectionFeatureCollection.featuresList.get(0).getAttribute("id") == "56e9b7137d84511d8dd0f13c_ANALYSIS_0_0"
+            mongoDBSubCollectionFeatureCollection.featuresList.get(1).getAttribute("id") == "56e9b7137d84511d8dd0f13c_ANALYSIS_0_1"
+            mongoDBSubCollectionFeatureCollection.featuresList.get(2).getAttribute("id") == "56e9b7137d84511d8dd0f13c_ANALYSIS_0_2"
+            mongoDBSubCollectionFeatureCollection.featuresList.get(3).getAttribute("id") == "56e9b7137d84511d8dd0f13c_ANALYSIS_1_0"
+            mongoDBSubCollectionFeatureCollection.featuresList.get(4).getAttribute("id") == "56e9b7137d84511d8dd0f13c_ANALYSIS_1_1"
+            mongoDBSubCollectionFeatureCollection.featuresList.get(5).getAttribute("id") == "56e9b7137d84511d8dd0f13c_ANALYSIS_1_2"
     }
 
     void testLimitPolePropertyNames() {
@@ -194,7 +200,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             feature.getAttribute("analysisDate") == null
             feature.getAttribute("component") ==  null
             feature.getAttribute("passes") == null
-            feature.getAttribute("id") == "56e9b7137d84511d8dd0f13c_ANALYSIS_0"
+            feature.getAttribute("id") == "56e9b7137d84511d8dd0f13c_ANALYSIS_0_0"
     }
 
     void testGetForm() {

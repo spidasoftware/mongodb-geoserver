@@ -117,7 +117,7 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
         return simpleFeatureBuilder.buildFeature(id ?: dbObject.get("id"))
     }
 
-    protected String getAttributeValueFromDBObject(DBObject dbObject, BasicDBObject attributeMapping, DBObject subCollectionObject = null, Integer index = null) {
+    protected String getAttributeValueFromDBObject(DBObject dbObject, BasicDBObject attributeMapping, DBObject subCollectionObject = null, List<Integer> index = null) {
         String value
         if(attributeMapping.value) {
             value = attributeMapping.value
@@ -134,7 +134,7 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
                 } else if(concatObject.subCollectionPath) {
                     value += getObjectFromPath(subCollectionObject, concatObject.subCollectionPath)
                 } else if(concatObject.currentIndex) {
-                    value += index?.toString()
+                    value += index.join("_")
                 }
             }
         } else if(attributeMapping.path) {
