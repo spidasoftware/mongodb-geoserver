@@ -38,37 +38,37 @@ class MongoDBSubCollectionFeatureCollection extends AbstractMongoDBFeatureCollec
         }
     }
 
-    private List<Feature> getFeatures(Map attributes, DBObject dbObject, BasicDBObject objectMapping, Object subCollectionObject = null, List<Integer> index = null) {
+    private List<Feature> getFeatures(Map attributes, DBObject dbObject, BasicDBObject objectMapping, Object subCollectionObject = null, List<Integer> indices = null) {
         if(objectMapping.attributes.any { it.stringValue } ) {
             return getStringValueFeatures(attributes, dbObject, objectMapping, subCollectionObject)
         } else if(objectMapping.attributes.any { it.useKey || it.useValue }) {
-            return getUseKeyOrUseValueFeatures(attributes, dbObject, objectMapping, subCollectionObject, index)
+            return getUseKeyOrUseValueFeatures(attributes, dbObject, objectMapping, subCollectionObject, indices)
 
         } else if(objectMapping.attributes.any { it.useObjectKey }) {
-            return getUseObjectKeyFeatures(attributes, dbObject, objectMapping, subCollectionObject, index)
+            return getUseObjectKeyFeatures(attributes, dbObject, objectMapping, subCollectionObject, indices)
         } else {
             objectMapping.attributes.each { attributeMapping ->
-                attributes.put(attributeMapping.name, getAttributeValueFromDBObject(dbObject, attributeMapping, subCollectionObject, index))
+                attributes.put(attributeMapping.name, getAttributeValueFromDBObject(dbObject, attributeMapping, subCollectionObject, indices))
             }
         }
 
         if(objectMapping.subCollections) {
-            return getSubcollectionFeatures(objectMapping.subCollections, attributes, dbObject, subCollectionObject, index)
+            return getSubcollectionFeatures(objectMapping.subCollections, attributes, dbObject, subCollectionObject, indices)
         } else {
             return [buildFromAttributes(attributes, dbObject)]
         }
     }
 
-    private List<Feature> getSubcollectionFeatures(def subCollections, Map attributes, DBObject dbObject, DBObject subCollectionObject = null, List<Integer> index = null) {
+    private List<Feature> getSubcollectionFeatures(def subCollections, Map attributes, DBObject dbObject, DBObject subCollectionObject = null, List<Integer> indices = null) {
         return subCollections.collect { subCollectionMapping ->
             DBObject subCollectionFromObject = (subCollectionObject ? getObjectFromPath(subCollectionObject, subCollectionMapping.subCollectionPath) : getObjectFromPath(dbObject, subCollectionMapping.subCollectionPath))
             if(subCollectionFromObject instanceof BasicBSONList) {
                 List<Feature> features = []
-                if(index == null) {
-                    index = []
+                if(indices == null) {
+                    indices = []
                 }
                 subCollectionFromObject.eachWithIndex { subCollection, idx ->
-                    features.addAll(getFeatures(attributes, dbObject, subCollectionMapping, subCollection, index.collect() + idx))
+                    features.addAll(getFeatures(attributes, dbObject, subCollectionMapping, subCollection, indices.collect() + idx))
                 }
                 return features
             } else {
@@ -88,7 +88,7 @@ class MongoDBSubCollectionFeatureCollection extends AbstractMongoDBFeatureCollec
         return []
     }
 
-    private List<Feature> getUseKeyOrUseValueFeatures(Map attributes, DBObject dbObject, BasicDBObject objectMapping, Object subCollectionObject = null, List<Integer> index = null) {
+    private List<Feature> getUseKeyOrUseValueFeatures(Map attributes, DBObject dbObject, BasicDBObject objectMapping, Object subCollectionObject = null, List<Integer> indices = null) {
         def keyAttr = objectMapping.attributes.find { it.useKey }
         def valueAttr = objectMapping.attributes.find { it.useValue }
 
@@ -103,7 +103,7 @@ class MongoDBSubCollectionFeatureCollection extends AbstractMongoDBFeatureCollec
                 }
                 objectMapping.attributes.each { attributeMapping ->
                     if (attributeMapping != keyAttr && attributeMapping != valueAttr)
-                        clonedAttributes.put(attributeMapping.name, getAttributeValueFromDBObject(dbObject, attributeMapping, subCollectionObject, index))
+                        clonedAttributes.put(attributeMapping.name, getAttributeValueFromDBObject(dbObject, attributeMapping, subCollectionObject, indices))
                 }
                 if (objectMapping.subCollections) {
                     return getSubcollectionFeatures(objectMapping.subCollections, clonedAttributes, dbObject, subCollectionObject)
@@ -125,7 +125,7 @@ class MongoDBSubCollectionFeatureCollection extends AbstractMongoDBFeatureCollec
         }
     }
 
-    private List<Feature> getUseObjectKeyFeatures(Map attributes, DBObject dbObject, BasicDBObject objectMapping, Object subCollectionObject = null, List<Integer> index = null) {
+    private List<Feature> getUseObjectKeyFeatures(Map attributes, DBObject dbObject, BasicDBObject objectMapping, Object subCollectionObject = null, List<Integer> indices = null) {
         if(!(subCollectionObject ?: dbObject).any { key, value -> value instanceof BasicDBObject}) {
             return []
         }
@@ -138,7 +138,7 @@ class MongoDBSubCollectionFeatureCollection extends AbstractMongoDBFeatureCollec
 
                 objectMapping.attributes.each { attributeMapping ->
                     if(attributeMapping != userObjectKeyAttr)
-                        clonedAttributes.put(attributeMapping.name, getAttributeValueFromDBObject(dbObject, attributeMapping, subCollectionObject, index))
+                        clonedAttributes.put(attributeMapping.name, getAttributeValueFromDBObject(dbObject, attributeMapping, subCollectionObject, indices))
                 }
                 if(objectMapping.subCollections) {
                     return getSubcollectionFeatures(objectMapping.subCollections, clonedAttributes, dbObject, value)
