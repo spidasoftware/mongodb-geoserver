@@ -33,14 +33,14 @@ class MongoDBDataAccessFactorySpec extends Specification {
         then:
             canProcess == expectedCanProcess
         where:
-            testNo | jsonMapping                                                                                                                         | host        | port    | databaseName  | namespace         | expectedCanProcess
-            1      | getClass().getResourceAsStream('/mapping.json').text                                                                                | "localhost" | "27017" | "test-calcdb" | "http://spida/db" | true
-            2      | '[{"typeName": "T", "collection": "T", "idAsAttribute": false, "attributes": [{"name": "T", "path": "T"}]}]'                        | "localhost" | "27017" | "test-calcdb" | "http://spida/db" | true
-            3      | '[{"typeName": "T", "collection": "T", "idAsAttribute": false, "attributes": [{"name": "T", "path": "T"}]}]'                        | null        | "27017" | "test-calcdb" | "http://spida/db" | false
-            4      | '[{"typeName": "T", "collection": "T", "idAsAttribute": false, "attributes": [{"name": "T", "path": "T"}]}]'                        | "localhost" | null    | "test-calcdb" | "http://spida/db" | false
-            5      | '[{"typeName": "T", "collection": "T", "idAsAttribute": false, "attributes": [{"name": "T", "path": "T"}]}]'                        | "localhost" | "27017" | null          | "http://spida/db" | false
-            6      | '[{"typeName": "T", "collection": "T", "idAsAttribute": false, "attributes": [{"name": "T", "path": "T"}]}]'                        | "localhost" | "27017" | "test-calcdb" | null              | false
-            7      | '[]'                                                                                                                                | "localhost" | "27017" | "test-calcdb" | "http://spida/db" | false
-            8      | null                                                                                                                                | "localhost" | "27017" | "test-calcdb" | "http://spida/db" | false
+            testNo | jsonMapping                                                                                                  | host        | port    | databaseName  | namespace         | expectedCanProcess
+            1      | getClass().getResourceAsStream('/mapping.json').text                                                   | "localhost" | "27017" | "test-calcdb" | "http://spida/db" | true
+            2      | '[{"typeName": "T", "collection": "T", "idAsAttribute": false, "attributes": [{"name": "T", "path": "T"}]}]' | "localhost" | "27017" | "test-calcdb" | "http://spida/db" | true
+            3      | '[{"typeName": "T", "collection": "T", "idAsAttribute": false, "attributes": [{"name": "T", "path": "T"}]}]' | null        | "27017" | "test-calcdb" | "http://spida/db" | false
+            4      | '[{"typeName": "T", "collection": "T", "idAsAttribute": false, "attributes": [{"name": "T", "path": "T"}]}]' | "localhost" | null    | "test-calcdb" | "http://spida/db" | false
+            5      | '[{"typeName": "T", "collection": "T", "idAsAttribute": false, "attributes": [{"name": "T", "path": "T"}]}]' | "localhost" | "27017" | null          | "http://spida/db" | false
+            6      | '[{"typeName": "T", "collection": "T", "idAsAttribute": false, "attributes": [{"name": "T", "path": "T"}]}]' | "localhost" | "27017" | "test-calcdb" | null              | false
+            7      | '[]'                                                                                                         | "localhost" | "27017" | "test-calcdb" | "http://spida/db" | false
+            8      | null                                                                                                         | "localhost" | "27017" | "test-calcdb" | "http://spida/db" | false
     }
 }

@@ -416,6 +416,38 @@
                         "passes": true
                     }
                 ]
+            },
+            {
+                "id": "CSA Heavy B",
+                "results": [
+                    {
+                        "actual": 1.2,
+                        "allowable": 100,
+                        "unit": "PERCENT",
+                        "analysisDate": 1446037442824,
+                        "component": "Pole-Buckling",
+                        "loadInfo": "CSA Heavy",
+                        "passes": true
+                    },
+                    {
+                        "actual": 6,
+                        "allowable": 100,
+                        "unit": "PERCENT",
+                        "analysisDate": 1446037442824,
+                        "component": "Pole-Deflection",
+                        "loadInfo": "CSA Heavy",
+                        "passes": true
+                    },
+                    {
+                        "actual": 6,
+                        "allowable": 100,
+                        "unit": "PERCENT",
+                        "analysisDate": 1446037442824,
+                        "component": "Pole",
+                        "loadInfo": "CSA Heavy",
+                        "passes": true
+                    }
+                ]
             }
         ],
         "id": "56e9b7137d84511d8dd0f13c"
@@ -459,6 +491,38 @@
             "loadInfo": "CSA Heavy",
             "passes": true
         }]
+    },
+    {
+        "id": "CSA Heavy B",
+        "results": [
+            {
+                "actual": 1.2,
+                "allowable": 100,
+                "unit": "PERCENT",
+                "analysisDate": 1446037442824,
+                "component": "Pole-Buckling",
+                "loadInfo": "CSA Heavy",
+                "passes": true
+            },
+            {
+                "actual": 6,
+                "allowable": 100,
+                "unit": "PERCENT",
+                "analysisDate": 1446037442824,
+                "component": "Pole-Deflection",
+                "loadInfo": "CSA Heavy",
+                "passes": true
+            },
+            {
+                "actual": 6,
+                "allowable": 100,
+                "unit": "PERCENT",
+                "analysisDate": 1446037442824,
+                "component": "Pole",
+                "loadInfo": "CSA Heavy",
+                "passes": true
+            }
+        ]
     }],
     "user": {
         "id": "123",
