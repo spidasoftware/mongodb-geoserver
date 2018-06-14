@@ -1,10 +1,8 @@
 package com.spidasoftware.mongodb.feature.collection
 
-import com.mongodb.AggregationOutput
 import com.mongodb.BasicDBList
 import com.mongodb.BasicDBObject
 import com.mongodb.DB
-import com.mongodb.DBCollection
 import com.mongodb.DBCursor
 import com.mongodb.MongoClient
 import com.mongodb.ServerAddress
@@ -16,6 +14,7 @@ import org.geotools.feature.NameImpl
 import org.geotools.util.logging.Logging
 import org.opengis.feature.Feature
 import org.opengis.feature.type.FeatureType
+import org.opengis.feature.simple.SimpleFeature
 
 import org.opengis.filter.Filter
 import spock.lang.Shared
@@ -35,7 +34,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
     @Shared String namespace = "http://spida/db"
     MongoDBFeatureSource mongoDBFeatureSource
 
-    void setupSpec() {
+    void setup() {
         locationJSON = JSON.parse(getClass().getResourceAsStream('/location.json').text)
         designJSON = JSON.parse(getClass().getResourceAsStream('/design.json').text)
 
@@ -58,9 +57,30 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
         database.getCollection("designs").insert(designJSON)
     }
 
-    void cleanupSpec() {
+    void cleanup() {
         database.getCollection("locations").remove(new BasicDBObject("id", locationJSON.get("id")))
         database.getCollection("designs").remove(new BasicDBObject("id", designJSON.get("id")))
+        database.getCollection("designs").remove(new BasicDBObject("id", "5b216ef1cff47e0001b9d9f4"))
+        database.getCollection("designs").remove(new BasicDBObject("id", "5b216ef1cff47e0001b9d9f5"))
+    }
+
+    void testNoAnalysisForLocation() { // Test that we don't NullPointerException when a design doesn't have analysis
+        setup:
+            BasicDBObject designWithAnalysis = JSON.parse("""{ "dateModified" : 1528917745615, "id" : "5b216ef1cff47e0001b9d9f4", "locationLabel" : "Empty", "locationId" : "5b216ef1cff47e0001b9d9f6", "projectLabel" : "New Project_Empty Design Layer AS", "projectId" : "5b216ef1cff47e0001b9d9f7", "clientFile" : "Getting Started_v7.X.client", "clientFileVersion" : "f2a20ab17b9863d90884b0a65d2f6365", "calcDesign" : { "label" : "Measured Design", "layerType" : "Measured", "structure" : { "pole" : { "glc" : { "unit" : "METRE", "value" : 1.1246310380696452 }, "agl" : { "unit" : "METRE", "value" : 15.849599999999999 }, "environment" : "NONE", "temperature" : { "unit" : "CELSIUS", "value" : 15.555555555555555 }, "stressRatio" : 1, "leanAngle" : 0, "leanDirection" : 0, "clientItemVersion" : "611f76aa024d22a49fbcab865d4a3a5a", "clientItem" : { "species" : "Southern Pine", "classOfPole" : "2", "height" : { "unit" : "METRE", "value" : 18.288 } }, "externalId" : "5b216d8b8b721ed0b12182bb", "owner" : { "id" : "Acme Power", "industry" : "UTILITY", "externalId" : "43e130a1-3c21-41c9-b420-0e5b966eb2f2" } }, "wireEndPoints" : [ ], "spanPoints" : [ ], "anchors" : [ ], "notePoints" : [ ], "pointLoads" : [ ], "wirePointLoads" : [ ], "damages" : [ ], "wires" : [ ], "spanGuys" : [ ], "guys" : [ ], "equipments" : [ ], "guyAttachPoints" : [ ], "crossArms" : [ ], "insulators" : [ ], "pushBraces" : [ ], "sidewalkBraces" : [ ], "foundations" : [ ], "assemblies" : [ ] }, "mapLocation" : { "type" : "Point", "coordinates" : [ -83.01508247852325, 40.100811662473994 ] }, "analysis" : [ { "id" : "Medium", "results" : [ { "actual" : 5.37301105123481, "allowable" : 100, "unit" : "PERCENT", "analysisDate" :1528917746774, "component" : "Pole", "loadInfo" : "Medium", "passes" : true, "analysisType" : "STRESS" } ] }, { "id" : "NESC ZONE", "results" : [ ] } ], "version" : 5, "id" : "5b216ef1cff47e0001b9d9f4", "schema" : "/schema/spidacalc/calc/design.schema" }, "worstCaseAnalysisResults" : { "pole" : { "actual" : 5.37301105123481, "allowable" : 100, "unit" : "PERCENT", "analysisDate" : 1528917746774, "component" : "Pole", "loadInfo" : "Medium", "passes" : true, "analysisType" : "STRESS" } }, "user" : { "id" : "965", "email" : "amber.schmiesing@spidasoftware.com" }, "analysisSummary" : [ { "id" : "Medium", "results" : [ { "actual" : 5.37301105123481, "allowable" : 100, "unit" : "PERCENT", "analysisDate" : 1528917746774, "component" : "Pole", "loadInfo" : "Medium", "passes" : true, "analysisType" : "STRESS" } ] } ] }""")
+            BasicDBObject designNoAnalysis = JSON.parse("""{  "dateModified" : 1528917745616, "id" : "5b216ef1cff47e0001b9d9f5", "locationLabel" : "Empty", "locationId" : "5b216ef1cff47e0001b9d9f6", "projectLabel" : "New Project_Empty Design Layer AS", "projectId" : "5b216ef1cff47e0001b9d9f7", "clientFile" : "Getting Started_v7.X.client", "clientFileVersion" : "f2a20ab17b9863d90884b0a65d2f6365", "calcDesign" : { "label" : "Theoretical Design", "layerType" : "Theoretical", "version" : 5, "id" : "5b216ef1cff47e0001b9d9f5", "schema" : "/schema/spidacalc/calc/design.schema" }, "user" : { "id" : "965", "email" : "amber.schmiesing@spidasoftware.com" } }""")
+            database.getCollection("designs").insert(designWithAnalysis)
+            database.getCollection("designs").insert(designNoAnalysis)
+            DBCursor dbCursor = database.getCollection("designs").find(new BasicDBObject("locationId", "5b216ef1cff47e0001b9d9f6"))
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "analysis"))
+            Query query = new Query("analysis", CQL.toFilter("locationId='5b216ef1cff47e0001b9d9f6'"), [])
+            BasicDBObject mapping = jsonMapping.find { it.typeName == "analysis" }
+            mongoDBFeatureSource = new MongoDBFeatureSource(mongoDBDataAccess, database, featureType, mapping)
+            def mongoDBSubCollectionFeatureCollection = new MongoDBSubCollectionFeatureCollection(dbCursor, featureType, mapping, query, mongoDBFeatureSource)
+        when:
+            Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
+        then:
+            mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
+            feature.getAttribute("actual") == 5.37301105123481
     }
 
     void testGetPole() {

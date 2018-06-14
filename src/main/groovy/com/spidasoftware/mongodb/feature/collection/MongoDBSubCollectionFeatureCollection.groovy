@@ -71,9 +71,10 @@ class MongoDBSubCollectionFeatureCollection extends AbstractMongoDBFeatureCollec
                     features.addAll(getFeatures(attributes, dbObject, subCollectionMapping, subCollection, indices.collect() + idx))
                 }
                 return features
-            } else {
+            } else if(subCollectionFromObject != null) {
                 return getFeatures(attributes, dbObject, subCollectionMapping, subCollectionFromObject)
             }
+            return []
 
         }.flatten()
     }
