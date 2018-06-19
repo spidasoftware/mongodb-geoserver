@@ -144,6 +144,6 @@ task wrapper(type: Wrapper) {
 		3) If you only set gradleVersion, it will append "-bin".
 		http://www.gradle.org/docs/current/dsl/org.gradle.api.tasks.wrapper.Wrapper.html
  	 *****************************************************************************************/
-	distributionUrl = 'http://services.gradle.org/distributions/gradle-1.11-all.zip'
+	distributionUrl = 'http://services.gradle.org/distributions/gradle-2.9-all.zip'
 }
 
