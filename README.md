@@ -30,3 +30,10 @@ Top level fields in the mapping.json file:
          - concatenate: Will concatenate these values together with an underscore [example](https://github.com/spidasoftware/mongodb-geoserver/blob/mongodb-geoserver-plugin/src/test/resources/mapping.json#L128)
          - useKey: Use the key of the object for the value of the attribute [example](https://github.com/spidasoftware/mongodb-geoserver/blob/mongodb-geoserver-plugin/src/test/resources/mapping.json#L128(.
          - useValue: Use the value of the object for the value of the attribute [example](https://github.com/spidasoftware/mongodb-geoserver/blob/mongodb-geoserver-plugin/src/test/resources/mapping.json#L171).
+
+### License Report
+
+The license report for this project will be generated in `build/reports/dependency-license` by running:
+```
+gradlew generateLicenseReport
+```

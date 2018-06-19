@@ -8,6 +8,7 @@ apply plugin: 'maven'
 apply plugin: 'idea'
 apply plugin: 'project-report'
 apply plugin: 'java-library-distribution'
+apply plugin: 'com.github.jk1.dependency-license-report'
 
 group = 'com.spidasoftware'
 version = '0.4'
@@ -41,9 +42,11 @@ buildscript {
 	repositories {
 		mavenCentral()
 		maven { url m2Settings.exposed }
+		maven { url 'https://plugins.gradle.org/m2/' }
 	}
 
 	dependencies {
+		classpath 'gradle.plugin.com.github.jk1:gradle-license-report:0.3.11'
 	}
 }
 
@@ -145,5 +148,9 @@ task wrapper(type: Wrapper) {
 		http://www.gradle.org/docs/current/dsl/org.gradle.api.tasks.wrapper.Wrapper.html
  	 *****************************************************************************************/
 	distributionUrl = 'http://services.gradle.org/distributions/gradle-2.9-all.zip'
+}
+
+licenseReport {
+	renderer = new com.github.jk1.license.render.CsvReportRenderer() // remove this line to get an html report
 }
 
