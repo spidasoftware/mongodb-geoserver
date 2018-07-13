@@ -170,6 +170,7 @@ class MongoDBDataAccessSpec extends Specification {
             featureType.getDescriptor("unit").type.binding == String
             featureType.getDescriptor("analysisDate").type.binding == Long
             featureType.getDescriptor("component").type.binding == String
+            featureType.getDescriptor("analysisType").type.binding == String
             featureType.getDescriptor("passes").type.binding == Boolean
             featureType.getDescriptor("poleId").type.binding == String
             featureType.getDescriptor("id").type.binding == String
