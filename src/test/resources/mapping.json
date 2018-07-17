@@ -367,6 +367,9 @@
                 "name": "component",
                 "subCollectionPath": "component"
             }, {
+                "name": "analysisType",
+                "subCollectionPath": "analysisType"
+            }, {
                 "name": "loadInfo",
                 "subCollectionPath": "loadInfo"
             }, {

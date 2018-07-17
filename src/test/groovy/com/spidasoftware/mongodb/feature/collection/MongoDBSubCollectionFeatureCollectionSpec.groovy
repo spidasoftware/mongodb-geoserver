@@ -116,7 +116,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 24
+            feature.attributeCount == 25
             feature.getAttribute("designType") == "Measured Design"
             feature.getAttribute("loadInfo") == "CSA Heavy"
             feature.getAttribute("locationLabel") == "684704E"
@@ -137,7 +137,8 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             feature.getAttribute("allowable") == 100
             feature.getAttribute("unit") == "PERCENT"
             feature.getAttribute("analysisDate") == 1446037442824
-            feature.getAttribute("component") ==  "Pole-Buckling"
+            feature.getAttribute("component") ==  "Pole"
+            feature.getAttribute("analysisType") ==  "BUCKLING"
             feature.getAttribute("passes") == true
             feature.getAttribute("poleId") == "56e9b7137d84511d8dd0f13c"
             feature.getAttribute("id") == "56e9b7137d84511d8dd0f13c_ANALYSIS_0_0"
@@ -196,7 +197,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 24
+            feature.attributeCount == 25
             feature.getAttribute("assetType") == null
             feature.getAttribute("designType") == null
             feature.getAttribute("loadInfo") ==null
@@ -219,6 +220,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             feature.getAttribute("unit") == null
             feature.getAttribute("analysisDate") == null
             feature.getAttribute("component") ==  null
+            feature.getAttribute("analysisType") ==  null
             feature.getAttribute("passes") == null
             feature.getAttribute("id") == "56e9b7137d84511d8dd0f13c_ANALYSIS_0_0"
     }

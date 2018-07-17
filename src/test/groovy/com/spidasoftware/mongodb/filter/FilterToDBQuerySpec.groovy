@@ -555,10 +555,15 @@ class FilterToDBQuerySpec extends Specification {
             "analysisDate lte exists"              | CQL.toFilter("analysisDate<=1446037442824")                          | new BasicDBObject("analysisSummary.results.analysisDate", new BasicDBObject('$lte', 1446037442824)) | 6
             "analysisDate lte doesn't exist"       | CQL.toFilter("analysisDate<=1446037442823")                          | new BasicDBObject("analysisSummary.results.analysisDate", new BasicDBObject('$lte', 1446037442823)) | 0
 
-            "component that exists"                | CQL.toFilter("component='Pole'")                                     | new BasicDBObject("analysisSummary.results.component", "Pole")                                      | 2
+            "component that exists"                | CQL.toFilter("component='Pole'")                                     | new BasicDBObject("analysisSummary.results.component", "Pole")                                      | 6
             "component that doesn't exist"         | CQL.toFilter("component='Strength'")                                 | new BasicDBObject("analysisSummary.results.component", "Strength")                                  | 0
-            "component like"                       | CQL.toFilter("component LIKE 'Pole-%'")                              | new BasicDBObject("analysisSummary.results.component", Pattern.compile("^Pole-.*\$"))        | 4
-            "component not like"                   | CQL.toFilter("component LIKE 'Guy%'")                                | new BasicDBObject("analysisSummary.results.component", Pattern.compile("^Guy.*\$"))          | 0
+            "component like"                       | CQL.toFilter("component LIKE 'Pol%'")                                | new BasicDBObject("analysisSummary.results.component", Pattern.compile("^Pol.*\$"))           | 6
+            "component like doesn't exist"         | CQL.toFilter("component LIKE 'Guy%'")                                | new BasicDBObject("analysisSummary.results.component", Pattern.compile("^Guy.*\$"))           | 0
+
+            "analysisType that exists"             | CQL.toFilter("analysisType='BUCKLING'")                              | new BasicDBObject("analysisSummary.results.analysisType", "BUCKLING")                               | 2
+            "analysisType that doesn't exist"      | CQL.toFilter("analysisType='TEST'")                                  | new BasicDBObject("analysisSummary.results.analysisType", "TEST")                                   | 0
+            "analysisType like"                    | CQL.toFilter("analysisType LIKE 'BUCKLIN%'")                         | new BasicDBObject("analysisSummary.results.analysisType", Pattern.compile("^BUCKLIN.*\$"))    | 2
+            "analysisTypelike doesn't exist"       | CQL.toFilter("analysisType LIKE 'STRENGT%'")                         | new BasicDBObject("analysisSummary.results.analysisType", Pattern.compile("^STRENGT.*\$"))    | 0
 
             "passes that exists"                   | CQL.toFilter("passes='true'")                                        | new BasicDBObject("analysisSummary.results.passes", true)                                           | 6
             "passes that doesn't exist"            | CQL.toFilter("passes='false'")                                       | new BasicDBObject("analysisSummary.results.passes", false)                                          | 0
