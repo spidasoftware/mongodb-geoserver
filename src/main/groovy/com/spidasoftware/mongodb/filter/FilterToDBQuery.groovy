@@ -147,6 +147,8 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
         objectMapping.subCollections?.each { subCollection ->
             if (subCollection.includeInDefaultQuery) {
                 def queryPath = joinWithDot(currentPath, subCollection.subCollectionPath)
+	            defaultQueries.add(new BasicDBObject("${queryPath}", new BasicDBObject('$exists', true)))
+
                 def lengthCondition = "this.${queryPath}.length > 0".toString()
                 def query = new BasicDBObject('$where', lengthCondition)
                 defaultQueries.add(query)

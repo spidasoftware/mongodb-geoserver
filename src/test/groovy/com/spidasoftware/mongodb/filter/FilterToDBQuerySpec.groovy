@@ -69,27 +69,33 @@ class FilterToDBQuerySpec extends Specification {
         then:
             featureCollection.size() == expectedSize
         where:
-            typeName       | collectionName | expectedSize
-            "location"     | "locations"    | 1
-            "poleTag"      | "locations"    | 3
-            "remedy"       | "locations"    | 1
-            "summaryNote"  | "locations"    | 4
-            "form"         | "locations"    | 2
-            "formField"    | "locations"    | 2
-            "pole"         | "designs"      | 1
-            "analysis"     | "designs"      | 6
-            "wire"         | "designs"      | 2
-            "spanPoint"    | "designs"      | 1
-            "spanGuy"      | "designs"      | 1
-            "guy"          | "designs"      | 1
-            "insulator"    | "designs"      | 1
-            "equipment"    | "designs"      | 1
-            "damage"       | "designs"      | 1
-            "crossArm"     | "designs"      | 1
-            "anchor"       | "designs"      | 1
-            "wireEndPoint" | "designs"      | 1
-            "notePoint"    | "designs"      | 1
-            "pointLoad"    | "designs"      | 1
+            typeName          | collectionName | expectedSize
+            "location"        | "locations"    | 1
+            "poleTag"         | "locations"    | 3
+            "remedy"          | "locations"    | 1
+            "summaryNote"     | "locations"    | 4
+            "form"            | "locations"    | 2
+            "formField"       | "locations"    | 2
+            "pole"            | "designs"      | 1
+            "analysis"        | "designs"      | 6
+            "wire"            | "designs"      | 2
+            "spanPoint"       | "designs"      | 1
+            "spanGuy"         | "designs"      | 1
+            "guy"             | "designs"      | 1
+            "insulator"       | "designs"      | 1
+            "equipment"       | "designs"      | 1
+            "damage"          | "designs"      | 1
+            "crossArm"        | "designs"      | 1
+            "anchor"          | "designs"      | 1
+            "wireEndPoint"    | "designs"      | 1
+            "notePoint"       | "designs"      | 1
+            "pointLoad"       | "designs"      | 1
+            "wirePointLoad"   | "designs"      | 1
+            "guyAttachPoint"  | "designs"      | 2
+            "pushBrace"       | "designs"      | 1
+            "sidewalkBrace"   | "designs"      | 1
+            "foundation"      | "designs"      | 1
+            "assembly"        | "designs"      | 1
     }
 
     @Unroll("test include filter for #typeName")
@@ -106,27 +112,33 @@ class FilterToDBQuerySpec extends Specification {
         then:
             featureCollection.size() == expectedSize
         where:
-            typeName       | collectionName | expectedSize
-            "location"     | "locations"    | 1
-            "poleTag"      | "locations"    | 3
-            "remedy"       | "locations"    | 1
-            "summaryNote"  | "locations"    | 4
-            "form"         | "locations"    | 2
-            "formField"    | "locations"    | 2
-            "pole"         | "designs"      | 1
-            "analysis"     | "designs"      | 6
-            "wire"         | "designs"      | 2
-            "spanPoint"    | "designs"      | 1
-            "spanGuy"      | "designs"      | 1
-            "guy"          | "designs"      | 1
-            "insulator"    | "designs"      | 1
-            "equipment"    | "designs"      | 1
-            "damage"       | "designs"      | 1
-            "crossArm"     | "designs"      | 1
-            "anchor"       | "designs"      | 1
-            "wireEndPoint" | "designs"      | 1
-            "notePoint"    | "designs"      | 1
-            "pointLoad"    | "designs"      | 1
+            typeName          | collectionName | expectedSize
+            "location"        | "locations"    | 1
+            "poleTag"         | "locations"    | 3
+            "remedy"          | "locations"    | 1
+            "summaryNote"     | "locations"    | 4
+            "form"            | "locations"    | 2
+            "formField"       | "locations"    | 2
+            "pole"            | "designs"      | 1
+            "analysis"        | "designs"      | 6
+            "wire"            | "designs"      | 2
+            "spanPoint"       | "designs"      | 1
+            "spanGuy"         | "designs"      | 1
+            "guy"             | "designs"      | 1
+            "insulator"       | "designs"      | 1
+            "equipment"       | "designs"      | 1
+            "damage"          | "designs"      | 1
+            "crossArm"        | "designs"      | 1
+            "anchor"          | "designs"      | 1
+            "wireEndPoint"    | "designs"      | 1
+            "notePoint"       | "designs"      | 1
+            "pointLoad"       | "designs"      | 1
+            "wirePointLoad"   | "designs"      | 1
+            "guyAttachPoint"  | "designs"      | 2
+            "pushBrace"       | "designs"      | 1
+            "sidewalkBrace"   | "designs"      | 1
+            "foundation"      | "designs"      | 1
+            "assembly"        | "designs"      | 1
     }
 
     @Unroll("test exclude filter for #typeName")
@@ -143,27 +155,33 @@ class FilterToDBQuerySpec extends Specification {
         then:
             featureCollection.size() == 0
         where:
-            typeName       | collectionName
-            "location"     | "locations"
-            "poleTag"      | "locations"
-            "remedy"       | "locations"
-            "summaryNote"  | "locations"
-            "form"         | "locations"
-            "formField"    | "locations"
-            "pole"         | "designs"
-            "analysis"     | "designs"
-            "wire"         | "designs"
-            "spanPoint"    | "designs"
-            "spanGuy"      | "designs"
-            "guy"          | "designs"
-            "insulator"    | "designs"
-            "equipment"    | "designs"
-            "damage"       | "designs"
-            "crossArm"     | "designs"
-            "anchor"       | "designs"
-            "wireEndPoint" | "designs"
-            "notePoint"    | "designs"
-            "pointLoad"    | "designs"
+            typeName          | collectionName
+            "location"        | "locations"
+            "poleTag"         | "locations"
+            "remedy"          | "locations"
+            "summaryNote"     | "locations"
+            "form"            | "locations"
+            "formField"       | "locations"
+            "pole"            | "designs"
+            "analysis"        | "designs"
+            "wire"            | "designs"
+            "spanPoint"       | "designs"
+            "spanGuy"         | "designs"
+            "guy"             | "designs"
+            "insulator"       | "designs"
+            "equipment"       | "designs"
+            "damage"          | "designs"
+            "crossArm"        | "designs"
+            "anchor"          | "designs"
+            "wireEndPoint"    | "designs"
+            "notePoint"       | "designs"
+            "pointLoad"       | "designs"
+            "wirePointLoad"   | "designs"
+            "guyAttachPoint"  | "designs"
+            "pushBrace"       | "designs"
+            "sidewalkBrace"   | "designs"
+            "foundation"      | "designs"
+            "assembly"        | "designs"
     }
 
     @Unroll("test Id query typeName=#typeName collectionName=#collectionName id=#id")
@@ -410,7 +428,7 @@ class FilterToDBQuerySpec extends Specification {
             "locationId that exists"               | CQL.toFilter("locationId='55fac7fde4b0e7f2e3be342c'")                | new BasicDBObject("locationId", "55fac7fde4b0e7f2e3be342c")                                             | 1
             "locationId that doesn't exist"        | CQL.toFilter("locationId='TEST'")                                    | new BasicDBObject("locationId", "TEST")                                                                 | 0
 
-            "clientFile that exists"               | CQL.toFilter("clientFile='SCE.client'")                              | new BasicDBObject("clientFile", "SCE.client")                                                           | 1
+            "clientFile that exists"               | CQL.toFilter("clientFile='Acme Power.client'")                       | new BasicDBObject("clientFile", "Acme Power.client")                                                    | 1
             "clientFile that doesn't exist"        | CQL.toFilter("clientFile='AEP.client'")                              | new BasicDBObject("clientFile", "AEP.client")                                                           | 0
 
             "clientFileVersion that exists"        | CQL.toFilter("clientFileVersion='6ee5fba14760878be22701e1b3b7c05b'") | new BasicDBObject("clientFileVersion", "6ee5fba14760878be22701e1b3b7c05b")                              | 1
@@ -502,7 +520,7 @@ class FilterToDBQuerySpec extends Specification {
             "locationId that exists"               | CQL.toFilter("locationId='55fac7fde4b0e7f2e3be342c'")                | new BasicDBObject("locationId", "55fac7fde4b0e7f2e3be342c")                                         | 6
             "locationId that doesn't exist"        | CQL.toFilter("locationId='TEST'")                                    | new BasicDBObject("locationId", "TEST")                                                             | 0
 
-            "clientFile that exists"               | CQL.toFilter("clientFile='SCE.client'")                              | new BasicDBObject("clientFile", "SCE.client")                                                       | 6
+            "clientFile that exists"               | CQL.toFilter("clientFile='Acme Power.client'")                       | new BasicDBObject("clientFile", "Acme Power.client")                                                | 6
             "clientFile that doesn't exist"        | CQL.toFilter("clientFile='AEP.client'")                              | new BasicDBObject("clientFile", "AEP.client")                                                       | 0
 
             "clientFileVersion that exists"        | CQL.toFilter("clientFileVersion='6ee5fba14760878be22701e1b3b7c05b'") | new BasicDBObject("clientFileVersion", "6ee5fba14760878be22701e1b3b7c05b")                          | 6
@@ -592,7 +610,7 @@ class FilterToDBQuerySpec extends Specification {
             featureCollection.size() == expectedSize
         where:
             description                            | filter                                               | expectedQuery                                                                                                         | expectedSize
-            "owner that exists"                    | CQL.toFilter("owner='AEP'")                          | new BasicDBObject("calcDesign.structure.wires.owner.id", "AEP")                                                       | 1
+            "owner that exists"                    | CQL.toFilter("owner='Acme Power'")                   | new BasicDBObject("calcDesign.structure.wires.owner.id", "Acme Power")                                                | 1
             "owner that doesn't exist"             | CQL.toFilter("owner='SCE'")                          | new BasicDBObject("calcDesign.structure.wires.owner.id", "SCE")                                                       | 0
 
             "size that exists"                     | CQL.toFilter("size='1/0 AAAC'")                      | new BasicDBObject("calcDesign.structure.wires.clientItem.size", "1/0 AAAC")                                           | 1
@@ -711,7 +729,7 @@ class FilterToDBQuerySpec extends Specification {
             featureCollection.size() == expectedSize
         where:
             description                           | filter                                              | expectedQuery                                                                                                 | expectedSize
-            "owner that exists"                   | CQL.toFilter("owner='AEP'")                         | new BasicDBObject("calcDesign.structure.spanGuys.owner.id", "AEP")                                            | 1
+            "owner that exists"                   | CQL.toFilter("owner='Acme Power'")                  | new BasicDBObject("calcDesign.structure.spanGuys.owner.id", "Acme Power")                                     | 1
             "owner that doesn't exist"            | CQL.toFilter("owner='TEST'")                        | new BasicDBObject("calcDesign.structure.spanGuys.owner.id", "TEST")                                           | 0
 
             "size that exists"                    | CQL.toFilter("size='3/8\" EHS'")                    | new BasicDBObject("calcDesign.structure.spanGuys.clientItem.size", "3/8\" EHS")                               | 1
@@ -793,7 +811,7 @@ class FilterToDBQuerySpec extends Specification {
             featureCollection.size() == expectedSize
         where:
             description                           | filter                                            | expectedQuery                                                                                             | expectedSize
-            "owner that exists"                   | CQL.toFilter("owner='AEP'")                       | new BasicDBObject("calcDesign.structure.guys.owner.id", "AEP")                                            | 1
+            "owner that exists"                   | CQL.toFilter("owner='Acme Power'")                | new BasicDBObject("calcDesign.structure.guys.owner.id", "Acme Power")                                     | 1
             "owner that doesn't exist"            | CQL.toFilter("owner='TEST'")                      | new BasicDBObject("calcDesign.structure.guys.owner.id", "TEST")                                           | 0
 
             "size that exists"                    | CQL.toFilter("size='3/8\" EHS'")                  | new BasicDBObject("calcDesign.structure.guys.clientItem.size", "3/8\" EHS")                               | 1
@@ -853,7 +871,7 @@ class FilterToDBQuerySpec extends Specification {
             featureCollection.size() == expectedSize
         where:
             description                           | filter                                               | expectedQuery                                                                                                              | expectedSize
-            "owner that exists"                   | CQL.toFilter("owner='AEP'")                          | new BasicDBObject("calcDesign.structure.insulators.owner.id", "AEP")                                                       | 1
+            "owner that exists"                   | CQL.toFilter("owner='Acme Power'")                   | new BasicDBObject("calcDesign.structure.insulators.owner.id", "Acme Power")                                                | 1
             "owner that doesn't exist"            | CQL.toFilter("owner='SCE'")                          | new BasicDBObject("calcDesign.structure.insulators.owner.id", "SCE")                                                       | 0
 
             "type that exists"                    | CQL.toFilter("type='15kV Dead End Insulator'")       | new BasicDBObject("calcDesign.structure.insulators.clientItem", "15kV Dead End Insulator")                                 | 1
@@ -916,7 +934,7 @@ class FilterToDBQuerySpec extends Specification {
             featureCollection.size() == expectedSize
         where:
             description                           | filter                                            | expectedQuery                                                                                                 | expectedSize
-            "owner that exists"                   | CQL.toFilter("owner='AEP'")                       | new BasicDBObject("calcDesign.structure.equipments.owner.id", "AEP")                                          | 1
+            "owner that exists"                   | CQL.toFilter("owner='Acme Power'")                | new BasicDBObject("calcDesign.structure.equipments.owner.id", "Acme Power")                                   | 1
             "owner that doesn't exist"            | CQL.toFilter("owner='SCE'")                       | new BasicDBObject("calcDesign.structure.equipments.owner.id", "SCE")                                          | 0
 
             "type that exists"                    | CQL.toFilter("type='CUTOUT_ARRESTOR'")            | new BasicDBObject("calcDesign.structure.equipments.clientItem.type", "CUTOUT_ARRESTOR")                       | 1
@@ -1047,7 +1065,7 @@ class FilterToDBQuerySpec extends Specification {
             featureCollection.size() == expectedSize
         where:
             description                            | filter                                               | expectedQuery                                                                                                             | expectedSize
-            "owner that exists"                    | CQL.toFilter("owner='AEP'")                          | new BasicDBObject("calcDesign.structure.crossArms.owner.id", "AEP")                                                       | 1
+            "owner that exists"                    | CQL.toFilter("owner='Acme Power'")                          | new BasicDBObject("calcDesign.structure.crossArms.owner.id", "Acme Power")                                                       | 1
             "owner that doesn't exist"             | CQL.toFilter("owner='TEST'")                         | new BasicDBObject("calcDesign.structure.crossArms.owner.id", "TEST")                                                      | 0
 
             "type that exists"                     | CQL.toFilter("type='8 Foot Cross Arm'")              | new BasicDBObject("calcDesign.structure.crossArms.clientItem", "8 Foot Cross Arm")                                        | 1
@@ -1132,7 +1150,7 @@ class FilterToDBQuerySpec extends Specification {
             "direction lte exists"           | CQL.toFilter("direction<=123")                    | new BasicDBObject("calcDesign.structure.anchors.direction", new BasicDBObject('$lte', 123))     | 1
             "direction lte doesn't exist"    | CQL.toFilter("direction<=3")                      | new BasicDBObject("calcDesign.structure.anchors.direction", new BasicDBObject('$lte', 3))       | 0
 
-            "owner that exists"              | CQL.toFilter("owner='AEP'")                       | new BasicDBObject("calcDesign.structure.anchors.owner.id", "AEP")                               | 1
+            "owner that exists"              | CQL.toFilter("owner='Acme Power'")                | new BasicDBObject("calcDesign.structure.anchors.owner.id", "Acme Power")                        | 1
             "owner that doesn't exist"       | CQL.toFilter("owner='TEST'")                      | new BasicDBObject("calcDesign.structure.anchors.owner.id", "TEST")                              | 0
 
             "height that exists"             | CQL.toFilter("height=0")                          | new BasicDBObject("calcDesign.structure.anchors.height.value", 0)                               | 1
@@ -1279,7 +1297,7 @@ class FilterToDBQuerySpec extends Specification {
             featureCollection.size() == expectedSize
         where:
             description                           | filter                                            | expectedQuery                                                                                                | expectedSize
-            "owner that exists"                   | CQL.toFilter("owner='SCE'")                       | new BasicDBObject("calcDesign.structure.pointLoads.owner.id", "SCE")                                         | 1
+            "owner that exists"                   | CQL.toFilter("owner='Acme Power'")                       | new BasicDBObject("calcDesign.structure.pointLoads.owner.id", "Acme Power")                                         | 1
             "owner that doesn't exist"            | CQL.toFilter("owner='TEST'")                      | new BasicDBObject("calcDesign.structure.pointLoads.owner.id", "TEST")                                        | 0
 
             "elevation that exists"               | CQL.toFilter("elevation=0")                       | new BasicDBObject("calcDesign.structure.pointLoads.elevation.value", 0)                                      | 1

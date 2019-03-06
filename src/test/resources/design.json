@@ -5,7 +5,7 @@
     "locationId": "55fac7fde4b0e7f2e3be342c",
     "projectLabel": "IJUS-44-2015-08-26-053",
     "projectId": "55fac7fde4b0e7f2e3be344f",
-    "clientFile": "SCE.client",
+    "clientFile": "Acme Power.client",
     "clientFileVersion": "6ee5fba14760878be22701e1b3b7c05b",
     "calcDesign": {
         "label": "Measured Design",
@@ -94,7 +94,7 @@
                     },
                     "direction": 122,
                     "owner": {
-                        "id": "AEP",
+                        "id": "Acme Power",
                         "industry": "UTILITY",
                         "externalId": "098e6dbc-b6df-470a-b7d1-5624f2ba89e2"
                     },
@@ -130,7 +130,7 @@
                     "id": "PointLoad#1",
                     "externalId": "55d21d2e3cdf3541ec622adb",
                     "owner": {
-                        "id": "SCE",
+                        "id": "Acme Power",
                         "industry": "UTILITY",
                         "externalId": "b2ad09d4-7ddb-4c68-be8e-60c57cd3bcd0"
                     },
@@ -209,7 +209,7 @@
                     "id": "Wire#1",
                     "externalId": "b698f022-f778-402b-a715-6fc12c289699",
                     "owner": {
-                        "id": "AEP",
+                        "id": "Acme Power",
                         "industry": "UTILITY",
                         "externalId": "e2f14a58-2b07-4238-a16b-46d0333e56dc"
                     },
@@ -261,7 +261,7 @@
                     "id": "SpanGuy#1",
                     "externalId": "625061e6-a895-4f9b-b4f5-9e7609f451de",
                     "owner": {
-                        "id": "AEP",
+                        "id": "Acme Power",
                         "industry": "UTILITY",
                         "externalId": "098e6dbc-b6df-470a-b7d1-5624f2ba89e2"
                     },
@@ -289,7 +289,7 @@
                     "id": "Guy#1",
                     "externalId": "9d37cef8-669a-42af-b260-7fe7731aace6",
                     "owner": {
-                        "id": "AEP",
+                        "id": "Acme Power",
                         "industry": "UTILITY",
                         "externalId": "098e6dbc-b6df-470a-b7d1-5624f2ba89e2"
                     },
@@ -309,7 +309,7 @@
                     "id": "Equip#1",
                     "externalId": "7bc2a396-1b11-477a-be63-7278ad48292c",
                     "owner": {
-                        "id": "AEP",
+                        "id": "Acme Power",
                         "industry": "UTILITY",
                         "externalId": "0ec2049e-6ecd-4e26-9589-b8f5f42bc897"
                     },
@@ -333,7 +333,7 @@
                     "id": "CrossArm#1",
                     "externalId": "7e93af09-d08e-4574-88d8-34df8291e6f2",
                     "owner": {
-                        "id": "AEP",
+                        "id": "Acme Power",
                         "industry": "UTILITY",
                         "externalId": "098e6dbc-b6df-470a-b7d1-5624f2ba89e2"
                     },
@@ -360,7 +360,7 @@
                     "id": "Insulator#1",
                     "externalId": "7d749c41-900e-48e0-b668-36e286910b27",
                     "owner": {
-                        "id": "AEP",
+                        "id": "Acme Power",
                         "industry": "UTILITY",
                         "externalId": "aea214c9-38f9-4c33-928d-eab8b876e777"
                     },
@@ -380,9 +380,144 @@
                     ]
                 }
             ],
-            "pushBraces": [],
-            "sidewalkBraces": [],
-            "foundations": []
+            "pushBraces": [
+              {
+                "id": "PushBrace#1",
+                "externalId": "5c78222921d4edc39438e28c",
+                "owner": {
+                  "id": "Acme Power",
+                  "industry": "UTILITY",
+                  "externalId": "43e130a1-3c21-41c9-b420-0e5b966eb2f2"
+                },
+                "clientItemVersion": "ea0bdc2a3cb2f0a427492063613204f1",
+                "clientItem": {
+                  "species": "Southern Pine",
+                  "classOfPole": "3",
+                  "height": {
+                    "unit": "METRE",
+                    "value": 10.668000000000001
+                  }
+                },
+                "attachmentHeight": {
+                  "unit": "METRE",
+                  "value": 6.9596
+                },
+                "glc": {
+                  "unit": "METRE",
+                  "value": 0.6096
+                },
+                "distance": {
+                  "unit": "METRE",
+                  "value": 4.572
+                },
+                "direction": 117
+              }
+            ],
+            "sidewalkBraces": [
+              {
+                "id": "SidewalkBrace#1",
+                "externalId": "5c78223b21d4edc39438e2d5",
+                "owner": {
+                  "id": "Acme Power",
+                  "industry": "UTILITY",
+                  "externalId": "43e130a1-3c21-41c9-b420-0e5b966eb2f2"
+                },
+                "clientItemVersion": "fe5e432d04ae114ea2831c36341b2568",
+                "clientItem": "2\" Schedule 40",
+                "attachmentHeight": {
+                  "unit": "METRE",
+                  "value": 3.0480000000000005
+                },
+                "length": {
+                  "unit": "METRE",
+                  "value": 4.572
+                },
+                "direction": 297,
+                "guys": [
+                  "Guy#1"
+                ]
+              }
+            ],
+            "foundations": [
+              {
+                "id": "Foundation",
+                "externalId": "5c78136921d4edc39438de0c",
+                "clientItemVersion": "46261e18ab52bfe0d99bfbacca452c28",
+                "clientItem": "Average"
+              }
+            ],
+            "wirePointLoads": [
+              {
+                "distance": {
+                  "unit": "METRE",
+                  "value": 22.860000000000003
+                },
+                "wire": "Wire#1",
+                "id": "PointLoad#1",
+                "externalId": "5c78136b21d4edc39438de12",
+                "owner": {
+                  "id": "Acme Power",
+                  "industry": "UTILITY",
+                  "externalId": "43e130a1-3c21-41c9-b420-0e5b966eb2f2"
+                },
+                "XForce": {
+                  "unit": "NEWTON",
+                  "value": 4.4482216152605005
+                },
+                "YForce": {
+                  "unit": "NEWTON",
+                  "value": 8.896443230521001
+                },
+                "ZForce": {
+                  "unit": "NEWTON",
+                  "value": 13.3446648457815
+                }
+              }
+            ],
+            "guyAttachPoints": [
+              {
+                "id": "GuyAttachPoint#1",
+                "externalId": "58cc0aae0348e5b489ce4b7a",
+                "attachHeight": {
+                  "unit": "METRE",
+                  "value": 9.474200000000002
+                },
+                "supportedWEPs": [
+                  "WEP#1"
+                ]
+              },
+              {
+                "id": "GuyAttachPoint#2",
+                "externalId": "58cc0aae0348e5b489ce4b7b",
+                "attachHeight": {
+                  "unit": "METRE",
+                  "value": 7.035800000000002
+                },
+                "supportedWEPs": [
+                  "WEP#1"
+                ]
+              }
+            ],
+            "assemblies": [
+              {
+                "id": "Assembly#1",
+                "source": "CLIENT_ASSEMBLIES",
+                "externalId": "5c7821af21d4edc39438e0a5",
+                "clientItemVersion": "b86a24bb788a0d9968efe541c4e79105",
+                "clientItem": "C5.1",
+                "items": [
+                  "Insulator#2",
+                  "Insulator#3",
+                  "Wire#1",
+                  "Insulator#1",
+                  "Wire#4",
+                  "Wire#2",
+                  "Wire#3",
+                  "GuyAttachPoint#2",
+                  "GuyAttachPoint#1"
+                ]
+              }
+            ]
         },
         "analysis": [
             {
