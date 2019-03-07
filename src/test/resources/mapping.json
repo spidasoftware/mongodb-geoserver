@@ -1,1051 +1,1754 @@
-
-[{
+[
+  {
     "typeName": "location",
     "collection": "locations",
     "idAsAttribute": true,
     "geometry": {
-        "name": "geographicCoordinate",
-        "crs": "EPSG:4326",
-        "path": "calcLocation.geographicCoordinate"
+      "name": "geographicCoordinate",
+      "crs": "EPSG:4326",
+      "path": "calcLocation.geographicCoordinate"
     },
     "displayGeometry": true,
-    "attributes": [{
+    "attributes": [
+      {
         "name": "id",
         "path": "id"
-    }, {
+      },
+      {
         "name": "label",
         "path": "calcLocation.label"
-    }, {
+      },
+      {
         "name": "projectId",
         "path": "projectId"
-    }, {
+      },
+      {
         "name": "projectName",
         "path": "projectLabel"
-    }, {
+      },
+      {
         "name": "clientFile",
         "path": "clientFile"
-    }, {
+      },
+      {
         "name": "clientFileVersion",
         "path": "clientFileVersion"
-    }, {
+      },
+      {
         "name": "dateModified",
         "path": "dateModified",
         "class": "Long"
-    }, {
+      },
+      {
         "name": "mapNumber",
         "path": "calcLocation.mapNumber"
-    }, {
+      },
+      {
         "name": "comments",
         "path": "calcLocation.comments"
-    }, {
+      },
+      {
         "name": "streetNumber",
         "path": "calcLocation.address.number"
-    }, {
+      },
+      {
         "name": "street",
         "path": "calcLocation.address.street"
-    }, {
+      },
+      {
         "name": "city",
         "path": "calcLocation.address.city"
-    }, {
+      },
+      {
         "name": "county",
         "path": "calcLocation.address.county"
-    }, {
+      },
+      {
         "name": "state",
         "path": "calcLocation.address.state"
-    }, {
+      },
+      {
         "name": "zipCode",
         "path": "calcLocation.address.zip_code"
-    }, {
+      },
+      {
         "name": "user",
         "path": "user.email"
-    }]
-}, {
+      }
+    ]
+  },
+  {
     "typeName": "poleTag",
     "collection": "locations",
     "idAsAttribute": false,
     "geometry": {
-        "name": "geographicCoordinate",
-        "crs": "urn:ogc:def:crs:EPSG:4326",
-        "path": "calcLocation.geographicCoordinate"
+      "name": "geographicCoordinate",
+      "crs": "urn:ogc:def:crs:EPSG:4326",
+      "path": "calcLocation.geographicCoordinate"
     },
     "displayGeometry": false,
-    "attributes": [{
+    "attributes": [
+      {
         "name": "locationId",
         "path": "id"
-    }],
-    "subCollections": [{
+      }
+    ],
+    "subCollections": [
+      {
         "subCollectionPath": "calcLocation.poleTags",
         "includeInDefaultQuery": true,
-        "attributes": [{
+        "attributes": [
+          {
             "name": "id",
-            "concatenate": [{
+            "concatenate": [
+              {
                 "path": "id"
-            }, {
+              },
+              {
                 "subCollectionPath": "type"
-            }]
-        }, {
+              }
+            ]
+          },
+          {
             "name": "type",
             "subCollectionPath": "type"
-        }, {
+          },
+          {
             "name": "value",
             "subCollectionPath": "value"
-        }]
-    }]
-}, {
+          }
+        ]
+      }
+    ]
+  },
+  {
     "typeName": "remedy",
     "collection": "locations",
     "idAsAttribute": false,
-    "attributes": [{
+    "attributes": [
+      {
         "name": "locationId",
         "path": "id"
-    }],
-    "subCollections": [{
+      }
+    ],
+    "subCollections": [
+      {
         "subCollectionPath": "calcLocation.remedies",
         "includeInDefaultQuery": true,
-        "attributes": [{
+        "attributes": [
+          {
             "name": "value",
             "subCollectionPath": "description"
-        }]
-    }]
-}, {
+          }
+        ]
+      }
+    ]
+  },
+  {
     "typeName": "summaryNote",
     "collection": "locations",
     "idAsAttribute": false,
-    "attributes": [{
+    "attributes": [
+      {
         "name": "locationId",
         "path": "id"
-    }],
-    "subCollections": [{
+      }
+    ],
+    "subCollections": [
+      {
         "subCollectionPath": "calcLocation.summaryNotes",
         "includeInDefaultQuery": true,
-        "attributes": [{
+        "attributes": [
+          {
             "name": "value",
             "stringValue": true,
             "subCollectionPath": ""
-        }]
-    }]
-}, {
+          }
+        ]
+      }
+    ]
+  },
+  {
     "typeName": "form",
     "collection": "locations",
     "idAsAttribute": true,
     "geometry": {
-        "name": "geographicCoordinate",
-        "crs": "urn:ogc:def:crs:EPSG:4326",
-        "path": "calcLocation.geographicCoordinate"
+      "name": "geographicCoordinate",
+      "crs": "urn:ogc:def:crs:EPSG:4326",
+      "path": "calcLocation.geographicCoordinate"
     },
     "displayGeometry": false,
-    "attributes": [{
+    "attributes": [
+      {
         "name": "locationId",
         "path": "id"
-    }],
-    "subCollections": [{
+      }
+    ],
+    "subCollections": [
+      {
         "subCollectionPath": "calcLocation.forms",
         "includeInDefaultQuery": true,
-        "attributes": [{
+        "attributes": [
+          {
             "name": "id",
-            "concatenate": [{
+            "concatenate": [
+              {
                 "path": "id"
-            }, {
+              },
+              {
                 "subCollectionPath": "template"
-            }]
-        }, {
+              }
+            ]
+          },
+          {
             "name": "template",
             "subCollectionPath": "template"
-        }, {
+          },
+          {
             "name": "title",
             "subCollectionPath": "title"
-        }]
-    }]
-}, {
+          }
+        ]
+      }
+    ]
+  },
+  {
     "typeName": "formField",
     "collection": "locations",
     "idAsAttribute": false,
     "geometry": {
-        "name": "geographicCoordinate",
-        "crs": "urn:ogc:def:crs:EPSG:4326",
-        "path": "calcLocation.geographicCoordinate"
+      "name": "geographicCoordinate",
+      "crs": "urn:ogc:def:crs:EPSG:4326",
+      "path": "calcLocation.geographicCoordinate"
     },
     "displayGeometry": false,
     "attributes": [],
-    "subCollections": [{
+    "subCollections": [
+      {
         "subCollectionPath": "calcLocation.forms",
         "includeInDefaultQuery": true,
-        "attributes": [{
+        "attributes": [
+          {
             "name": "formId",
-            "concatenate": [{
+            "concatenate": [
+              {
                 "path": "id"
-            }, {
+              },
+              {
                 "subCollectionPath": "template"
-            }]
-        }],
-        "subCollections": [{
+              }
+            ]
+          }
+        ],
+        "subCollections": [
+          {
             "subCollectionPath": "fields",
             "includeInDefaultQuery": false,
-            "attributes": [{
+            "attributes": [
+              {
                 "name": "name",
                 "useKey": true
-            }, {
+              },
+              {
                 "name": "value",
                 "useValue": true
-
-            }]
-
-        }, {
+              }
+            ]
+          },
+          {
             "subCollectionPath": "fields",
             "includeInDefaultQuery": false,
-            "attributes": [{
+            "attributes": [
+              {
                 "name": "groupName",
                 "useObjectKey": true
-            }],
-            "subCollections": [{
+              }
+            ],
+            "subCollections": [
+              {
                 "subCollectionPath": "",
                 "includeInDefaultQuery": false,
-                "attributes": [{
+                "attributes": [
+                  {
                     "name": "name",
                     "useKey": true
-                }, {
+                  },
+                  {
                     "name": "value",
                     "useValue": true
-
-                }]
-
-            }]
-        }]
-    }]
-}, {
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
     "typeName": "pole",
     "collection": "designs",
     "idAsAttribute": true,
-    "attributes": [{
+    "attributes": [
+      {
         "name": "designType",
         "path": "calcDesign.label"
-    }, {
+      },
+      {
         "name": "locationId",
         "path": "locationId"
-    }, {
+      },
+      {
         "name": "locationLabel",
         "path": "locationLabel"
-    }, {
+      },
+      {
         "name": "clientFile",
         "path": "clientFile"
-    }, {
+      },
+      {
         "name": "clientFileVersion",
         "path": "clientFileVersion"
-    }, {
+      },
+      {
         "name": "dateModified",
         "path": "dateModified",
         "class": "Long"
-    }, {
+      },
+      {
         "name": "glc",
         "path": "calcDesign.structure.pole.glc.value",
         "class": "Double"
-    }, {
+      },
+      {
         "name": "glcUnit",
         "path": "calcDesign.structure.pole.glc.unit"
-    }, {
+      },
+      {
         "name": "agl",
         "path": "calcDesign.structure.pole.agl.value",
         "class": "Double"
-    }, {
+      },
+      {
         "name": "aglUnit",
         "path": "calcDesign.structure.pole.agl.unit"
-    }, {
+      },
+      {
         "name": "species",
         "path": "calcDesign.structure.pole.clientItem.species"
-    }, {
+      },
+      {
         "name": "class",
         "path": "calcDesign.structure.pole.clientItem.classOfPole"
-    }, {
+      },
+      {
         "name": "length",
         "path": "calcDesign.structure.pole.clientItem.height.value",
         "class": "Double"
-    }, {
+      },
+      {
         "name": "lengthUnit",
         "path": "calcDesign.structure.pole.clientItem.height.unit"
-    }, {
+      },
+      {
         "name": "owner",
         "path": "calcDesign.structure.pole.owner.id"
-    }, {
+      },
+      {
         "name": "id",
         "path": "id"
-    }]
-}, {
+      }
+    ]
+  },
+  {
     "typeName": "analysis",
     "collection": "designs",
     "idAsAttribute": true,
-    "attributes": [{
+    "attributes": [
+      {
         "name": "designType",
         "path": "calcDesign.label"
-    }, {
+      },
+      {
         "name": "locationId",
         "path": "locationId"
-    }, {
+      },
+      {
         "name": "locationLabel",
         "path": "locationLabel"
-    }, {
+      },
+      {
         "name": "clientFile",
         "path": "clientFile"
-    }, {
+      },
+      {
         "name": "clientFileVersion",
         "path": "clientFileVersion"
-    }, {
+      },
+      {
         "name": "dateModified",
         "path": "dateModified",
         "class": "Long"
-    }, {
+      },
+      {
         "name": "glc",
         "path": "calcDesign.structure.pole.glc.value",
         "class": "Double"
-    }, {
+      },
+      {
         "name": "glcUnit",
         "path": "calcDesign.structure.pole.glc.unit"
-    }, {
+      },
+      {
         "name": "agl",
         "path": "calcDesign.structure.pole.agl.value",
         "class": "Double"
-    }, {
+      },
+      {
         "name": "aglUnit",
         "path": "calcDesign.structure.pole.agl.unit"
-    }, {
+      },
+      {
         "name": "species",
         "path": "calcDesign.structure.pole.clientItem.species"
-    }, {
+      },
+      {
         "name": "class",
         "path": "calcDesign.structure.pole.clientItem.classOfPole"
-    }, {
+      },
+      {
         "name": "length",
         "path": "calcDesign.structure.pole.clientItem.height.value",
         "class": "Double"
-    }, {
+      },
+      {
         "name": "lengthUnit",
         "path": "calcDesign.structure.pole.clientItem.height.unit"
-    }, {
+      },
+      {
         "name": "owner",
         "path": "calcDesign.structure.pole.owner.id"
-    }, {
+      },
+      {
         "name": "poleId",
         "path": "id"
-    }],
-    "subCollections": [{
+      }
+    ],
+    "subCollections": [
+      {
         "subCollectionPath": "analysisSummary",
         "includeInDefaultQuery": false,
-        "attributes": [{
+        "attributes": [
+          {
             "name": "loadInfo",
             "subCollectionPath": "id"
-        }, {
+          },
+          {
             "name": "poleId",
             "path": "id"
-        }],
-        "subCollections": [{
+          }
+        ],
+        "subCollections": [
+          {
             "subCollectionPath": "results",
             "includeInDefaultQuery": false,
-            "attributes": [{
+            "attributes": [
+              {
                 "name": "id",
-                "concatenate": [{
+                "concatenate": [
+                  {
                     "path": "id"
-                }, {
+                  },
+                  {
                     "value": "ANALYSIS"
-                }, {
+                  },
+                  {
                     "currentIndex": true
-                }]
-            }, {
+                  }
+                ]
+              },
+              {
                 "name": "actual",
                 "subCollectionPath": "actual",
                 "class": "Double"
-            }, {
+              },
+              {
                 "name": "allowable",
                 "subCollectionPath": "allowable",
                 "class": "Double"
-            }, {
+              },
+              {
                 "name": "unit",
                 "subCollectionPath": "unit"
-            }, {
+              },
+              {
                 "name": "analysisDate",
                 "subCollectionPath": "analysisDate",
                 "class": "Long"
-            }, {
+              },
+              {
                 "name": "component",
                 "subCollectionPath": "component"
-            }, {
+              },
+              {
                 "name": "analysisType",
                 "subCollectionPath": "analysisType"
-            }, {
+              },
+              {
                 "name": "loadInfo",
                 "subCollectionPath": "loadInfo"
-            }, {
+              },
+              {
                 "name": "passes",
                 "subCollectionPath": "passes",
                 "class": "Boolean"
-            }]
-        }]
-    }]
-},{
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
     "typeName": "wire",
     "collection": "designs",
     "idAsAttribute": false,
-    "attributes": [{
+    "attributes": [
+      {
         "name": "poleId",
         "path": "id"
-    }],
-    "subCollections": [{
+      }
+    ],
+    "subCollections": [
+      {
         "subCollectionPath": "calcDesign.structure.wires",
         "includeInDefaultQuery": true,
-        "attributes": [{
+        "attributes": [
+          {
             "name": "id",
-            "concatenate": [{
+            "concatenate": [
+              {
                 "path": "id"
-            }, {
+              },
+              {
                 "subCollectionPath": "id"
-            }]
-        }, {
+              }
+            ]
+          },
+          {
             "name": "owner",
             "subCollectionPath": "owner.id"
-        }, {
+          },
+          {
             "name": "size",
             "subCollectionPath": "clientItem.size"
-        }, {
+          },
+          {
             "name": "coreStrands",
             "subCollectionPath": "clientItem.coreStrands",
             "class": "Long"
-        }, {
+          },
+          {
             "name": "conductorStrands",
             "subCollectionPath": "clientItem.conductorStrands",
             "class": "Long"
-        }, {
+          },
+          {
             "name": "attachmentHeight",
             "subCollectionPath": "attachmentHeight.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "attachmentHeightUnit",
             "subCollectionPath": "attachmentHeight.unit"
-        }, {
+          },
+          {
             "name": "usageGroup",
             "subCollectionPath": "usageGroup"
-        }, {
+          },
+          {
             "name": "tensionGroup",
             "subCollectionPath": "tensionGroup"
-        }, {
+          },
+          {
             "name": "midspanHeight",
             "subCollectionPath": "midspanHeight.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "midspanHeightUnit",
             "subCollectionPath": "midspanHeight.unit"
-        }, {
+          },
+          {
             "name": "tensionAdjustment",
             "subCollectionPath": "tensionAdjustment",
             "class": "Double"
-        }]
-    }]
-}, {
+          }
+        ]
+      }
+    ]
+  },
+  {
     "typeName": "spanPoint",
     "collection": "designs",
     "idAsAttribute": false,
-    "attributes": [{
+    "attributes": [
+      {
         "name": "poleId",
         "path": "id"
-    }],
-    "subCollections": [{
+      }
+    ],
+    "subCollections": [
+      {
         "subCollectionPath": "calcDesign.structure.spanPoints",
         "includeInDefaultQuery": true,
-        "attributes": [{
+        "attributes": [
+          {
             "name": "id",
-            "concatenate": [{
+            "concatenate": [
+              {
                 "path": "id"
-            }, {
+              },
+              {
                 "subCollectionPath": "id"
-            }]
-        }, {
+              }
+            ]
+          },
+          {
             "name": "distance",
             "subCollectionPath": "distance.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "distanceUnit",
             "subCollectionPath": "distance.unit"
-        }, {
+          },
+          {
             "name": "environment",
             "subCollectionPath": "environment"
-        }]
-    }]
-}, {
+          }
+        ]
+      }
+    ]
+  },
+  {
     "typeName": "spanGuy",
     "collection": "designs",
     "idAsAttribute": false,
-    "attributes": [{
+    "attributes": [
+      {
         "name": "poleId",
         "path": "id"
-    }],
-    "subCollections": [{
+      }
+    ],
+    "subCollections": [
+      {
         "subCollectionPath": "calcDesign.structure.spanGuys",
         "includeInDefaultQuery": true,
-        "attributes": [{
+        "attributes": [
+          {
             "name": "id",
-            "concatenate": [{
+            "concatenate": [
+              {
                 "path": "id"
-            }, {
+              },
+              {
                 "subCollectionPath": "id"
-            }]
-        }, {
+              }
+            ]
+          },
+          {
             "name": "owner",
             "subCollectionPath": "owner.id"
-        }, {
+          },
+          {
             "name": "size",
             "subCollectionPath": "clientItem.size"
-        }, {
+          },
+          {
             "name": "coreStrands",
             "subCollectionPath": "clientItem.coreStrands",
             "class": "Long"
-        }, {
+          },
+          {
             "name": "conductorStrands",
             "subCollectionPath": "clientItem.conductorStrands",
             "class": "Long"
-        }, {
+          },
+          {
             "name": "attachmentHeight",
             "subCollectionPath": "attachmentHeight.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "attachmentHeightUnit",
             "subCollectionPath": "attachmentHeight.unit"
-        }, {
+          },
+          {
             "name": "midspanHeight",
             "subCollectionPath": "midspanHeight.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "midspanHeightUnit",
             "subCollectionPath": "midspanHeight.unit"
-        }, {
+          },
+          {
             "name": "height",
             "subCollectionPath": "height.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "heightUnit",
             "subCollectionPath": "height.unit"
-        }]
-    }]
-}, {
+          }
+        ]
+      }
+    ]
+  },
+  {
     "typeName": "guy",
     "collection": "designs",
     "idAsAttribute": false,
-    "attributes": [{
+    "attributes": [
+      {
         "name": "poleId",
         "path": "id"
-    }],
-    "subCollections": [{
+      }
+    ],
+    "subCollections": [
+      {
         "subCollectionPath": "calcDesign.structure.guys",
         "includeInDefaultQuery": true,
-        "attributes": [{
+        "attributes": [
+          {
             "name": "id",
-            "concatenate": [{
+            "concatenate": [
+              {
                 "path": "id"
-            }, {
+              },
+              {
                 "subCollectionPath": "id"
-            }]
-        }, {
+              }
+            ]
+          },
+          {
             "name": "owner",
             "subCollectionPath": "owner.id"
-        }, {
+          },
+          {
             "name": "size",
             "subCollectionPath": "clientItem.size"
-        }, {
+          },
+          {
             "name": "coreStrands",
             "subCollectionPath": "clientItem.coreStrands",
             "class": "Long"
-        }, {
+          },
+          {
             "name": "conductorStrands",
             "subCollectionPath": "clientItem.conductorStrands",
             "class": "Long"
-        }, {
+          },
+          {
             "name": "attachmentHeight",
             "subCollectionPath": "attachmentHeight.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "attachmentHeightUnit",
             "subCollectionPath": "attachmentHeight.unit"
-        }]
-    }]
-}, {
+          }
+        ]
+      }
+    ]
+  },
+  {
     "typeName": "insulator",
     "collection": "designs",
     "idAsAttribute": false,
-    "attributes": [{
+    "attributes": [
+      {
         "name": "poleId",
         "path": "id"
-    }],
-    "subCollections": [{
+      }
+    ],
+    "subCollections": [
+      {
         "subCollectionPath": "calcDesign.structure.insulators",
         "includeInDefaultQuery": true,
-        "attributes": [{
+        "attributes": [
+          {
             "name": "id",
-            "concatenate": [{
+            "concatenate": [
+              {
                 "path": "id"
-            }, {
+              },
+              {
                 "subCollectionPath": "id"
-            }]
-        }, {
+              }
+            ]
+          },
+          {
             "name": "owner",
             "subCollectionPath": "owner.id"
-        }, {
+          },
+          {
             "name": "type",
             "subCollectionPath": "clientItem"
-        }, {
+          },
+          {
             "name": "attachmentHeight",
             "subCollectionPath": "attachmentHeight.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "attachmentHeightUnit",
             "subCollectionPath": "attachmentHeight.unit"
-        }, {
+          },
+          {
             "name": "offset",
             "subCollectionPath": "offset.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "offsetUnit",
             "subCollectionPath": "offset.unit"
-        }, {
+          },
+          {
             "name": "direction",
             "subCollectionPath": "direction",
             "class": "Long"
-        }, {
+          },
+          {
             "name": "doubleInsulator",
             "subCollectionPath": "doubleInsulator",
             "class": "Boolean"
-        }]
-    }]
-}, {
+          }
+        ]
+      }
+    ]
+  },
+  {
     "typeName": "equipment",
     "collection": "designs",
     "idAsAttribute": false,
-    "attributes": [{
+    "attributes": [
+      {
         "name": "poleId",
         "path": "id"
-    }],
-    "subCollections": [{
+      }
+    ],
+    "subCollections": [
+      {
         "subCollectionPath": "calcDesign.structure.equipments",
         "includeInDefaultQuery": true,
-        "attributes": [{
+        "attributes": [
+          {
             "name": "id",
-            "concatenate": [{
+            "concatenate": [
+              {
                 "path": "id"
-            }, {
+              },
+              {
                 "subCollectionPath": "id"
-            }]
-        }, {
+              }
+            ]
+          },
+          {
             "name": "owner",
             "subCollectionPath": "owner.id"
-        }, {
+          },
+          {
             "name": "size",
             "subCollectionPath": "clientItem.size"
-        }, {
+          },
+          {
             "name": "type",
             "subCollectionPath": "clientItem.type"
-        }, {
+          },
+          {
             "name": "attachmentHeight",
             "subCollectionPath": "attachmentHeight.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "attachmentHeightUnit",
             "subCollectionPath": "attachmentHeight.unit"
-        }, {
+          },
+          {
             "name": "bottomHeight",
             "subCollectionPath": "bottomHeight.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "bottomHeightUnit",
             "subCollectionPath": "bottomHeight.unit"
-        }, {
+          },
+          {
             "name": "direction",
             "subCollectionPath": "direction",
             "class": "Long"
-        }]
-    }]
-}, {
+          }
+        ]
+      }
+    ]
+  },
+  {
     "typeName": "damage",
     "collection": "designs",
     "idAsAttribute": false,
-    "attributes": [{
+    "attributes": [
+      {
         "name": "poleId",
         "path": "id"
-    }],
-    "subCollections": [{
+      }
+    ],
+    "subCollections": [
+      {
         "subCollectionPath": "calcDesign.structure.damages",
         "includeInDefaultQuery": true,
-        "attributes": [{
+        "attributes": [
+          {
             "name": "id",
-            "concatenate": [{
+            "concatenate": [
+              {
                 "path": "id"
-            }, {
+              },
+              {
                 "subCollectionPath": "id"
-            }]
-        }, {
+              }
+            ]
+          },
+          {
             "name": "attachHeight",
             "subCollectionPath": "attachHeight.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "attachHeightUnit",
             "subCollectionPath": "attachHeight.unit"
-        }, {
+          },
+          {
             "name": "damageHeight",
             "subCollectionPath": "damageHeight.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "damageHeightUnit",
             "subCollectionPath": "damageHeight.unit"
-        }, {
+          },
+          {
             "name": "type",
             "subCollectionPath": "damageType"
-        }, {
+          },
+          {
             "name": "width",
             "subCollectionPath": "width.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "widthUnit",
             "subCollectionPath": "width.unit"
-        }, {
+          },
+          {
             "name": "direction",
             "subCollectionPath": "direction",
             "class": "Long"
-        }, {
+          },
+          {
             "name": "arc",
             "subCollectionPath": "arc.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "arcUnit",
             "subCollectionPath": "arc.unit"
-        }, {
+          },
+          {
             "name": "depth",
             "subCollectionPath": "depth.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "depthUnit",
             "subCollectionPath": "depth.unit"
-        }, {
+          },
+          {
             "name": "circumference",
             "subCollectionPath": "circumference.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "circumferenceUnit",
             "subCollectionPath": "circumference.unit"
-        }, {
+          },
+          {
             "name": "shellThickness",
             "subCollectionPath": "shellThickness.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "shellThicknessUnit",
             "subCollectionPath": "shellThickness.unit"
-        }, {
+          },
+          {
             "name": "neckDepth",
             "subCollectionPath": "neckDepth.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "neckDepthUnit",
             "subCollectionPath": "neckDepth.unit"
-        }, {
+          },
+          {
             "name": "neckDiameter",
             "subCollectionPath": "neckDiameter.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "neckDiameterUnit",
             "subCollectionPath": "neckDiameter.unit"
-        }, {
+          },
+          {
             "name": "neckOffset",
             "subCollectionPath": "neckOffset.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "neckOffsetUnit",
             "subCollectionPath": "neckOffset.unit"
-        }, {
+          },
+          {
             "name": "nestDepth",
             "subCollectionPath": "nestDepth.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "nestDepthUnit",
             "subCollectionPath": "nestDepth.unit"
-        }]
-    }]
-}, {
+          }
+        ]
+      }
+    ]
+  },
+  {
     "typeName": "crossArm",
     "collection": "designs",
     "idAsAttribute": false,
-    "attributes": [{
+    "attributes": [
+      {
         "name": "poleId",
         "path": "id"
-    }],
-    "subCollections": [{
+      }
+    ],
+    "subCollections": [
+      {
         "subCollectionPath": "calcDesign.structure.crossArms",
         "includeInDefaultQuery": true,
-        "attributes": [{
+        "attributes": [
+          {
             "name": "id",
-            "concatenate": [{
+            "concatenate": [
+              {
                 "path": "id"
-            }, {
+              },
+              {
                 "subCollectionPath": "id"
-            }]
-        }, {
+              }
+            ]
+          },
+          {
             "name": "owner",
             "subCollectionPath": "owner.id"
-        }, {
+          },
+          {
             "name": "type",
             "subCollectionPath": "clientItem"
-        }, {
+          },
+          {
             "name": "attachmentHeight",
             "subCollectionPath": "attachmentHeight.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "attachmentHeightUnit",
             "subCollectionPath": "attachmentHeight.unit"
-        }, {
+          },
+          {
             "name": "offset",
             "subCollectionPath": "offset.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "offsetUnit",
             "subCollectionPath": "offset.unit"
-        }, {
+          },
+          {
             "name": "direction",
             "subCollectionPath": "direction",
             "class": "Long"
-        }, {
+          },
+          {
             "name": "associatedBacking",
             "subCollectionPath": "associatedBacking"
-        }]
-    }]
-}, {
+          }
+        ]
+      }
+    ]
+  },
+  {
     "typeName": "anchor",
     "collection": "designs",
     "idAsAttribute": false,
-    "attributes": [{
+    "attributes": [
+      {
         "name": "poleId",
         "path": "id"
-    }],
-    "subCollections": [{
+      }
+    ],
+    "subCollections": [
+      {
         "subCollectionPath": "calcDesign.structure.anchors",
         "includeInDefaultQuery": true,
-        "attributes": [{
+        "attributes": [
+          {
             "name": "id",
-            "concatenate": [{
+            "concatenate": [
+              {
                 "path": "id"
-            }, {
+              },
+              {
                 "subCollectionPath": "id"
-            }]
-        }, {
+              }
+            ]
+          },
+          {
             "name": "distance",
             "subCollectionPath": "distance.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "distanceUnit",
             "subCollectionPath": "distance.unit"
-        }, {
+          },
+          {
             "name": "direction",
             "subCollectionPath": "direction",
             "class": "Long"
-        }, {
+          },
+          {
             "name": "owner",
             "subCollectionPath": "owner.id"
-        }, {
+          },
+          {
             "name": "height",
             "subCollectionPath": "height.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "heightUnit",
             "subCollectionPath": "height.unit"
-        }, {
+          },
+          {
             "name": "supportType",
             "subCollectionPath": "supportType"
-        }, {
+          },
+          {
             "name": "type",
             "subCollectionPath": "clientItem"
-        }]
-    }]
-}, {
+          }
+        ]
+      }
+    ]
+  },
+  {
     "typeName": "wireEndPoint",
     "collection": "designs",
     "idAsAttribute": false,
-    "attributes": [{
+    "attributes": [
+      {
         "name": "poleId",
         "path": "id"
-    }],
-    "subCollections": [{
+      }
+    ],
+    "subCollections": [
+      {
         "subCollectionPath": "calcDesign.structure.wireEndPoints",
         "includeInDefaultQuery": true,
-        "attributes": [{
+        "attributes": [
+          {
             "name": "id",
-            "concatenate": [{
+            "concatenate": [
+              {
                 "path": "id"
-            }, {
+              },
+              {
                 "subCollectionPath": "id"
-            }]
-        }, {
+              }
+            ]
+          },
+          {
             "name": "distance",
             "subCollectionPath": "distance.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "distanceUnit",
             "subCollectionPath": "distance.unit"
-        }, {
+          },
+          {
             "name": "direction",
             "subCollectionPath": "direction",
             "class": "Long"
-        }, {
+          },
+          {
             "name": "inclination",
             "subCollectionPath": "inclination.value",
             "class": "Long"
-        }, {
+          },
+          {
             "name": "inclinationUnit",
             "subCollectionPath": "inclination.unit"
-        }, {
+          },
+          {
             "name": "type",
             "subCollectionPath": "type"
-        }, {
+          },
+          {
             "name": "comments",
             "subCollectionPath": "comments"
-        }]
-    }]
-}, {
+          }
+        ]
+      }
+    ]
+  },
+  {
     "typeName": "notePoint",
     "collection": "designs",
     "idAsAttribute": false,
-    "attributes": [{
+    "attributes": [
+      {
         "name": "poleId",
         "path": "id"
-    }],
-    "subCollections": [{
+      }
+    ],
+    "subCollections": [
+      {
         "subCollectionPath": "calcDesign.structure.notePoints",
         "includeInDefaultQuery": true,
-        "attributes": [{
+        "attributes": [
+          {
             "name": "id",
-            "concatenate": [{
+            "concatenate": [
+              {
                 "path": "id"
-            }, {
+              },
+              {
                 "subCollectionPath": "id"
-            }]
-        }, {
+              }
+            ]
+          },
+          {
             "name": "distance",
             "subCollectionPath": "distance.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "distanceUnit",
             "subCollectionPath": "distance.unit"
-        }, {
+          },
+          {
             "name": "direction",
             "subCollectionPath": "direction",
             "class": "Long"
-        }, {
+          },
+          {
             "name": "note",
             "subCollectionPath": "note"
-        }, {
+          },
+          {
             "name": "height",
             "subCollectionPath": "height.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "heightUnit",
             "subCollectionPath": "height.unit"
-        }]
-    }]
-}, {
+          }
+        ]
+      }
+    ]
+  },
+  {
     "typeName": "pointLoad",
     "collection": "designs",
     "idAsAttribute": false,
-    "attributes": [{
+    "attributes": [
+      {
         "name": "poleId",
         "path": "id"
-    }],
-    "subCollections": [{
+      }
+    ],
+    "subCollections": [
+      {
         "subCollectionPath": "calcDesign.structure.pointLoads",
         "includeInDefaultQuery": true,
-        "attributes": [{
+        "attributes": [
+          {
             "name": "id",
-            "concatenate": [{
+            "concatenate": [
+              {
                 "path": "id"
-            }, {
+              },
+              {
                 "subCollectionPath": "id"
-            }]
-        }, {
+              }
+            ]
+          },
+          {
             "name": "owner",
             "subCollectionPath": "owner.id"
-        }, {
+          },
+          {
             "name": "elevation",
             "subCollectionPath": "elevation.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "elevationUnit",
             "subCollectionPath": "elevation.unit"
-        }, {
+          },
+          {
             "name": "attachmentHeight",
             "subCollectionPath": "attachmentHeight.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "attachmentHeightUnit",
             "subCollectionPath": "attachmentHeight.unit"
-        }, {
+          },
+          {
             "name": "rotation",
             "subCollectionPath": "rotation.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "rotationUnit",
             "subCollectionPath": "rotation.unit"
-        }, {
+          },
+          {
             "name": "x",
             "subCollectionPath": "x.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "xUnit",
             "subCollectionPath": "x.unit"
-        }, {
+          },
+          {
             "name": "y",
             "subCollectionPath": "y.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "yUnit",
             "subCollectionPath": "y.unit"
-        }, {
+          },
+          {
             "name": "z",
             "subCollectionPath": "z.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "zUnit",
             "subCollectionPath": "z.unit"
-        }, {
+          },
+          {
             "name": "fx",
             "subCollectionPath": "fx.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "fxUnit",
             "subCollectionPath": "fx.unit"
-        }, {
+          },
+          {
             "name": "fy",
             "subCollectionPath": "fy.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "fyUnit",
             "subCollectionPath": "fy.unit"
-        }, {
+          },
+          {
             "name": "fz",
             "subCollectionPath": "fz.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "fzUnit",
             "subCollectionPath": "fz.unit"
-        }, {
+          },
+          {
             "name": "mx",
             "subCollectionPath": "mx.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "mxUnit",
             "subCollectionPath": "mx.unit"
-        }, {
+          },
+          {
             "name": "my",
             "subCollectionPath": "my.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "myUnit",
             "subCollectionPath": "my.unit"
-        }, {
+          },
+          {
             "name": "mz",
             "subCollectionPath": "mz.value",
             "class": "Double"
-        }, {
+          },
+          {
             "name": "mzUnit",
             "subCollectionPath": "mz.unit"
-        }]
-    }]
-}]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "typeName": "wirePointLoad",
+    "collection": "designs",
+    "idAsAttribute": false,
+    "attributes": [
+      {
+        "name": "poleId",
+        "path": "id"
+      }
+    ],
+    "subCollections": [
+      {
+        "subCollectionPath": "calcDesign.structure.wirePointLoads",
+        "includeInDefaultQuery": true,
+        "attributes": [
+          {
+            "name": "id",
+            "concatenate": [
+              {
+                "path": "id"
+              },
+              {
+                "subCollectionPath": "id"
+              }
+            ]
+          },
+          {
+            "name": "owner",
+            "subCollectionPath": "owner.id"
+          },
+          {
+            "name": "distance",
+            "subCollectionPath": "distance.value",
+            "class": "Double"
+          },
+          {
+            "name": "distanceUnit",
+            "subCollectionPath": "distance.unit"
+          },
+          {
+            "name": "wire",
+            "subCollectionPath": "wire"
+          },
+          {
+            "name": "XForce",
+            "subCollectionPath": "XForce.value",
+            "class": "Double"
+          },
+          {
+            "name": "XForceUnit",
+            "subCollectionPath": "XForce.unit"
+          },
+          {
+            "name": "YForce",
+            "subCollectionPath": "YForce.value",
+            "class": "Double"
+          },
+          {
+            "name": "YForceUnit",
+            "subCollectionPath": "YForce.unit"
+          },
+          {
+            "name": "ZForce",
+            "subCollectionPath": "ZForce.value",
+            "class": "Double"
+          },
+          {
+            "name": "ZForceUnit",
+            "subCollectionPath": "ZForce.unit"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "typeName": "guyAttachPoint",
+    "collection": "designs",
+    "idAsAttribute": false,
+    "attributes": [
+      {
+        "name": "poleId",
+        "path": "id"
+      }
+    ],
+    "subCollections": [
+      {
+        "subCollectionPath": "calcDesign.structure.guyAttachPoints",
+        "includeInDefaultQuery": true,
+        "attributes": [
+          {
+            "name": "id",
+            "concatenate": [
+              {
+                "path": "id"
+              },
+              {
+                "subCollectionPath": "id"
+              }
+            ]
+          },
+          {
+            "name": "owner",
+            "subCollectionPath": "owner.id"
+          },
+          {
+            "name": "attachHeight",
+            "subCollectionPath": "attachHeight.value",
+            "class": "Double"
+          },
+          {
+            "name": "attachHeightUnit",
+            "subCollectionPath": "attachHeight.unit"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "typeName": "pushBrace",
+    "collection": "designs",
+    "idAsAttribute": false,
+    "attributes": [
+      {
+        "name": "poleId",
+        "path": "id"
+      }
+    ],
+    "subCollections": [
+      {
+        "subCollectionPath": "calcDesign.structure.pushBraces",
+        "includeInDefaultQuery": true,
+        "attributes": [
+          {
+            "name": "id",
+            "concatenate": [
+              {
+                "path": "id"
+              },
+              {
+                "subCollectionPath": "id"
+              }
+            ]
+          },
+          {
+            "name": "owner",
+            "subCollectionPath": "owner.id"
+          },
+          {
+            "name": "attachmentHeight",
+            "subCollectionPath": "attachmentHeight.value",
+            "class": "Double"
+          },
+          {
+            "name": "attachmentHeightUnit",
+            "subCollectionPath": "attachmentHeight.unit"
+          },
+          {
+            "name": "glc",
+            "subCollectionPath": "glc.value",
+            "class": "Double"
+          },
+          {
+            "name": "glcUnit",
+            "subCollectionPath": "glc.unit"
+          },
+          {
+            "name": "distance",
+            "subCollectionPath": "distance.value",
+            "class": "Double"
+          },
+          {
+            "name": "distanceUnit",
+            "subCollectionPath": "distance.unit"
+          },
+          {
+            "name": "direction",
+            "subCollectionPath": "direction",
+            "class": "Double"
+          },
+          {
+            "name": "species",
+            "subCollectionPath": "clientItem.species"
+          },
+          {
+            "name": "class",
+            "subCollectionPath": "clientItem.classOfPole"
+          },
+          {
+            "name": "length",
+            "subCollectionPath": "clientItem.height.value",
+            "class": "Double"
+          },
+          {
+            "name": "lengthUnit",
+            "subCollectionPath": "clientItem.height.unit"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "typeName": "sidewalkBrace",
+    "collection": "designs",
+    "idAsAttribute": false,
+    "attributes": [
+      {
+        "name": "poleId",
+        "path": "id"
+      }
+    ],
+    "subCollections": [
+      {
+        "subCollectionPath": "calcDesign.structure.sidewalkBraces",
+        "includeInDefaultQuery": true,
+        "attributes": [
+          {
+            "name": "id",
+            "concatenate": [
+              {
+                "path": "id"
+              },
+              {
+                "subCollectionPath": "id"
+              }
+            ]
+          },
+          {
+            "name": "owner",
+            "subCollectionPath": "owner.id"
+          },
+          {
+            "name": "attachmentHeight",
+            "subCollectionPath": "attachmentHeight.value",
+            "class": "Double"
+          },
+          {
+            "name": "attachmentHeightUnit",
+            "subCollectionPath": "attachmentHeight.unit"
+          },
+          {
+            "name": "clientItem",
+            "subCollectionPath": "clientItem"
+          },
+          {
+            "name": "length",
+            "subCollectionPath": "length.value",
+            "class": "Double"
+          },
+          {
+            "name": "lengthUnit",
+            "subCollectionPath": "length.unit"
+          },
+          {
+            "name": "direction",
+            "subCollectionPath": "direction",
+            "class": "Double"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "typeName": "foundation",
+    "collection": "designs",
+    "idAsAttribute": false,
+    "attributes": [
+      {
+        "name": "poleId",
+        "path": "id"
+      }
+    ],
+    "subCollections": [
+      {
+        "subCollectionPath": "calcDesign.structure.foundations",
+        "includeInDefaultQuery": true,
+        "attributes": [
+          {
+            "name": "id",
+            "concatenate": [
+              {
+                "path": "id"
+              },
+              {
+                "subCollectionPath": "id"
+              }
+            ]
+          },
+          {
+            "name": "clientItem",
+            "subCollectionPath": "clientItem"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "typeName": "assembly",
+    "collection": "designs",
+    "idAsAttribute": false,
+    "attributes": [
+      {
+        "name": "poleId",
+        "path": "id"
+      }
+    ],
+    "subCollections": [
+      {
+        "subCollectionPath": "calcDesign.structure.assemblies",
+        "includeInDefaultQuery": true,
+        "attributes": [
+          {
+            "name": "id",
+            "concatenate": [
+              {
+                "path": "id"
+              },
+              {
+                "subCollectionPath": "id"
+              }
+            ]
+          },
+          {
+            "name": "clientItem",
+            "subCollectionPath": "clientItem"
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -94,7 +94,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             feature.getAttribute("designType") == "Measured Design"
             feature.getAttribute("locationLabel") == "684704E"
             feature.getAttribute("locationId") == "55fac7fde4b0e7f2e3be342c"
-            feature.getAttribute("clientFile") == "SCE.client"
+            feature.getAttribute("clientFile") == "Acme Power.client"
             feature.getAttribute("clientFileVersion") == "6ee5fba14760878be22701e1b3b7c05b"
             feature.getAttribute("dateModified") == 1442498557079
             feature.getAttribute("glc") == 2.8990375130504664
@@ -121,7 +121,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             feature.getAttribute("loadInfo") == "CSA Heavy"
             feature.getAttribute("locationLabel") == "684704E"
             feature.getAttribute("locationId") == "55fac7fde4b0e7f2e3be342c"
-            feature.getAttribute("clientFile") == "SCE.client"
+            feature.getAttribute("clientFile") == "Acme Power.client"
             feature.getAttribute("clientFileVersion") == "6ee5fba14760878be22701e1b3b7c05b"
             feature.getAttribute("dateModified") == 1442498557079
             feature.getAttribute("glc") == 2.8990375130504664
@@ -345,13 +345,13 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
 
     void testGetWireFeature() {
         setup:
-            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("wire", "designs", CQL.toFilter("owner='AEP'"))
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("wire", "designs", CQL.toFilter("owner='Acme Power'"))
         when:
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 12
-            feature.getAttribute("owner") == "AEP"
+            feature.getAttribute("owner") == "Acme Power"
             feature.getAttribute("size") == "1/0 AAAC"
             feature.getAttribute("coreStrands") == 4
             feature.getAttribute("conductorStrands") == 7
@@ -367,13 +367,13 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
 
     void testLimitWirePropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("wire", "designs", CQL.toFilter("owner='AEP'"), ["owner"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("wire", "designs", CQL.toFilter("owner='Acme Power'"), ["owner"] as String[])
         when:
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 12
-            feature.getAttribute("owner") == "AEP"
+            feature.getAttribute("owner") == "Acme Power"
             feature.getAttribute("size") == null
             feature.getAttribute("coreStrands") == null
             feature.getAttribute("conductorStrands") == null
@@ -423,7 +423,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 11
-            feature.getAttribute("owner") == "AEP"
+            feature.getAttribute("owner") == "Acme Power"
             feature.getAttribute("size") == "3/8\" EHS"
             feature.getAttribute("coreStrands") == 1
             feature.getAttribute("conductorStrands") == 7
@@ -438,13 +438,13 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
 
     void testLimitSpanGuyPropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("spanGuy", "designs", CQL.toFilter("owner='AEP'"), ["owner"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("spanGuy", "designs", CQL.toFilter("owner='Acme Power'"), ["owner"] as String[])
         when:
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 11
-            feature.getAttribute("owner") == "AEP"
+            feature.getAttribute("owner") == "Acme Power"
             feature.getAttribute("size") == null
             feature.getAttribute("coreStrands") == null
             feature.getAttribute("conductorStrands") == null
@@ -465,7 +465,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 7
-            feature.getAttribute("owner") == "AEP"
+            feature.getAttribute("owner") == "Acme Power"
             feature.getAttribute("size") == "3/8\" EHS"
             feature.getAttribute("coreStrands") == 1
             feature.getAttribute("conductorStrands") == 7
@@ -476,13 +476,13 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
 
     void testLimitGuyPropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("guy", "designs", CQL.toFilter("owner='AEP'"), ["owner"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("guy", "designs", CQL.toFilter("owner='Acme Power'"), ["owner"] as String[])
         when:
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 7
-            feature.getAttribute("owner") == "AEP"
+            feature.getAttribute("owner") == "Acme Power"
             feature.getAttribute("size") == null
             feature.getAttribute("coreStrands") == null
             feature.getAttribute("conductorStrands") == null
@@ -499,7 +499,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 9
-            feature.getAttribute("owner") == "AEP"
+            feature.getAttribute("owner") == "Acme Power"
             feature.getAttribute("type") == "15kV Dead End Insulator"
             feature.getAttribute("attachmentHeight") == 27.083333333333332
             feature.getAttribute("attachmentHeightUnit") == "FOOT"
@@ -512,13 +512,13 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
 
     void testLimitInsulatorPropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("insulator", "designs", CQL.toFilter("owner='AEP'"), ["owner"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("insulator", "designs", CQL.toFilter("owner='Acme Power'"), ["owner"] as String[])
         when:
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 9
-            feature.getAttribute("owner") == "AEP"
+            feature.getAttribute("owner") == "Acme Power"
             feature.getAttribute("type") == null
             feature.getAttribute("attachmentHeight") == null
             feature.getAttribute("attachmentHeightUnit") == null
@@ -537,7 +537,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 9
-            feature.getAttribute("owner") == "AEP"
+            feature.getAttribute("owner") == "Acme Power"
             feature.getAttribute("size") == "1 Cutout"
             feature.getAttribute("type") == "CUTOUT_ARRESTOR"
             feature.getAttribute("attachmentHeight") == 24.75
@@ -645,7 +645,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 9
-            feature.getAttribute("owner") == "AEP"
+            feature.getAttribute("owner") == "Acme Power"
             feature.getAttribute("type") == "8 Foot Cross Arm"
             feature.getAttribute("attachmentHeight") == 32.666666666666664
             feature.getAttribute("attachmentHeightUnit") == "FOOT"
@@ -664,7 +664,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 9
-            feature.getAttribute("owner") == "AEP"
+            feature.getAttribute("owner") == "Acme Power"
             feature.getAttribute("type") == null
             feature.getAttribute("attachmentHeight") == null
             feature.getAttribute("attachmentHeightUnit") == null
@@ -686,7 +686,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             feature.getAttribute("distance") == 12
             feature.getAttribute("distanceUnit") == "FOOT"
             feature.getAttribute("direction") == 122
-            feature.getAttribute("owner") == "AEP"
+            feature.getAttribute("owner") == "Acme Power"
             feature.getAttribute("height") == 0
             feature.getAttribute("heightUnit") == "FOOT"
             feature.getAttribute("supportType") == "Other"
@@ -706,7 +706,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             feature.getAttribute("distanceUnit") == null
             feature.getAttribute("direction") == null
             feature.getAttribute("directionUnit") == null
-            feature.getAttribute("owner") == "AEP"
+            feature.getAttribute("owner") == "Acme Power"
             feature.getAttribute("height") == null
             feature.getAttribute("supportType") == null
             feature.getAttribute("type") == null
@@ -791,7 +791,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
         then:
             mongoDBSubCollectionFeatureCollection.size() == 1
             feature.attributeCount == 26
-            feature.getAttribute("owner") == "SCE"
+            feature.getAttribute("owner") == "Acme Power"
             feature.getAttribute("elevation") == 0
             feature.getAttribute("elevationUnit") == "DEGREE_ANGLE"
             feature.getAttribute("attachmentHeight") == 32
@@ -827,7 +827,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 26
-            feature.getAttribute("owner") == "SCE"
+            feature.getAttribute("owner") == "Acme Power"
             feature.getAttribute("elevation") == null
             feature.getAttribute("elevationUnit") == null
             feature.getAttribute("attachmentHeight") == null

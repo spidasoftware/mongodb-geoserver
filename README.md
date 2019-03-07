@@ -1,15 +1,32 @@
 # mongodb-geoserver
 A [MongoDB](https://www.mongodb.com/) plugin for [Geoserver](http://geoserver.org/).
 
-### To setup:
+Download [Geoserver 2.8.3](http://geoserver.org/release/2.8.3/)
+
+### To setup a dev environment:
 1. Download deployment from [here](https://dev.spidasoftware.com/artifactory/exposed-repo/com/spidasoftware/mongodb-geoserver/)
 2. Unzip the deployment
 3. Move the groovy jar, the mongo java driver jar and the mongodb-geoserver jar into  geoserver/WEB-INF/lib
 4. Restart geoserver.
 
-### To add a store
+### Add a store and layers for development
 1. Create a mapping file that includes a mapping for each mongo collection that will be published.
-2. Add the store in Geoserver, adding the MongoDB connection parameters and the path to the mapping file.
+2. In geoserver, click "Workspaces", then click "Add new workspace"
+3. Set the name to "DB" and the Namespace URI to "http://spida/db" and check Default Workspace
+4. In geoserver, click "Stores", then click "Add new Store", then click "Mongo DB"
+5. Select the DB workspace, name it SPIDADB, set MongoDB connection parameters, and the path to the mapping file.
+6. If automatically brought to the layers page to publish layers, skip the next step
+7. In geoserver, click "Layers", then click "Add new resource", then select "DB:SPIDADB"
+8. Publish each layer.  Set Declared SRS to "EPSG:4326" and bounding box values all to 1
+
+NOTE: When min builds this is all done automatically by copying files from [min/scripts/docker/tomcat/geoserver](https://github.com/spidasoftware/min/tree/master/scripts/docker/tomcat/geoserver)
+
+### Point projectmanager at geoserver
+
+1. [Uncomment url](https://github.com/spidasoftware/min/blob/master/projectmanager/deployments/dev/projectmanagerConfig.groovy#L77) 
+so that asset service bean gets created.
+2. Start projectmanager
+3. Edit a permission group and add the spida db asset service.
 
 ### Mapping file
 The mapping file will map a feature collection to a mongo collection.  If there is multiple objects nested in a collection each nested object can be published as a feature.  Here is an example [mapping.json](src/test/resources/mapping.json) file.  There is also a [location.json](src/test/resources/location.json) and [design.json](src/test/resources/design.json) that the mapping file and tests use.

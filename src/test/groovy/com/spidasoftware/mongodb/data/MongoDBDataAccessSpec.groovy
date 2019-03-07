@@ -27,7 +27,7 @@ class MongoDBDataAccessSpec extends Specification {
         when:
             List<Name> names = mongoDBDataAccess.getNames()
         then:
-            names.size() == 20
+            names.size() == 26
             names.findAll { it.localPart == "location" }.size() == 1
             names.findAll { it.localPart == "poleTag" }.size() == 1
             names.findAll { it.localPart == "remedy" }.size() == 1
@@ -48,6 +48,12 @@ class MongoDBDataAccessSpec extends Specification {
             names.findAll { it.localPart == "wireEndPoint" }.size() == 1
             names.findAll { it.localPart == "notePoint" }.size() == 1
             names.findAll { it.localPart == "pointLoad" }.size() == 1
+            names.findAll { it.localPart == "wirePointLoad" }.size() == 1
+            names.findAll { it.localPart == "guyAttachPoint" }.size() == 1
+            names.findAll { it.localPart == "pushBrace" }.size() == 1
+            names.findAll { it.localPart == "sidewalkBrace" }.size() == 1
+            names.findAll { it.localPart == "foundation" }.size() == 1
+            names.findAll { it.localPart == "assembly" }.size() == 1
     }
 
     void "test can get schema for every type"() {
@@ -437,6 +443,100 @@ class MongoDBDataAccessSpec extends Specification {
             featureType.getDescriptor("myUnit").type.binding == String
             featureType.getDescriptor("mz").type.binding == Double
             featureType.getDescriptor("mzUnit").type.binding == String
+            featureType.getDescriptor("poleId").type.binding == String
+    }
+
+    void "test wirePointLoad feature type"() {
+        when:
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "wirePointLoad"))
+        then:
+            featureType.coordinateReferenceSystem == null
+            featureType.getGeometryDescriptor() == null
+            featureType.getName().getLocalPart() == "wirePointLoad"
+            featureType.getDescriptor("owner").type.binding == String
+            featureType.getDescriptor("wire").type.binding == String
+            featureType.getDescriptor("distance").type.binding == Double
+            featureType.getDescriptor("distanceUnit").type.binding == String
+            featureType.getDescriptor("XForce").type.binding == Double
+            featureType.getDescriptor("XForceUnit").type.binding == String
+            featureType.getDescriptor("YForce").type.binding == Double
+            featureType.getDescriptor("YForceUnit").type.binding == String
+            featureType.getDescriptor("ZForce").type.binding == Double
+            featureType.getDescriptor("ZForceUnit").type.binding == String
+            featureType.getDescriptor("poleId").type.binding == String
+    }
+
+    void "test guyAttachPoint feature type"() {
+        when:
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "guyAttachPoint"))
+        then:
+            featureType.coordinateReferenceSystem == null
+            featureType.getGeometryDescriptor() == null
+            featureType.getName().getLocalPart() == "guyAttachPoint"
+            featureType.getDescriptor("owner").type.binding == String
+            featureType.getDescriptor("attachHeight").type.binding == Double
+            featureType.getDescriptor("attachHeightUnit").type.binding == String
+            featureType.getDescriptor("poleId").type.binding == String
+    }
+
+    void "test pushBrace feature type"() {
+        when:
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "pushBrace"))
+        then:
+            featureType.coordinateReferenceSystem == null
+            featureType.getGeometryDescriptor() == null
+            featureType.getName().getLocalPart() == "pushBrace"
+            featureType.getDescriptor("owner").type.binding == String
+            featureType.getDescriptor("attachmentHeight").type.binding == Double
+            featureType.getDescriptor("attachmentHeightUnit").type.binding == String
+            featureType.getDescriptor("glc").type.binding == Double
+            featureType.getDescriptor("glcUnit").type.binding == String
+            featureType.getDescriptor("distance").type.binding == Double
+            featureType.getDescriptor("distanceUnit").type.binding == String
+            featureType.getDescriptor("direction").type.binding == Double
+            featureType.getDescriptor("species").type.binding == String
+            featureType.getDescriptor("class").type.binding == String
+            featureType.getDescriptor("length").type.binding == Double
+            featureType.getDescriptor("lengthUnit").type.binding == String
+            featureType.getDescriptor("poleId").type.binding == String
+    }
+
+    void "test sidewalkBrace feature type"() {
+        when:
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "sidewalkBrace"))
+        then:
+            featureType.coordinateReferenceSystem == null
+            featureType.getGeometryDescriptor() == null
+            featureType.getName().getLocalPart() == "sidewalkBrace"
+            featureType.getDescriptor("owner").type.binding == String
+            featureType.getDescriptor("attachmentHeight").type.binding == Double
+            featureType.getDescriptor("attachmentHeightUnit").type.binding == String
+            featureType.getDescriptor("clientItem").type.binding == String
+            featureType.getDescriptor("length").type.binding == Double
+            featureType.getDescriptor("lengthUnit").type.binding == String
+            featureType.getDescriptor("direction").type.binding == Double
+            featureType.getDescriptor("poleId").type.binding == String
+    }
+
+    void "test foundation feature type"() {
+        when:
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "foundation"))
+        then:
+            featureType.coordinateReferenceSystem == null
+            featureType.getGeometryDescriptor() == null
+            featureType.getName().getLocalPart() == "foundation"
+            featureType.getDescriptor("clientItem").type.binding == String
+            featureType.getDescriptor("poleId").type.binding == String
+    }
+
+    void "test assembly feature type"() {
+        when:
+            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "assembly"))
+        then:
+            featureType.coordinateReferenceSystem == null
+            featureType.getGeometryDescriptor() == null
+            featureType.getName().getLocalPart() == "assembly"
+            featureType.getDescriptor("clientItem").type.binding == String
             featureType.getDescriptor("poleId").type.binding == String
     }
 }
