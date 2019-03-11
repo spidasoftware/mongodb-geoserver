@@ -19,6 +19,8 @@ Download [Geoserver 2.8.3](http://geoserver.org/release/2.8.3/)
 7. In geoserver, click "Layers", then click "Add new resource", then select "DB:SPIDADB"
 8. Publish each layer.  Set Declared SRS to "EPSG:4326" and bounding box values all to 1
 
+You can see all types and properties [at this geoserver url](http://localhost:8080/geoserver/DB/wfs?service=wfs&version=1.1.0&request=DescribeFeatureType).
+
 NOTE: When min builds this is all done automatically by copying files from [min/scripts/docker/tomcat/geoserver](https://github.com/spidasoftware/min/tree/master/scripts/docker/tomcat/geoserver)
 
 ### Point projectmanager at geoserver
