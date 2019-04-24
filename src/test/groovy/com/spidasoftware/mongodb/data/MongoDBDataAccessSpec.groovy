@@ -356,7 +356,6 @@ class MongoDBDataAccessSpec extends Specification {
             featureType.getDescriptor("offset").type.binding == Double
             featureType.getDescriptor("offsetUnit").type.binding == String
             featureType.getDescriptor("direction").type.binding == Long
-            featureType.getDescriptor("associatedBacking").type.binding == String
             featureType.getDescriptor("poleId").type.binding == String
     }
 
@@ -373,7 +372,6 @@ class MongoDBDataAccessSpec extends Specification {
             featureType.getDescriptor("owner").type.binding == String
             featureType.getDescriptor("height").type.binding == Double
             featureType.getDescriptor("heightUnit").type.binding == String
-            featureType.getDescriptor("supportType").type.binding == String
             featureType.getDescriptor("type").type.binding == String
             featureType.getDescriptor("poleId").type.binding == String
     }

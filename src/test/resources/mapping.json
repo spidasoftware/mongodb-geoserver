@@ -1088,10 +1088,6 @@
             "name": "direction",
             "subCollectionPath": "direction",
             "class": "Long"
-          },
-          {
-            "name": "associatedBacking",
-            "subCollectionPath": "associatedBacking"
           }
         ]
       }
@@ -1149,10 +1145,6 @@
           {
             "name": "heightUnit",
             "subCollectionPath": "height.unit"
-          },
-          {
-            "name": "supportType",
-            "subCollectionPath": "supportType"
           },
           {
             "name": "type",

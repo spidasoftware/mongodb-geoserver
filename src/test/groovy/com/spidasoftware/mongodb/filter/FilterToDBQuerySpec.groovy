@@ -1104,9 +1104,6 @@ class FilterToDBQuerySpec extends Specification {
             "direction lte exists"                 | CQL.toFilter("direction<=60")                        | new BasicDBObject("calcDesign.structure.crossArms.direction", new BasicDBObject('$lte', 60))                              | 1
             "direction lte doesn't exist"          | CQL.toFilter("direction<=10")                        | new BasicDBObject("calcDesign.structure.crossArms.direction", new BasicDBObject('$lte', 10))                              | 0
 
-            "associatedBacking that exists"        | CQL.toFilter("associatedBacking='Other'")            | new BasicDBObject("calcDesign.structure.crossArms.associatedBacking", "Other")                                            | 1
-            "associatedBacking that doesn't exist" | CQL.toFilter("associatedBacking='TEST'")             | new BasicDBObject("calcDesign.structure.crossArms.associatedBacking", "TEST")                                             | 0
-
             "poleId that exists"                   | CQL.toFilter("poleId='56e9b7137d84511d8dd0f13c'")    | new BasicDBObject("id", "56e9b7137d84511d8dd0f13c")                                                                       | 1
             "poleId that doesn't exist"            | CQL.toFilter("poleId='Measured Design'")             | new BasicDBObject("id", "Measured Design")                                                                                | 0
     }
@@ -1163,9 +1160,6 @@ class FilterToDBQuerySpec extends Specification {
             "height lt doesn't exist"        | CQL.toFilter("height<0")                          | new BasicDBObject("calcDesign.structure.anchors.height.value", new BasicDBObject('$lt', 0))     | 0
             "height lte exists"              | CQL.toFilter("height<=12")                        | new BasicDBObject("calcDesign.structure.anchors.height.value", new BasicDBObject('$lte', 12))   | 1
             "height lte doesn't exist"       | CQL.toFilter("height<=-1")                        | new BasicDBObject("calcDesign.structure.anchors.height.value", new BasicDBObject('$lte', -1))   | 0
-
-            "supportType that exists"        | CQL.toFilter("supportType='Other'")               | new BasicDBObject("calcDesign.structure.anchors.supportType", "Other")                          | 1
-            "supportType that doesn't exist" | CQL.toFilter("supportType='TEST'")                | new BasicDBObject("calcDesign.structure.anchors.supportType", "TEST")                           | 0
 
             "type that exists"               | CQL.toFilter("type='Single'")                     | new BasicDBObject("calcDesign.structure.anchors.clientItem", "Single")                          | 1
             "type that doesn't exist"        | CQL.toFilter("type='TEST'")                       | new BasicDBObject("calcDesign.structure.anchors.clientItem", "TEST")                            | 0

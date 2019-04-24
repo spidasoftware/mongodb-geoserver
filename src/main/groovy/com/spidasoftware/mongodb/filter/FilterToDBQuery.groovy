@@ -363,11 +363,12 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
     @Override
     Object visit(Not filter, Object extraData) {
         BasicDBObject expr = (BasicDBObject) filter.getFilter().accept(this, null)
+        def key = expr.keySet().first()
+        def val = expr.get(key)
         if (filter.getFilter() instanceof PropertyIsEqualTo) {
-            def key = expr.keySet().first()
-            return new BasicDBObject(key, new BasicDBObject('$ne', expr.get(key)))
+            return new BasicDBObject(key, new BasicDBObject('$ne', val))
         }
-        return new BasicDBObject('$not': expr)
+        return new BasicDBObject(key, new BasicDBObject('$not': val))
     }
 
     @Override
