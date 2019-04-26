@@ -15,7 +15,7 @@
         "path": "id"
       },
       {
-        "name": "label",
+        "name": "name",
         "path": "calcLocation.label"
       },
       {
@@ -81,6 +81,23 @@
         "name": "technician",
         "path": "calcLocation.technician"
       }
+    ]
+  },
+  {
+    "typeName": "poleTag",
+    "collection": "locations",
+    "idAsAttribute": false,
+    "geometry": {
+      "name": "geographicCoordinate",
+      "crs": "urn:ogc:def:crs:EPSG:4326",
+      "path": "calcLocation.geographicCoordinate"
+    },
+    "displayGeometry": false,
+    "attributes": [
+      {
+        "name": "locationId",
+        "path": "id"
+      }
     ],
     "subCollections": [
       {
@@ -99,11 +116,11 @@
             ]
           },
           {
-            "name": "poleTagType",
+            "name": "type",
             "subCollectionPath": "type"
           },
           {
-            "name": "poleTagValue",
+            "name": "value",
             "subCollectionPath": "value"
           }
         ]
@@ -150,8 +167,7 @@
         "attributes": [
           {
             "name": "value",
-            "stringValue": true,
-            "subCollectionPath": ""
+            "subCollectionPath": "description"
           }
         ]
       }
@@ -744,7 +760,7 @@
             "subCollectionPath": "owner.id"
           },
           {
-            "name": "type",
+            "name": "size",
             "subCollectionPath": "clientItem"
           },
           {
@@ -1013,7 +1029,7 @@
             "subCollectionPath": "owner.id"
           },
           {
-            "name": "clientItem",
+            "name": "size",
             "subCollectionPath": "clientItem"
           },
           {
@@ -1097,7 +1113,7 @@
             "subCollectionPath": "height.unit"
           },
           {
-            "name": "clientItem",
+            "name": "size",
             "subCollectionPath": "clientItem"
           }
         ]
@@ -1431,10 +1447,6 @@
           {
             "name": "species",
             "subCollectionPath": "clientItem.species"
-          },
-          {
-            "name": "lengthUnit",
-            "subCollectionPath": "clientItem.height.unit"
           }
         ]
       }
@@ -1480,7 +1492,7 @@
             "subCollectionPath": "attachmentHeight.unit"
           },
           {
-            "name": "clientItem",
+            "name": "size",
             "subCollectionPath": "clientItem"
           },
           {
@@ -1528,7 +1540,7 @@
             ]
           },
           {
-            "name": "clientItem",
+            "name": "name",
             "subCollectionPath": "clientItem"
           }
         ]
@@ -1562,7 +1574,7 @@
             ]
           },
           {
-            "name": "clientItem",
+            "name": "code",
             "subCollectionPath": "clientItem"
           }
         ]
