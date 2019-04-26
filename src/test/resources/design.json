@@ -134,53 +134,21 @@
                         "industry": "UTILITY",
                         "externalId": "b2ad09d4-7ddb-4c68-be8e-60c57cd3bcd0"
                     },
-                    "elevation": {
-                        "unit": "DEGREE_ANGLE",
-                        "value": 0
-                    },
-                    "attachmentHeight": {
+                    "attachHeight": {
                         "unit": "FOOT",
                         "value": 32
                     },
-                    "rotation": {
-                        "unit": "DEGREE_ANGLE",
-                        "value": 0
-                    },
-                    "x": {
+                    "XForce": {
                         "unit": "FOOT",
                         "value": 0
                     },
-                    "y": {
+                    "YForce": {
                         "unit": "FOOT",
                         "value": 0
                     },
-                    "z": {
+                    "ZForce": {
                         "unit": "FOOT",
                         "value": 32.666666666666664
-                    },
-                    "fx": {
-                        "unit": "POUND_FORCE",
-                        "value": 73.92457179425563
-                    },
-                    "fy": {
-                        "unit": "POUND_FORCE",
-                        "value": 241.92570549706124
-                    },
-                    "fz": {
-                        "unit": "POUND_FORCE",
-                        "value": -7.177126069505941
-                    },
-                    "mx": {
-                        "unit": "POUND_FORCE_FOOT",
-                        "value": 0
-                    },
-                    "my": {
-                        "unit": "POUND_FORCE_FOOT",
-                        "value": 0
-                    },
-                    "mz": {
-                        "unit": "POUND_FORCE_FOOT",
-                        "value": 0
                     }
                 }
             ],

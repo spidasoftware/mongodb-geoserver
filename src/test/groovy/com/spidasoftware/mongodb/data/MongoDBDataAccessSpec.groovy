@@ -27,7 +27,7 @@ class MongoDBDataAccessSpec extends Specification {
         when:
             List<Name> names = mongoDBDataAccess.getNames()
         then:
-            names.size() == 26
+            names.size() == 25
             names.findAll { it.localPart == "location" }.size() == 1
             names.findAll { it.localPart == "poleTag" }.size() == 1
             names.findAll { it.localPart == "remedy" }.size() == 1
@@ -49,7 +49,6 @@ class MongoDBDataAccessSpec extends Specification {
             names.findAll { it.localPart == "notePoint" }.size() == 1
             names.findAll { it.localPart == "pointLoad" }.size() == 1
             names.findAll { it.localPart == "wirePointLoad" }.size() == 1
-            names.findAll { it.localPart == "guyAttachPoint" }.size() == 1
             names.findAll { it.localPart == "pushBrace" }.size() == 1
             names.findAll { it.localPart == "sidewalkBrace" }.size() == 1
             names.findAll { it.localPart == "foundation" }.size() == 1
@@ -71,13 +70,12 @@ class MongoDBDataAccessSpec extends Specification {
             featureType.getGeometryDescriptor().getName().getLocalPart() == "geographicCoordinate"
             featureType.getName().getLocalPart() == "location"
             featureType.getDescriptor("id").type.binding == String
-            featureType.getDescriptor("label").type.binding == String
+            featureType.getDescriptor("name").type.binding == String
             featureType.getDescriptor("projectId").type.binding == String
             featureType.getDescriptor("projectName").type.binding == String
             featureType.getDescriptor("dateModified").type.binding == Long
             featureType.getDescriptor("clientFile").type.binding == String
             featureType.getDescriptor("clientFileVersion").type.binding == String
-            featureType.getDescriptor("mapNumber").type.binding == String
             featureType.getDescriptor("comments").type.binding == String
             featureType.getDescriptor("streetNumber").type.binding == String
             featureType.getDescriptor("street").type.binding == String
@@ -85,7 +83,9 @@ class MongoDBDataAccessSpec extends Specification {
             featureType.getDescriptor("state").type.binding == String
             featureType.getDescriptor("zipCode").type.binding == String
             featureType.getDescriptor("county").type.binding == String
-            featureType.getDescriptor("user").type.binding == String
+            featureType.getDescriptor("technician").type.binding == String
+            featureType.getDescriptor("latitude").type.binding == Double
+            featureType.getDescriptor("longitude").type.binding == Double
     }
 
     void "test poleTag feature type"() {
@@ -155,22 +155,13 @@ class MongoDBDataAccessSpec extends Specification {
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
             featureType.getName().getLocalPart() == "analysis"
-            featureType.getDescriptor("designType").type.binding == String
+            featureType.getDescriptor("designLayerName").type.binding == String
             featureType.getDescriptor("loadInfo").type.binding == String
-            featureType.getDescriptor("locationLabel").type.binding == String
+            featureType.getDescriptor("locationName").type.binding == String
             featureType.getDescriptor("locationId").type.binding == String
             featureType.getDescriptor("clientFile").type.binding == String
             featureType.getDescriptor("clientFileVersion").type.binding == String
             featureType.getDescriptor("dateModified").type.binding == Long
-            featureType.getDescriptor("glc").type.binding == Double
-            featureType.getDescriptor("glcUnit").type.binding == String
-            featureType.getDescriptor("agl").type.binding == Double
-            featureType.getDescriptor("aglUnit").type.binding == String
-            featureType.getDescriptor("species").type.binding == String
-            featureType.getDescriptor("class").type.binding == String
-            featureType.getDescriptor("length").type.binding == Double
-            featureType.getDescriptor("lengthUnit").type.binding == String
-            featureType.getDescriptor("owner").type.binding == String
             featureType.getDescriptor("actual").type.binding == Double
             featureType.getDescriptor("allowable").type.binding == Double
             featureType.getDescriptor("unit").type.binding == String
@@ -189,8 +180,8 @@ class MongoDBDataAccessSpec extends Specification {
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
             featureType.getName().getLocalPart() == "pole"
-            featureType.getDescriptor("designType").type.binding == String
-            featureType.getDescriptor("locationLabel").type.binding == String
+            featureType.getDescriptor("designLayerName").type.binding == String
+            featureType.getDescriptor("locationName").type.binding == String
             featureType.getDescriptor("locationId").type.binding == String
             featureType.getDescriptor("clientFile").type.binding == String
             featureType.getDescriptor("clientFileVersion").type.binding == String
@@ -350,7 +341,7 @@ class MongoDBDataAccessSpec extends Specification {
             featureType.getGeometryDescriptor() == null
             featureType.getName().getLocalPart() == "crossArm"
             featureType.getDescriptor("owner").type.binding == String
-            featureType.getDescriptor("type").type.binding == String
+            featureType.getDescriptor("size").type.binding == String
             featureType.getDescriptor("attachmentHeight").type.binding == Double
             featureType.getDescriptor("attachmentHeightUnit").type.binding == String
             featureType.getDescriptor("offset").type.binding == Double
@@ -372,7 +363,7 @@ class MongoDBDataAccessSpec extends Specification {
             featureType.getDescriptor("owner").type.binding == String
             featureType.getDescriptor("height").type.binding == Double
             featureType.getDescriptor("heightUnit").type.binding == String
-            featureType.getDescriptor("type").type.binding == String
+            featureType.getDescriptor("size").type.binding == String
             featureType.getDescriptor("poleId").type.binding == String
     }
 
@@ -417,30 +408,14 @@ class MongoDBDataAccessSpec extends Specification {
             featureType.getGeometryDescriptor() == null
             featureType.getName().getLocalPart() == "pointLoad"
             featureType.getDescriptor("owner").type.binding == String
-            featureType.getDescriptor("elevation").type.binding == Double
-            featureType.getDescriptor("elevationUnit").type.binding == String
-            featureType.getDescriptor("attachmentHeight").type.binding == Double
-            featureType.getDescriptor("attachmentHeightUnit").type.binding == String
-            featureType.getDescriptor("rotation").type.binding == Double
-            featureType.getDescriptor("rotationUnit").type.binding == String
-            featureType.getDescriptor("x").type.binding == Double
-            featureType.getDescriptor("xUnit").type.binding == String
-            featureType.getDescriptor("y").type.binding == Double
-            featureType.getDescriptor("yUnit").type.binding == String
-            featureType.getDescriptor("z").type.binding == Double
-            featureType.getDescriptor("zUnit").type.binding == String
-            featureType.getDescriptor("fx").type.binding == Double
-            featureType.getDescriptor("fxUnit").type.binding == String
-            featureType.getDescriptor("fy").type.binding == Double
-            featureType.getDescriptor("fyUnit").type.binding == String
-            featureType.getDescriptor("fz").type.binding == Double
-            featureType.getDescriptor("fzUnit").type.binding == String
-            featureType.getDescriptor("mx").type.binding == Double
-            featureType.getDescriptor("mxUnit").type.binding == String
-            featureType.getDescriptor("my").type.binding == Double
-            featureType.getDescriptor("myUnit").type.binding == String
-            featureType.getDescriptor("mz").type.binding == Double
-            featureType.getDescriptor("mzUnit").type.binding == String
+            featureType.getDescriptor("attachHeight").type.binding == Double
+            featureType.getDescriptor("attachHeightUnit").type.binding == String
+            featureType.getDescriptor("XForce").type.binding == Double
+            featureType.getDescriptor("XForceUnit").type.binding == String
+            featureType.getDescriptor("YForce").type.binding == Double
+            featureType.getDescriptor("YForceUnit").type.binding == String
+            featureType.getDescriptor("ZForce").type.binding == Double
+            featureType.getDescriptor("ZForceUnit").type.binding == String
             featureType.getDescriptor("poleId").type.binding == String
     }
 
@@ -464,19 +439,6 @@ class MongoDBDataAccessSpec extends Specification {
             featureType.getDescriptor("poleId").type.binding == String
     }
 
-    void "test guyAttachPoint feature type"() {
-        when:
-            FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "guyAttachPoint"))
-        then:
-            featureType.coordinateReferenceSystem == null
-            featureType.getGeometryDescriptor() == null
-            featureType.getName().getLocalPart() == "guyAttachPoint"
-            featureType.getDescriptor("owner").type.binding == String
-            featureType.getDescriptor("attachHeight").type.binding == Double
-            featureType.getDescriptor("attachHeightUnit").type.binding == String
-            featureType.getDescriptor("poleId").type.binding == String
-    }
-
     void "test pushBrace feature type"() {
         when:
             FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "pushBrace"))
@@ -493,9 +455,6 @@ class MongoDBDataAccessSpec extends Specification {
             featureType.getDescriptor("distanceUnit").type.binding == String
             featureType.getDescriptor("direction").type.binding == Double
             featureType.getDescriptor("species").type.binding == String
-            featureType.getDescriptor("class").type.binding == String
-            featureType.getDescriptor("length").type.binding == Double
-            featureType.getDescriptor("lengthUnit").type.binding == String
             featureType.getDescriptor("poleId").type.binding == String
     }
 
@@ -509,7 +468,7 @@ class MongoDBDataAccessSpec extends Specification {
             featureType.getDescriptor("owner").type.binding == String
             featureType.getDescriptor("attachmentHeight").type.binding == Double
             featureType.getDescriptor("attachmentHeightUnit").type.binding == String
-            featureType.getDescriptor("clientItem").type.binding == String
+            featureType.getDescriptor("size").type.binding == String
             featureType.getDescriptor("length").type.binding == Double
             featureType.getDescriptor("lengthUnit").type.binding == String
             featureType.getDescriptor("direction").type.binding == Double
@@ -523,7 +482,7 @@ class MongoDBDataAccessSpec extends Specification {
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
             featureType.getName().getLocalPart() == "foundation"
-            featureType.getDescriptor("clientItem").type.binding == String
+            featureType.getDescriptor("name").type.binding == String
             featureType.getDescriptor("poleId").type.binding == String
     }
 
@@ -534,7 +493,7 @@ class MongoDBDataAccessSpec extends Specification {
             featureType.coordinateReferenceSystem == null
             featureType.getGeometryDescriptor() == null
             featureType.getName().getLocalPart() == "assembly"
-            featureType.getDescriptor("clientItem").type.binding == String
+            featureType.getDescriptor("code").type.binding == String
             featureType.getDescriptor("poleId").type.binding == String
     }
 }
