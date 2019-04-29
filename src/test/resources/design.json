@@ -9,6 +9,7 @@
     "clientFileVersion": "6ee5fba14760878be22701e1b3b7c05b",
     "calcDesign": {
         "label": "Measured Design",
+        "layerType": "Measured",
         "structure": {
             "pole": {
                 "glc": {

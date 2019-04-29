@@ -90,8 +90,9 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 16
+            feature.attributeCount == 17
             feature.getAttribute("designLayerName") == "Measured Design"
+            feature.getAttribute("designLayerType") == "Measured"
             feature.getAttribute("locationName") == "684704E"
             feature.getAttribute("locationId") == "55fac7fde4b0e7f2e3be342c"
             feature.getAttribute("clientFile") == "Acme Power.client"
@@ -116,8 +117,9 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 16
+            feature.attributeCount == 17
             feature.getAttribute("designLayerName") == "Measured Design"
+            feature.getAttribute("designLayerType") == "Measured"
             feature.getAttribute("loadInfo") == "CSA Heavy"
             feature.getAttribute("locationName") == "684704E"
             feature.getAttribute("locationId") == "55fac7fde4b0e7f2e3be342c"
@@ -162,8 +164,9 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 16
+            feature.attributeCount == 17
             feature.getAttribute("designLayerName") == "Measured Design"
+            feature.getAttribute("designLayerType") == null
             feature.getAttribute("locationName") == null
             feature.getAttribute("locationId") == null
             feature.getAttribute("clientFile") == null
@@ -188,9 +191,10 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 16
+            feature.attributeCount == 17
             feature.getAttribute("assetType") == null
             feature.getAttribute("designLayerName") == null
+            feature.getAttribute("designLayerType") == null
             feature.getAttribute("loadInfo") ==null
             feature.getAttribute("locationName") == null
             feature.getAttribute("locationId") == null
