@@ -300,6 +300,10 @@
         "path": "calcDesign.label"
       },
       {
+        "name": "designLayerType",
+        "path": "calcDesign.layerType"
+      },
+      {
         "name": "locationId",
         "path": "locationId"
       },
@@ -373,6 +377,10 @@
       {
         "name": "designLayerName",
         "path": "calcDesign.label"
+      },
+      {
+        "name": "designLayerType",
+        "path": "calcDesign.layerType"
       },
       {
         "name": "locationId",
