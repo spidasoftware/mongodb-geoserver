@@ -91,7 +91,6 @@ class FilterToDBQuerySpec extends Specification {
             "notePoint"       | "designs"      | 1
             "pointLoad"       | "designs"      | 1
             "wirePointLoad"   | "designs"      | 1
-            "guyAttachPoint"  | "designs"      | 2
             "pushBrace"       | "designs"      | 1
             "sidewalkBrace"   | "designs"      | 1
             "foundation"      | "designs"      | 1
@@ -134,7 +133,6 @@ class FilterToDBQuerySpec extends Specification {
             "notePoint"       | "designs"      | 1
             "pointLoad"       | "designs"      | 1
             "wirePointLoad"   | "designs"      | 1
-            "guyAttachPoint"  | "designs"      | 2
             "pushBrace"       | "designs"      | 1
             "sidewalkBrace"   | "designs"      | 1
             "foundation"      | "designs"      | 1
@@ -177,7 +175,6 @@ class FilterToDBQuerySpec extends Specification {
             "notePoint"       | "designs"
             "pointLoad"       | "designs"
             "wirePointLoad"   | "designs"
-            "guyAttachPoint"  | "designs"
             "pushBrace"       | "designs"
             "sidewalkBrace"   | "designs"
             "foundation"      | "designs"
@@ -203,7 +200,7 @@ class FilterToDBQuerySpec extends Specification {
             "poleTag"      | "locations"    | "55fac7fde4b0e7f2e3be342c_MAP"                                       | new BasicDBObject('$and', JSON.parse('[{"id":"55fac7fde4b0e7f2e3be342c"}, {"calcLocation.poleTags.type":"MAP"}]'))                                        | 1
             "form"         | "locations"    | "55fac7fde4b0e7f2e3be342c_6ee5fba14760878be22701e1b3b7c05b-HTA Form" | new BasicDBObject('$and', JSON.parse('[{"id":"55fac7fde4b0e7f2e3be342c"}, {"calcLocation.forms.template":"6ee5fba14760878be22701e1b3b7c05b-HTA Form"}]')) | 1
             "pole"         | "designs"      | "56e9b7137d84511d8dd0f13c"                                           | new BasicDBObject("id", "56e9b7137d84511d8dd0f13c")                                                                                                       | 1
-            "analysis"     | "designs"      | "56e9b7137d84511d8dd0f13c_ANALYSIS_0_0"                                | new BasicDBObject("id", "56e9b7137d84511d8dd0f13c")                                                                                                       | 1
+            "analysis"     | "designs"      | "56e9b7137d84511d8dd0f13c_ANALYSIS_0_0"                              | new BasicDBObject("id", "56e9b7137d84511d8dd0f13c")                                                                                                       | 1
             "wire"         | "designs"      | "56e9b7137d84511d8dd0f13c_Wire#1"                                    | new BasicDBObject('$and', JSON.parse('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.wires.id":"Wire#1"}]'))                                  | 1
             "spanPoint"    | "designs"      | "56e9b7137d84511d8dd0f13c_SpanPoint#1"                               | new BasicDBObject('$and', JSON.parse('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.spanPoints.id":"SpanPoint#1"}]'))                        | 1
             "spanGuy"      | "designs"      | "56e9b7137d84511d8dd0f13c_SpanGuy#1"                                 | new BasicDBObject('$and', JSON.parse('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.spanGuys.id":"SpanGuy#1"}]'))                            | 1
@@ -237,8 +234,8 @@ class FilterToDBQuerySpec extends Specification {
             description                            | filter                                                                        | expectedQuery                                                                                    | expectedSize
             "id that exists"                       | CQL.toFilter("id='55fac7fde4b0e7f2e3be342c'")                                 | new BasicDBObject("id", "55fac7fde4b0e7f2e3be342c")                                              | 1
             "id that doesn't exist"                | CQL.toFilter("id='TEST'")                                                     | new BasicDBObject("id", "TEST")                                                                  | 0
-            "label that exists"                    | CQL.toFilter("label='684704E'")                                               | new BasicDBObject("calcLocation.label", "684704E")                                               | 1
-            "label that doesn't exist"             | CQL.toFilter("label='TEST'")                                                  | new BasicDBObject("calcLocation.label", "TEST")                                                  | 0
+            "name that exists"                     | CQL.toFilter("name='684704E'")                                                | new BasicDBObject("calcLocation.label", "684704E")                                               | 1
+            "name that doesn't exist"              | CQL.toFilter("name='TEST'")                                                   | new BasicDBObject("calcLocation.label", "TEST")                                                  | 0
             "projectId that exists"                | CQL.toFilter("projectId='55fac7fde4b0e7f2e3be344f'")                          | new BasicDBObject("projectId", "55fac7fde4b0e7f2e3be344f")                                       | 1
             "projectId that doesn't exist"         | CQL.toFilter("projectId='TEST'")                                              | new BasicDBObject("projectId", "TEST")                                                           | 0
             "projectName that exists"              | CQL.toFilter("projectName='IJUS-44-2015-08-26-053'")                          | new BasicDBObject("projectLabel", "IJUS-44-2015-08-26-053")                                      | 1
@@ -257,8 +254,8 @@ class FilterToDBQuerySpec extends Specification {
             "clientFile that doesn't exist"        | CQL.toFilter("clientFile='AEP.client'")                                       | new BasicDBObject("clientFile", "AEP.client")                                                    | 0
             "clientFileVersion that exists"        | CQL.toFilter("clientFileVersion='6ee5fba14760878be22701e1b3b7c05b'")          | new BasicDBObject("clientFileVersion", "6ee5fba14760878be22701e1b3b7c05b")                       | 1
             "clientFileVersion that doesn't exist" | CQL.toFilter("clientFileVersion='TEST'")                                      | new BasicDBObject("clientFileVersion", "TEST")                                                   | 0
-            "mapNumber that exists"                | CQL.toFilter("mapNumber='ROME AVE.'")                                         | new BasicDBObject("calcLocation.mapNumber", "ROME AVE.")                                         | 1
-            "mapNumber that doesn't exist"         | CQL.toFilter("mapNumber='TEST'")                                              | new BasicDBObject("calcLocation.mapNumber", "TEST")                                              | 0
+            "technician that exists"               | CQL.toFilter("technician='Arle Rodriguez'")                                   | new BasicDBObject("calcLocation.technician", "Arle Rodriguez")                                         | 1
+            "technician that doesn't exist"        | CQL.toFilter("technician='TEST'")                                             | new BasicDBObject("calcLocation.technician", "TEST")                                              | 0
             "comments that exist"                  | CQL.toFilter("comments='Two transformers connected to lower two cross arms'") | new BasicDBObject("calcLocation.comments", "Two transformers connected to lower two cross arms") | 1
             "comments that doesn't exist"          | CQL.toFilter("comments='TEST'")                                               | new BasicDBObject("calcLocation.comments", "TEST")                                               | 0
             "streetNumber that exists"             | CQL.toFilter("streetNumber='8812'")                                           | new BasicDBObject("calcLocation.address.number", "8812")                                         | 1
@@ -317,12 +314,12 @@ class FilterToDBQuerySpec extends Specification {
             featureCollection.size() == expectedSize
         where:
             description                | filter                                                                    | expectedQuery                                                                                       | expectedSize
-            "value exists"             | CQL.toFilter("value='Windstream/KDL install down guy for span to the W'") | new BasicDBObject("calcLocation.summaryNotes", "Windstream/KDL install down guy for span to the W") | 1
-            "value doesn't exist"      | CQL.toFilter("value='TEST'")                                              | new BasicDBObject("calcLocation.summaryNotes", "TEST")                                              | 0
+            "value exists"             | CQL.toFilter("value='Windstream/KDL install down guy for span to the W'") | new BasicDBObject("calcLocation.summaryNotes.description", "Windstream/KDL install down guy for span to the W") | 1
+            "value doesn't exist"      | CQL.toFilter("value='TEST'")                                              | new BasicDBObject("calcLocation.summaryNotes.description", "TEST")                                              | 0
             "locationId exists"        | CQL.toFilter("locationId='55fac7fde4b0e7f2e3be342c'")                     | new BasicDBObject("id", "55fac7fde4b0e7f2e3be342c")                                                 | 4
             "locationId doesn't exist" | CQL.toFilter("locationId='TEST'")                                         | new BasicDBObject("id", "TEST")                                                                     | 0
-            "value like"               | CQL.toFilter("value LIKE 'Windstream%'")                                  | new BasicDBObject("calcLocation.summaryNotes", Pattern.compile("^Windstream.*\$"))                  | 2
-            "value like"               | CQL.toFilter("value LIKE 'Test%'")                                        | new BasicDBObject("calcLocation.summaryNotes", Pattern.compile("^Test.*\$"))                        | 0
+            "value like"               | CQL.toFilter("value LIKE 'Windstream%'")                                  | new BasicDBObject("calcLocation.summaryNotes.description", Pattern.compile("^Windstream.*\$"))                  | 2
+            "value like"               | CQL.toFilter("value LIKE 'Test%'")                                        | new BasicDBObject("calcLocation.summaryNotes.description", Pattern.compile("^Test.*\$"))                        | 0
     }
 
     @Unroll("Test remedy property query for #description")
@@ -419,11 +416,11 @@ class FilterToDBQuerySpec extends Specification {
             featureCollection.size() == expectedSize
         where:
             description                            | filter                                                               | expectedQuery                                                                                           | expectedSize
-            "design type that exists"              | CQL.toFilter("designType='Measured Design'")                         | new BasicDBObject("calcDesign.label", "Measured Design")                                                | 1
-            "design type that doesn't exist"       | CQL.toFilter("designType='Existing Design'")                         | new BasicDBObject("calcDesign.label", "Existing Design")                                                | 0
+            "design layer that exists"             | CQL.toFilter("designLayerName='Measured Design'")                    | new BasicDBObject("calcDesign.label", "Measured Design")                                                | 1
+            "design layer that doesn't exist"      | CQL.toFilter("designLayerName='Existing Design'")                    | new BasicDBObject("calcDesign.label", "Existing Design")                                                | 0
 
-            "location label that exists"           | CQL.toFilter("locationLabel='684704E'")                              | new BasicDBObject("locationLabel", "684704E")                                                           | 1
-            "location label that doesn't exist"    | CQL.toFilter("locationLabel='TEST'")                                 | new BasicDBObject("locationLabel", "TEST")                                                              | 0
+            "location name that exists"            | CQL.toFilter("locationName='684704E'")                               | new BasicDBObject("locationLabel", "684704E")                                                           | 1
+            "location name that doesn't exist"     | CQL.toFilter("locationName='TEST'")                                  | new BasicDBObject("locationLabel", "TEST")                                                              | 0
 
             "locationId that exists"               | CQL.toFilter("locationId='55fac7fde4b0e7f2e3be342c'")                | new BasicDBObject("locationId", "55fac7fde4b0e7f2e3be342c")                                             | 1
             "locationId that doesn't exist"        | CQL.toFilter("locationId='TEST'")                                    | new BasicDBObject("locationId", "TEST")                                                                 | 0
@@ -508,14 +505,14 @@ class FilterToDBQuerySpec extends Specification {
             featureCollection.size() == expectedSize
         where:
             description                            | filter                                                               | expectedQuery                                                                                       | expectedSize
-            "design type that exists"              | CQL.toFilter("designType='Measured Design'")                         | new BasicDBObject("calcDesign.label", "Measured Design")                                            | 6
-            "design type that doesn't exist"       | CQL.toFilter("designType='Existing Design'")                         | new BasicDBObject("calcDesign.label", "Existing Design")                                            | 0
+            "design layer that exists"             | CQL.toFilter("designLayerName='Measured Design'")                    | new BasicDBObject("calcDesign.label", "Measured Design")                                            | 6
+            "design layer that doesn't exist"      | CQL.toFilter("designLayerName='Existing Design'")                    | new BasicDBObject("calcDesign.label", "Existing Design")                                            | 0
 
             "loadInfo that exists"                 | CQL.toFilter("loadInfo='CSA Heavy'")                                 | new BasicDBObject("analysisSummary.id", "CSA Heavy")                                                | 6
             "loadInfo that doesn't exist"          | CQL.toFilter("loadInfo='TEST'")                                      | new BasicDBObject("analysisSummary.id", "TEST")                                                     | 0
 
-            "location label that exists"           | CQL.toFilter("locationLabel='684704E'")                              | new BasicDBObject("locationLabel", "684704E")                                                       | 6
-            "location label that doesn't exist"    | CQL.toFilter("locationLabel='TEST'")                                 | new BasicDBObject("locationLabel", "TEST")                                                          | 0
+            "location name that exists"           | CQL.toFilter("locationName='684704E'")                                | new BasicDBObject("locationLabel", "684704E")                                                       | 6
+            "location name that doesn't exist"    | CQL.toFilter("locationName='TEST'")                                   | new BasicDBObject("locationLabel", "TEST")                                                          | 0
 
             "locationId that exists"               | CQL.toFilter("locationId='55fac7fde4b0e7f2e3be342c'")                | new BasicDBObject("locationId", "55fac7fde4b0e7f2e3be342c")                                         | 6
             "locationId that doesn't exist"        | CQL.toFilter("locationId='TEST'")                                    | new BasicDBObject("locationId", "TEST")                                                             | 0
@@ -874,8 +871,8 @@ class FilterToDBQuerySpec extends Specification {
             "owner that exists"                   | CQL.toFilter("owner='Acme Power'")                   | new BasicDBObject("calcDesign.structure.insulators.owner.id", "Acme Power")                                                | 1
             "owner that doesn't exist"            | CQL.toFilter("owner='SCE'")                          | new BasicDBObject("calcDesign.structure.insulators.owner.id", "SCE")                                                       | 0
 
-            "type that exists"                    | CQL.toFilter("type='15kV Dead End Insulator'")       | new BasicDBObject("calcDesign.structure.insulators.clientItem", "15kV Dead End Insulator")                                 | 1
-            "type that doesn't exist"             | CQL.toFilter("type='TEST'")                          | new BasicDBObject("calcDesign.structure.insulators.clientItem", "TEST")                                                    | 0
+            "size that exists"                    | CQL.toFilter("size='15kV Dead End Insulator'")       | new BasicDBObject("calcDesign.structure.insulators.clientItem", "15kV Dead End Insulator")                                 | 1
+            "size that doesn't exist"             | CQL.toFilter("size='TEST'")                          | new BasicDBObject("calcDesign.structure.insulators.clientItem", "TEST")                                                    | 0
 
             "attachmentHeight that exists"        | CQL.toFilter("attachmentHeight=27.083333333333332")  | new BasicDBObject("calcDesign.structure.insulators.attachmentHeight.value", 27.083333333333332)                            | 1
             "attachmentHeight that doesn't exist" | CQL.toFilter("attachmentHeight=31")                  | new BasicDBObject("calcDesign.structure.insulators.attachmentHeight.value", 31)                                            | 0
@@ -1068,8 +1065,8 @@ class FilterToDBQuerySpec extends Specification {
             "owner that exists"                    | CQL.toFilter("owner='Acme Power'")                          | new BasicDBObject("calcDesign.structure.crossArms.owner.id", "Acme Power")                                                       | 1
             "owner that doesn't exist"             | CQL.toFilter("owner='TEST'")                         | new BasicDBObject("calcDesign.structure.crossArms.owner.id", "TEST")                                                      | 0
 
-            "type that exists"                     | CQL.toFilter("type='8 Foot Cross Arm'")              | new BasicDBObject("calcDesign.structure.crossArms.clientItem", "8 Foot Cross Arm")                                        | 1
-            "type that doesn't exist"              | CQL.toFilter("type='TEST'")                          | new BasicDBObject("calcDesign.structure.crossArms.clientItem", "TEST")                                                    | 0
+            "size that exists"                     | CQL.toFilter("size='8 Foot Cross Arm'")              | new BasicDBObject("calcDesign.structure.crossArms.clientItem", "8 Foot Cross Arm")                                        | 1
+            "size that doesn't exist"              | CQL.toFilter("size='TEST'")                          | new BasicDBObject("calcDesign.structure.crossArms.clientItem", "TEST")                                                    | 0
 
             "attachHeight that exists"             | CQL.toFilter("attachmentHeight=32.666666666666664")  | new BasicDBObject("calcDesign.structure.crossArms.attachmentHeight.value", 32.666666666666664)                            | 1
             "attachHeight that doesn't exist"      | CQL.toFilter("attachmentHeight=2")                   | new BasicDBObject("calcDesign.structure.crossArms.attachmentHeight.value", 2)                                             | 0
@@ -1103,9 +1100,6 @@ class FilterToDBQuerySpec extends Specification {
             "direction lt doesn't exist"           | CQL.toFilter("direction<20")                         | new BasicDBObject("calcDesign.structure.crossArms.direction", new BasicDBObject('$lt', 20))                               | 0
             "direction lte exists"                 | CQL.toFilter("direction<=60")                        | new BasicDBObject("calcDesign.structure.crossArms.direction", new BasicDBObject('$lte', 60))                              | 1
             "direction lte doesn't exist"          | CQL.toFilter("direction<=10")                        | new BasicDBObject("calcDesign.structure.crossArms.direction", new BasicDBObject('$lte', 10))                              | 0
-
-            "associatedBacking that exists"        | CQL.toFilter("associatedBacking='Other'")            | new BasicDBObject("calcDesign.structure.crossArms.associatedBacking", "Other")                                            | 1
-            "associatedBacking that doesn't exist" | CQL.toFilter("associatedBacking='TEST'")             | new BasicDBObject("calcDesign.structure.crossArms.associatedBacking", "TEST")                                             | 0
 
             "poleId that exists"                   | CQL.toFilter("poleId='56e9b7137d84511d8dd0f13c'")    | new BasicDBObject("id", "56e9b7137d84511d8dd0f13c")                                                                       | 1
             "poleId that doesn't exist"            | CQL.toFilter("poleId='Measured Design'")             | new BasicDBObject("id", "Measured Design")                                                                                | 0
@@ -1164,11 +1158,8 @@ class FilterToDBQuerySpec extends Specification {
             "height lte exists"              | CQL.toFilter("height<=12")                        | new BasicDBObject("calcDesign.structure.anchors.height.value", new BasicDBObject('$lte', 12))   | 1
             "height lte doesn't exist"       | CQL.toFilter("height<=-1")                        | new BasicDBObject("calcDesign.structure.anchors.height.value", new BasicDBObject('$lte', -1))   | 0
 
-            "supportType that exists"        | CQL.toFilter("supportType='Other'")               | new BasicDBObject("calcDesign.structure.anchors.supportType", "Other")                          | 1
-            "supportType that doesn't exist" | CQL.toFilter("supportType='TEST'")                | new BasicDBObject("calcDesign.structure.anchors.supportType", "TEST")                           | 0
-
-            "type that exists"               | CQL.toFilter("type='Single'")                     | new BasicDBObject("calcDesign.structure.anchors.clientItem", "Single")                          | 1
-            "type that doesn't exist"        | CQL.toFilter("type='TEST'")                       | new BasicDBObject("calcDesign.structure.anchors.clientItem", "TEST")                            | 0
+            "size that exists"               | CQL.toFilter("size='Single'")                     | new BasicDBObject("calcDesign.structure.anchors.clientItem", "Single")                          | 1
+            "size that doesn't exist"        | CQL.toFilter("size='TEST'")                       | new BasicDBObject("calcDesign.structure.anchors.clientItem", "TEST")                            | 0
 
             "poleId that exists"             | CQL.toFilter("poleId='56e9b7137d84511d8dd0f13c'") | new BasicDBObject("id", "56e9b7137d84511d8dd0f13c")                                             | 1
             "poleId that doesn't exist"      | CQL.toFilter("poleId='Measured Design'")          | new BasicDBObject("id", "Measured Design")                                                      | 0
@@ -1297,140 +1288,52 @@ class FilterToDBQuerySpec extends Specification {
             featureCollection.size() == expectedSize
         where:
             description                           | filter                                            | expectedQuery                                                                                                | expectedSize
-            "owner that exists"                   | CQL.toFilter("owner='Acme Power'")                       | new BasicDBObject("calcDesign.structure.pointLoads.owner.id", "Acme Power")                                         | 1
+            "owner that exists"                   | CQL.toFilter("owner='Acme Power'")                | new BasicDBObject("calcDesign.structure.pointLoads.owner.id", "Acme Power")                                         | 1
             "owner that doesn't exist"            | CQL.toFilter("owner='TEST'")                      | new BasicDBObject("calcDesign.structure.pointLoads.owner.id", "TEST")                                        | 0
 
-            "elevation that exists"               | CQL.toFilter("elevation=0")                       | new BasicDBObject("calcDesign.structure.pointLoads.elevation.value", 0)                                      | 1
-            "elevation that doesn't exist"        | CQL.toFilter("elevation=2")                       | new BasicDBObject("calcDesign.structure.pointLoads.elevation.value", 2)                                      | 0
-            "elevation gt exists"                 | CQL.toFilter("elevation>-1")                      | new BasicDBObject("calcDesign.structure.pointLoads.elevation.value", new BasicDBObject('$gt', -1))           | 1
-            "elevation gt doesn't exist"          | CQL.toFilter("elevation>1")                       | new BasicDBObject("calcDesign.structure.pointLoads.elevation.value", new BasicDBObject('$gt', 1))            | 0
-            "elevation gte exists"                | CQL.toFilter("elevation>=0")                      | new BasicDBObject("calcDesign.structure.pointLoads.elevation.value", new BasicDBObject('$gte', 0))           | 1
-            "elevation gte doesn't exist"         | CQL.toFilter("elevation>=33")                     | new BasicDBObject("calcDesign.structure.pointLoads.elevation.value", new BasicDBObject('$gte', 33))          | 0
-            "elevation lt exists"                 | CQL.toFilter("elevation<34")                      | new BasicDBObject("calcDesign.structure.pointLoads.elevation.value", new BasicDBObject('$lt', 34))           | 1
-            "elevation lt doesn't exist"          | CQL.toFilter("elevation<0")                       | new BasicDBObject("calcDesign.structure.pointLoads.elevation.value", new BasicDBObject('$lt', 0))            | 0
-            "elevation lte exists"                | CQL.toFilter("elevation<=12")                     | new BasicDBObject("calcDesign.structure.pointLoads.elevation.value", new BasicDBObject('$lte', 12))          | 1
-            "elevation lte doesn't exist"         | CQL.toFilter("elevation<=-1")                     | new BasicDBObject("calcDesign.structure.pointLoads.elevation.value", new BasicDBObject('$lte', -1))          | 0
+            "attachHeight that exists"            | CQL.toFilter("attachHeight=32")                   | new BasicDBObject("calcDesign.structure.pointLoads.attachHeight.value", 32)                              | 1
+            "attachHeight that doesn't exist"     | CQL.toFilter("attachHeight=2")                    | new BasicDBObject("calcDesign.structure.pointLoads.attachHeight.value", 2)                               | 0
+            "attachHeight gt exists"              | CQL.toFilter("attachHeight>5")                    | new BasicDBObject("calcDesign.structure.pointLoads.attachHeight.value", new BasicDBObject('$gt', 5))     | 1
+            "attachHeight gt doesn't exist"       | CQL.toFilter("attachHeight>65")                   | new BasicDBObject("calcDesign.structure.pointLoads.attachHeight.value", new BasicDBObject('$gt', 65))    | 0
+            "attachHeight gte exists"             | CQL.toFilter("attachHeight>=32")                  | new BasicDBObject("calcDesign.structure.pointLoads.attachHeight.value", new BasicDBObject('$gte', 32))   | 1
+            "attachHeight gte doesn't exist"      | CQL.toFilter("attachHeight>=65")                  | new BasicDBObject("calcDesign.structure.pointLoads.attachHeight.value", new BasicDBObject('$gte', 65))   | 0
+            "attachHeight lt exists"              | CQL.toFilter("attachHeight<65")                   | new BasicDBObject("calcDesign.structure.pointLoads.attachHeight.value", new BasicDBObject('$lt', 65))    | 1
+            "attachHeight lt doesn't exist"       | CQL.toFilter("attachHeight<10")                   | new BasicDBObject("calcDesign.structure.pointLoads.attachHeight.value", new BasicDBObject('$lt', 10))    | 0
+            "attachHeight lte exists"             | CQL.toFilter("attachHeight<=65")                  | new BasicDBObject("calcDesign.structure.pointLoads.attachHeight.value", new BasicDBObject('$lte', 65))   | 1
+            "attachHeight lte doesn't exist"      | CQL.toFilter("attachHeight<=3")                   | new BasicDBObject("calcDesign.structure.pointLoads.attachHeight.value", new BasicDBObject('$lte', 3))    | 0
 
-            "attachmentHeight that exists"        | CQL.toFilter("attachmentHeight=32")               | new BasicDBObject("calcDesign.structure.pointLoads.attachmentHeight.value", 32)                              | 1
-            "attachmentHeight that doesn't exist" | CQL.toFilter("attachmentHeight=2")                | new BasicDBObject("calcDesign.structure.pointLoads.attachmentHeight.value", 2)                               | 0
-            "attachmentHeight gt exists"          | CQL.toFilter("attachmentHeight>5")                | new BasicDBObject("calcDesign.structure.pointLoads.attachmentHeight.value", new BasicDBObject('$gt', 5))     | 1
-            "attachmentHeight gt doesn't exist"   | CQL.toFilter("attachmentHeight>65")               | new BasicDBObject("calcDesign.structure.pointLoads.attachmentHeight.value", new BasicDBObject('$gt', 65))    | 0
-            "attachmentHeight gte exists"         | CQL.toFilter("attachmentHeight>=32")              | new BasicDBObject("calcDesign.structure.pointLoads.attachmentHeight.value", new BasicDBObject('$gte', 32))   | 1
-            "attachmentHeight gte doesn't exist"  | CQL.toFilter("attachmentHeight>=65")              | new BasicDBObject("calcDesign.structure.pointLoads.attachmentHeight.value", new BasicDBObject('$gte', 65))   | 0
-            "attachmentHeight lt exists"          | CQL.toFilter("attachmentHeight<65")               | new BasicDBObject("calcDesign.structure.pointLoads.attachmentHeight.value", new BasicDBObject('$lt', 65))    | 1
-            "attachmentHeight lt doesn't exist"   | CQL.toFilter("attachmentHeight<10")               | new BasicDBObject("calcDesign.structure.pointLoads.attachmentHeight.value", new BasicDBObject('$lt', 10))    | 0
-            "attachmentHeight lte exists"         | CQL.toFilter("attachmentHeight<=65")              | new BasicDBObject("calcDesign.structure.pointLoads.attachmentHeight.value", new BasicDBObject('$lte', 65))   | 1
-            "attachmentHeight lte doesn't exist"  | CQL.toFilter("attachmentHeight<=3")               | new BasicDBObject("calcDesign.structure.pointLoads.attachmentHeight.value", new BasicDBObject('$lte', 3))    | 0
+            "XForce that exists"                  | CQL.toFilter("XForce=0")                          | new BasicDBObject("calcDesign.structure.pointLoads.XForce.value", 0)                                              | 1
+            "XForce that doesn't exist"           | CQL.toFilter("XForce=2")                          | new BasicDBObject("calcDesign.structure.pointLoads.XForce.value", 2)                                              | 0
+            "XForce gt exists"                    | CQL.toFilter("XForce>-1")                         | new BasicDBObject("calcDesign.structure.pointLoads.XForce.value", new BasicDBObject('$gt', -1))                   | 1
+            "XForce gt doesn't exist"             | CQL.toFilter("XForce>1")                          | new BasicDBObject("calcDesign.structure.pointLoads.XForce.value", new BasicDBObject('$gt', 1))                    | 0
+            "XForce gte exists"                   | CQL.toFilter("XForce>=0")                         | new BasicDBObject("calcDesign.structure.pointLoads.XForce.value", new BasicDBObject('$gte', 0))                   | 1
+            "XForce gte doesn't exist"            | CQL.toFilter("XForce>=33")                        | new BasicDBObject("calcDesign.structure.pointLoads.XForce.value", new BasicDBObject('$gte', 33))                  | 0
+            "XForce lt exists"                    | CQL.toFilter("XForce<34")                         | new BasicDBObject("calcDesign.structure.pointLoads.XForce.value", new BasicDBObject('$lt', 34))                   | 1
+            "XForce lt doesn't exist"             | CQL.toFilter("XForce<0")                          | new BasicDBObject("calcDesign.structure.pointLoads.XForce.value", new BasicDBObject('$lt', 0))                    | 0
+            "XForce lte exists"                   | CQL.toFilter("XForce<=12")                        | new BasicDBObject("calcDesign.structure.pointLoads.XForce.value", new BasicDBObject('$lte', 12))                  | 1
+            "XForce lte doesn't exist"            | CQL.toFilter("XForce<=-1")                        | new BasicDBObject("calcDesign.structure.pointLoads.XForce.value", new BasicDBObject('$lte', -1))                  | 0
 
-            "rotation that exists"                | CQL.toFilter("rotation=0")                        | new BasicDBObject("calcDesign.structure.pointLoads.rotation.value", 0)                                       | 1
-            "rotation that doesn't exist"         | CQL.toFilter("rotation=2")                        | new BasicDBObject("calcDesign.structure.pointLoads.rotation.value", 2)                                       | 0
-            "rotation gt exists"                  | CQL.toFilter("rotation>-1")                       | new BasicDBObject("calcDesign.structure.pointLoads.rotation.value", new BasicDBObject('$gt', -1))            | 1
-            "rotation gt doesn't exist"           | CQL.toFilter("rotation>1")                        | new BasicDBObject("calcDesign.structure.pointLoads.rotation.value", new BasicDBObject('$gt', 1))             | 0
-            "rotation gte exists"                 | CQL.toFilter("rotation>=0")                       | new BasicDBObject("calcDesign.structure.pointLoads.rotation.value", new BasicDBObject('$gte', 0))            | 1
-            "rotation gte doesn't exist"          | CQL.toFilter("rotation>=33")                      | new BasicDBObject("calcDesign.structure.pointLoads.rotation.value", new BasicDBObject('$gte', 33))           | 0
-            "rotation lt exists"                  | CQL.toFilter("rotation<34")                       | new BasicDBObject("calcDesign.structure.pointLoads.rotation.value", new BasicDBObject('$lt', 34))            | 1
-            "rotation lt doesn't exist"           | CQL.toFilter("rotation<0")                        | new BasicDBObject("calcDesign.structure.pointLoads.rotation.value", new BasicDBObject('$lt', 0))             | 0
-            "rotation lte exists"                 | CQL.toFilter("rotation<=12")                      | new BasicDBObject("calcDesign.structure.pointLoads.rotation.value", new BasicDBObject('$lte', 12))           | 1
-            "rotation lte doesn't exist"          | CQL.toFilter("rotation<=-1")                      | new BasicDBObject("calcDesign.structure.pointLoads.rotation.value", new BasicDBObject('$lte', -1))           | 0
+            "YForce that exists"                  | CQL.toFilter("YForce=0")                          | new BasicDBObject("calcDesign.structure.pointLoads.YForce.value", 0)                                              | 1
+            "YForce that doesn't exist"           | CQL.toFilter("YForce=2")                          | new BasicDBObject("calcDesign.structure.pointLoads.YForce.value", 2)                                              | 0
+            "YForce gt exists"                    | CQL.toFilter("YForce>-1")                         | new BasicDBObject("calcDesign.structure.pointLoads.YForce.value", new BasicDBObject('$gt', -1))                   | 1
+            "YForce gt doesn't exist"             | CQL.toFilter("YForce>1")                          | new BasicDBObject("calcDesign.structure.pointLoads.YForce.value", new BasicDBObject('$gt', 1))                    | 0
+            "YForce gte exists"                   | CQL.toFilter("YForce>=0")                         | new BasicDBObject("calcDesign.structure.pointLoads.YForce.value", new BasicDBObject('$gte', 0))                   | 1
+            "YForce gte doesn't exist"            | CQL.toFilter("YForce>=33")                        | new BasicDBObject("calcDesign.structure.pointLoads.YForce.value", new BasicDBObject('$gte', 33))                  | 0
+            "YForce lt exists"                    | CQL.toFilter("YForce<34")                         | new BasicDBObject("calcDesign.structure.pointLoads.YForce.value", new BasicDBObject('$lt', 34))                   | 1
+            "YForce lt doesn't exist"             | CQL.toFilter("YForce<0")                          | new BasicDBObject("calcDesign.structure.pointLoads.YForce.value", new BasicDBObject('$lt', 0))                    | 0
+            "YForce lte exists"                   | CQL.toFilter("YForce<=12")                        | new BasicDBObject("calcDesign.structure.pointLoads.YForce.value", new BasicDBObject('$lte', 12))                  | 1
+            "YForce lte doesn't exist"            | CQL.toFilter("YForce<=-1")                        | new BasicDBObject("calcDesign.structure.pointLoads.YForce.value", new BasicDBObject('$lte', -1))                  | 0
 
-            "x that exists"                       | CQL.toFilter("x=0")                               | new BasicDBObject("calcDesign.structure.pointLoads.x.value", 0)                                              | 1
-            "x that doesn't exist"                | CQL.toFilter("x=2")                               | new BasicDBObject("calcDesign.structure.pointLoads.x.value", 2)                                              | 0
-            "x gt exists"                         | CQL.toFilter("x>-1")                              | new BasicDBObject("calcDesign.structure.pointLoads.x.value", new BasicDBObject('$gt', -1))                   | 1
-            "x gt doesn't exist"                  | CQL.toFilter("x>1")                               | new BasicDBObject("calcDesign.structure.pointLoads.x.value", new BasicDBObject('$gt', 1))                    | 0
-            "x gte exists"                        | CQL.toFilter("x>=0")                              | new BasicDBObject("calcDesign.structure.pointLoads.x.value", new BasicDBObject('$gte', 0))                   | 1
-            "x gte doesn't exist"                 | CQL.toFilter("x>=33")                             | new BasicDBObject("calcDesign.structure.pointLoads.x.value", new BasicDBObject('$gte', 33))                  | 0
-            "x lt exists"                         | CQL.toFilter("x<34")                              | new BasicDBObject("calcDesign.structure.pointLoads.x.value", new BasicDBObject('$lt', 34))                   | 1
-            "x lt doesn't exist"                  | CQL.toFilter("x<0")                               | new BasicDBObject("calcDesign.structure.pointLoads.x.value", new BasicDBObject('$lt', 0))                    | 0
-            "x lte exists"                        | CQL.toFilter("x<=12")                             | new BasicDBObject("calcDesign.structure.pointLoads.x.value", new BasicDBObject('$lte', 12))                  | 1
-            "x lte doesn't exist"                 | CQL.toFilter("x<=-1")                             | new BasicDBObject("calcDesign.structure.pointLoads.x.value", new BasicDBObject('$lte', -1))                  | 0
-
-            "y that exists"                       | CQL.toFilter("y=0")                               | new BasicDBObject("calcDesign.structure.pointLoads.y.value", 0)                                              | 1
-            "y that doesn't exist"                | CQL.toFilter("y=2")                               | new BasicDBObject("calcDesign.structure.pointLoads.y.value", 2)                                              | 0
-            "y gt exists"                         | CQL.toFilter("y>-1")                              | new BasicDBObject("calcDesign.structure.pointLoads.y.value", new BasicDBObject('$gt', -1))                   | 1
-            "y gt doesn't exist"                  | CQL.toFilter("y>1")                               | new BasicDBObject("calcDesign.structure.pointLoads.y.value", new BasicDBObject('$gt', 1))                    | 0
-            "y gte exists"                        | CQL.toFilter("y>=0")                              | new BasicDBObject("calcDesign.structure.pointLoads.y.value", new BasicDBObject('$gte', 0))                   | 1
-            "y gte doesn't exist"                 | CQL.toFilter("y>=33")                             | new BasicDBObject("calcDesign.structure.pointLoads.y.value", new BasicDBObject('$gte', 33))                  | 0
-            "y lt exists"                         | CQL.toFilter("y<34")                              | new BasicDBObject("calcDesign.structure.pointLoads.y.value", new BasicDBObject('$lt', 34))                   | 1
-            "y lt doesn't exist"                  | CQL.toFilter("y<0")                               | new BasicDBObject("calcDesign.structure.pointLoads.y.value", new BasicDBObject('$lt', 0))                    | 0
-            "y lte exists"                        | CQL.toFilter("y<=12")                             | new BasicDBObject("calcDesign.structure.pointLoads.y.value", new BasicDBObject('$lte', 12))                  | 1
-            "y lte doesn't exist"                 | CQL.toFilter("y<=-1")                             | new BasicDBObject("calcDesign.structure.pointLoads.y.value", new BasicDBObject('$lte', -1))                  | 0
-
-            "z that exists"                       | CQL.toFilter("z=32.666666666666664")              | new BasicDBObject("calcDesign.structure.pointLoads.z.value", 32.666666666666664)                             | 1
-            "z that doesn't exist"                | CQL.toFilter("z=2")                               | new BasicDBObject("calcDesign.structure.pointLoads.z.value", 2)                                              | 0
-            "z gt exists"                         | CQL.toFilter("z>1")                               | new BasicDBObject("calcDesign.structure.pointLoads.z.value", new BasicDBObject('$gt', 1))                    | 1
-            "z gt doesn't exist"                  | CQL.toFilter("z>50")                              | new BasicDBObject("calcDesign.structure.pointLoads.z.value", new BasicDBObject('$gt', 50))                   | 0
-            "z gte exists"                        | CQL.toFilter("z>=0")                              | new BasicDBObject("calcDesign.structure.pointLoads.z.value", new BasicDBObject('$gte', 0))                   | 1
-            "z gte doesn't exist"                 | CQL.toFilter("z>=33")                             | new BasicDBObject("calcDesign.structure.pointLoads.z.value", new BasicDBObject('$gte', 33))                  | 0
-            "z lt exists"                         | CQL.toFilter("z<34")                              | new BasicDBObject("calcDesign.structure.pointLoads.z.value", new BasicDBObject('$lt', 34))                   | 1
-            "z lt doesn't exist"                  | CQL.toFilter("z<0")                               | new BasicDBObject("calcDesign.structure.pointLoads.z.value", new BasicDBObject('$lt', 0))                    | 0
-            "z lte exists"                        | CQL.toFilter("z<=32.666666666666664")             | new BasicDBObject("calcDesign.structure.pointLoads.z.value", new BasicDBObject('$lte', 32.666666666666664))  | 1
-            "z lte doesn't exist"                 | CQL.toFilter("z<=-1")                             | new BasicDBObject("calcDesign.structure.pointLoads.z.value", new BasicDBObject('$lte', -1))                  | 0
-
-            "fx that exists"                      | CQL.toFilter("fx=73.92457179425563")              | new BasicDBObject("calcDesign.structure.pointLoads.fx.value", 73.92457179425563)                             | 1
-            "fx that doesn't exist"               | CQL.toFilter("fx=2")                              | new BasicDBObject("calcDesign.structure.pointLoads.fx.value", 2)                                             | 0
-            "fx gt exists"                        | CQL.toFilter("fx>1")                              | new BasicDBObject("calcDesign.structure.pointLoads.fx.value", new BasicDBObject('$gt', 1))                   | 1
-            "fx gt doesn't exist"                 | CQL.toFilter("fx>75")                             | new BasicDBObject("calcDesign.structure.pointLoads.fx.value", new BasicDBObject('$gt', 75))                  | 0
-            "fx gte exists"                       | CQL.toFilter("fx>=0")                             | new BasicDBObject("calcDesign.structure.pointLoads.fx.value", new BasicDBObject('$gte', 0))                  | 1
-            "fx gte doesn't exist"                | CQL.toFilter("fx>=75")                            | new BasicDBObject("calcDesign.structure.pointLoads.fx.value", new BasicDBObject('$gte', 75))                 | 0
-            "fx lt exists"                        | CQL.toFilter("fx<75")                             | new BasicDBObject("calcDesign.structure.pointLoads.fx.value", new BasicDBObject('$lt', 75))                  | 1
-            "fx lt doesn't exist"                 | CQL.toFilter("fx<0")                              | new BasicDBObject("calcDesign.structure.pointLoads.fx.value", new BasicDBObject('$lt', 0))                   | 0
-            "fx lte exists"                       | CQL.toFilter("fx<=75")                            | new BasicDBObject("calcDesign.structure.pointLoads.fx.value", new BasicDBObject('$lte', 75))                 | 1
-            "fx lte doesn't exist"                | CQL.toFilter("fx<=-1")                            | new BasicDBObject("calcDesign.structure.pointLoads.fx.value", new BasicDBObject('$lte', -1))                 | 0
-
-            "fy that exists"                      | CQL.toFilter("fy=241.92570549706124")             | new BasicDBObject("calcDesign.structure.pointLoads.fy.value", 241.92570549706124)                            | 1
-            "fy that doesn't exist"               | CQL.toFilter("fy=2")                              | new BasicDBObject("calcDesign.structure.pointLoads.fy.value", 2)                                             | 0
-            "fy gt exists"                        | CQL.toFilter("fy>1")                              | new BasicDBObject("calcDesign.structure.pointLoads.fy.value", new BasicDBObject('$gt', 1))                   | 1
-            "fy gt doesn't exist"                 | CQL.toFilter("fy>250")                            | new BasicDBObject("calcDesign.structure.pointLoads.fy.value", new BasicDBObject('$gt', 250))                 | 0
-            "fy gte exists"                       | CQL.toFilter("fy>=0")                             | new BasicDBObject("calcDesign.structure.pointLoads.fy.value", new BasicDBObject('$gte', 0))                  | 1
-            "fy gte doesn't exist"                | CQL.toFilter("fy>=330")                           | new BasicDBObject("calcDesign.structure.pointLoads.fy.value", new BasicDBObject('$gte', 330))                | 0
-            "fy lt exists"                        | CQL.toFilter("fy<250")                            | new BasicDBObject("calcDesign.structure.pointLoads.fy.value", new BasicDBObject('$lt', 250))                 | 1
-            "fy lt doesn't exist"                 | CQL.toFilter("fy<0")                              | new BasicDBObject("calcDesign.structure.pointLoads.fy.value", new BasicDBObject('$lt', 0))                   | 0
-            "fy lte exists"                       | CQL.toFilter("fy<=250")                           | new BasicDBObject("calcDesign.structure.pointLoads.fy.value", new BasicDBObject('$lte', 250))                | 1
-            "fy lte doesn't exist"                | CQL.toFilter("fy<=1")                             | new BasicDBObject("calcDesign.structure.pointLoads.fy.value", new BasicDBObject('$lte', 1))                  | 0
-
-            "fz that exists"                      | CQL.toFilter("fz=-7.177126069505941")             | new BasicDBObject("calcDesign.structure.pointLoads.fz.value", -7.177126069505941)                            | 1
-            "fz that doesn't exist"               | CQL.toFilter("fz=2")                              | new BasicDBObject("calcDesign.structure.pointLoads.fz.value", 2)                                             | 0
-            "fz gt exists"                        | CQL.toFilter("fz>-8")                             | new BasicDBObject("calcDesign.structure.pointLoads.fz.value", new BasicDBObject('$gt', -8))                  | 1
-            "fz gt doesn't exist"                 | CQL.toFilter("fz>1")                              | new BasicDBObject("calcDesign.structure.pointLoads.fz.value", new BasicDBObject('$gt', 1))                   | 0
-            "fz gte exists"                       | CQL.toFilter("fz>=-7.177126069505941")            | new BasicDBObject("calcDesign.structure.pointLoads.fz.value", new BasicDBObject('$gte', -7.177126069505941)) | 1
-            "fz gte doesn't exist"                | CQL.toFilter("fz>=33")                            | new BasicDBObject("calcDesign.structure.pointLoads.fz.value", new BasicDBObject('$gte', 33))                 | 0
-            "fz lt exists"                        | CQL.toFilter("fz<34")                             | new BasicDBObject("calcDesign.structure.pointLoads.fz.value", new BasicDBObject('$lt', 34))                  | 1
-            "fz lt doesn't exist"                 | CQL.toFilter("fz<-8")                             | new BasicDBObject("calcDesign.structure.pointLoads.fz.value", new BasicDBObject('$lt', -8))                  | 0
-            "fz lte exists"                       | CQL.toFilter("fz<=12")                            | new BasicDBObject("calcDesign.structure.pointLoads.fz.value", new BasicDBObject('$lte', 12))                 | 1
-            "fz lte doesn't exist"                | CQL.toFilter("fz<=-9")                            | new BasicDBObject("calcDesign.structure.pointLoads.fz.value", new BasicDBObject('$lte', -9))                 | 0
-
-            "mx that exists"                      | CQL.toFilter("mx=0")                              | new BasicDBObject("calcDesign.structure.pointLoads.mx.value", 0)                                             | 1
-            "mx that doesn't exist"               | CQL.toFilter("mx=2")                              | new BasicDBObject("calcDesign.structure.pointLoads.mx.value", 2)                                             | 0
-            "mx gt exists"                        | CQL.toFilter("mx>-1")                             | new BasicDBObject("calcDesign.structure.pointLoads.mx.value", new BasicDBObject('$gt', -1))                  | 1
-            "mx gt doesn't exist"                 | CQL.toFilter("mx>1")                              | new BasicDBObject("calcDesign.structure.pointLoads.mx.value", new BasicDBObject('$gt', 1))                   | 0
-            "mx gte exists"                       | CQL.toFilter("mx>=0")                             | new BasicDBObject("calcDesign.structure.pointLoads.mx.value", new BasicDBObject('$gte', 0))                  | 1
-            "mx gte doesn't exist"                | CQL.toFilter("mx>=33")                            | new BasicDBObject("calcDesign.structure.pointLoads.mx.value", new BasicDBObject('$gte', 33))                 | 0
-            "mx lt exists"                        | CQL.toFilter("mx<34")                             | new BasicDBObject("calcDesign.structure.pointLoads.mx.value", new BasicDBObject('$lt', 34))                  | 1
-            "mx lt doesn't exist"                 | CQL.toFilter("mx<0")                              | new BasicDBObject("calcDesign.structure.pointLoads.mx.value", new BasicDBObject('$lt', 0))                   | 0
-            "mx lte exists"                       | CQL.toFilter("mx<=12")                            | new BasicDBObject("calcDesign.structure.pointLoads.mx.value", new BasicDBObject('$lte', 12))                 | 1
-            "mx lte doesn't exist"                | CQL.toFilter("mx<=-1")                            | new BasicDBObject("calcDesign.structure.pointLoads.mx.value", new BasicDBObject('$lte', -1))                 | 0
-
-            "my that exists"                      | CQL.toFilter("my=0")                              | new BasicDBObject("calcDesign.structure.pointLoads.my.value", 0)                                             | 1
-            "my that doesn't exist"               | CQL.toFilter("my=2")                              | new BasicDBObject("calcDesign.structure.pointLoads.my.value", 2)                                             | 0
-            "my gt exists"                        | CQL.toFilter("my>-1")                             | new BasicDBObject("calcDesign.structure.pointLoads.my.value", new BasicDBObject('$gt', -1))                  | 1
-            "my gt doesn't exist"                 | CQL.toFilter("my>1")                              | new BasicDBObject("calcDesign.structure.pointLoads.my.value", new BasicDBObject('$gt', 1))                   | 0
-            "my gte exists"                       | CQL.toFilter("my>=0")                             | new BasicDBObject("calcDesign.structure.pointLoads.my.value", new BasicDBObject('$gte', 0))                  | 1
-            "my gte doesn't exist"                | CQL.toFilter("my>=33")                            | new BasicDBObject("calcDesign.structure.pointLoads.my.value", new BasicDBObject('$gte', 33))                 | 0
-            "my lt exists"                        | CQL.toFilter("my<34")                             | new BasicDBObject("calcDesign.structure.pointLoads.my.value", new BasicDBObject('$lt', 34))                  | 1
-            "my lt doesn't exist"                 | CQL.toFilter("my<0")                              | new BasicDBObject("calcDesign.structure.pointLoads.my.value", new BasicDBObject('$lt', 0))                   | 0
-            "my lte exists"                       | CQL.toFilter("my<=12")                            | new BasicDBObject("calcDesign.structure.pointLoads.my.value", new BasicDBObject('$lte', 12))                 | 1
-            "my lte doesn't exist"                | CQL.toFilter("my<=-1")                            | new BasicDBObject("calcDesign.structure.pointLoads.my.value", new BasicDBObject('$lte', -1))                 | 0
-
-            "mz that exists"                      | CQL.toFilter("mz=0")                              | new BasicDBObject("calcDesign.structure.pointLoads.mz.value", 0)                                             | 1
-            "mz that doesn't exist"               | CQL.toFilter("mz=2")                              | new BasicDBObject("calcDesign.structure.pointLoads.mz.value", 2)                                             | 0
-            "mz gt exists"                        | CQL.toFilter("mz>-1")                             | new BasicDBObject("calcDesign.structure.pointLoads.mz.value", new BasicDBObject('$gt', -1))                  | 1
-            "mz gt doesn't exist"                 | CQL.toFilter("mz>1")                              | new BasicDBObject("calcDesign.structure.pointLoads.mz.value", new BasicDBObject('$gt', 1))                   | 0
-            "mz gte exists"                       | CQL.toFilter("mz>=0")                             | new BasicDBObject("calcDesign.structure.pointLoads.mz.value", new BasicDBObject('$gte', 0))                  | 1
-            "mz gte doesn't exist"                | CQL.toFilter("mz>=33")                            | new BasicDBObject("calcDesign.structure.pointLoads.mz.value", new BasicDBObject('$gte', 33))                 | 0
-            "mz lt exists"                        | CQL.toFilter("mz<34")                             | new BasicDBObject("calcDesign.structure.pointLoads.mz.value", new BasicDBObject('$lt', 34))                  | 1
-            "mz lt doesn't exist"                 | CQL.toFilter("mz<0")                              | new BasicDBObject("calcDesign.structure.pointLoads.mz.value", new BasicDBObject('$lt', 0))                   | 0
-            "mz lte exists"                       | CQL.toFilter("mz<=12")                            | new BasicDBObject("calcDesign.structure.pointLoads.mz.value", new BasicDBObject('$lte', 12))                 | 1
-            "mz lte doesn't exist"                | CQL.toFilter("mz<=-1")                            | new BasicDBObject("calcDesign.structure.pointLoads.mz.value", new BasicDBObject('$lte', -1))                 | 0
+            "ZForce that exists"                  | CQL.toFilter("ZForce=32.666666666666664")         | new BasicDBObject("calcDesign.structure.pointLoads.ZForce.value", 32.666666666666664)                             | 1
+            "ZForce that doesn't exist"           | CQL.toFilter("ZForce=2")                          | new BasicDBObject("calcDesign.structure.pointLoads.ZForce.value", 2)                                              | 0
+            "ZForce gt exists"                    | CQL.toFilter("ZForce>1")                          | new BasicDBObject("calcDesign.structure.pointLoads.ZForce.value", new BasicDBObject('$gt', 1))                    | 1
+            "ZForce gt doesn't exist"             | CQL.toFilter("ZForce>50")                         | new BasicDBObject("calcDesign.structure.pointLoads.ZForce.value", new BasicDBObject('$gt', 50))                   | 0
+            "ZForce gte exists"                   | CQL.toFilter("ZForce>=0")                         | new BasicDBObject("calcDesign.structure.pointLoads.ZForce.value", new BasicDBObject('$gte', 0))                   | 1
+            "ZForce gte doesn't exist"            | CQL.toFilter("ZForce>=33")                        | new BasicDBObject("calcDesign.structure.pointLoads.ZForce.value", new BasicDBObject('$gte', 33))                  | 0
+            "ZForce lt exists"                    | CQL.toFilter("ZForce<34")                         | new BasicDBObject("calcDesign.structure.pointLoads.ZForce.value", new BasicDBObject('$lt', 34))                   | 1
+            "ZForce lt doesn't exist"             | CQL.toFilter("ZForce<0")                          | new BasicDBObject("calcDesign.structure.pointLoads.ZForce.value", new BasicDBObject('$lt', 0))                    | 0
+            "ZForce lte exists"                   | CQL.toFilter("ZForce<=32.666666666666664")        | new BasicDBObject("calcDesign.structure.pointLoads.ZForce.value", new BasicDBObject('$lte', 32.666666666666664))  | 1
+            "ZForce lte doesn't exist"            | CQL.toFilter("ZForce<=-1")                        | new BasicDBObject("calcDesign.structure.pointLoads.ZForce.value", new BasicDBObject('$lte', -1))                  | 0
 
             "poleId that exists"                  | CQL.toFilter("poleId='56e9b7137d84511d8dd0f13c'") | new BasicDBObject("id", "56e9b7137d84511d8dd0f13c")                                                          | 1
             "poleId that doesn't exist"           | CQL.toFilter("poleId='Measured Design'")          | new BasicDBObject("id", "Measured Design")                                                                   | 0

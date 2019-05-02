@@ -15,8 +15,18 @@
         "path": "id"
       },
       {
-        "name": "label",
+        "name": "name",
         "path": "calcLocation.label"
+      },
+      {
+        "name": "latitude",
+        "path": "calcLocation.geographicCoordinate.coordinates.1",
+        "class": "Double"
+      },
+      {
+        "name": "longitude",
+        "path": "calcLocation.geographicCoordinate.coordinates.0",
+        "class": "Double"
       },
       {
         "name": "projectId",
@@ -38,10 +48,6 @@
         "name": "dateModified",
         "path": "dateModified",
         "class": "Long"
-      },
-      {
-        "name": "mapNumber",
-        "path": "calcLocation.mapNumber"
       },
       {
         "name": "comments",
@@ -72,8 +78,8 @@
         "path": "calcLocation.address.zip_code"
       },
       {
-        "name": "user",
-        "path": "user.email"
+        "name": "technician",
+        "path": "calcLocation.technician"
       }
     ]
   },
@@ -161,8 +167,7 @@
         "attributes": [
           {
             "name": "value",
-            "stringValue": true,
-            "subCollectionPath": ""
+            "subCollectionPath": "description"
           }
         ]
       }
@@ -291,15 +296,19 @@
     "idAsAttribute": true,
     "attributes": [
       {
-        "name": "designType",
+        "name": "designLayerName",
         "path": "calcDesign.label"
+      },
+      {
+        "name": "designLayerType",
+        "path": "calcDesign.layerType"
       },
       {
         "name": "locationId",
         "path": "locationId"
       },
       {
-        "name": "locationLabel",
+        "name": "locationName",
         "path": "locationLabel"
       },
       {
@@ -366,15 +375,19 @@
     "idAsAttribute": true,
     "attributes": [
       {
-        "name": "designType",
+        "name": "designLayerName",
         "path": "calcDesign.label"
+      },
+      {
+        "name": "designLayerType",
+        "path": "calcDesign.layerType"
       },
       {
         "name": "locationId",
         "path": "locationId"
       },
       {
-        "name": "locationLabel",
+        "name": "locationName",
         "path": "locationLabel"
       },
       {
@@ -389,45 +402,6 @@
         "name": "dateModified",
         "path": "dateModified",
         "class": "Long"
-      },
-      {
-        "name": "glc",
-        "path": "calcDesign.structure.pole.glc.value",
-        "class": "Double"
-      },
-      {
-        "name": "glcUnit",
-        "path": "calcDesign.structure.pole.glc.unit"
-      },
-      {
-        "name": "agl",
-        "path": "calcDesign.structure.pole.agl.value",
-        "class": "Double"
-      },
-      {
-        "name": "aglUnit",
-        "path": "calcDesign.structure.pole.agl.unit"
-      },
-      {
-        "name": "species",
-        "path": "calcDesign.structure.pole.clientItem.species"
-      },
-      {
-        "name": "class",
-        "path": "calcDesign.structure.pole.clientItem.classOfPole"
-      },
-      {
-        "name": "length",
-        "path": "calcDesign.structure.pole.clientItem.height.value",
-        "class": "Double"
-      },
-      {
-        "name": "lengthUnit",
-        "path": "calcDesign.structure.pole.clientItem.height.unit"
-      },
-      {
-        "name": "owner",
-        "path": "calcDesign.structure.pole.owner.id"
       },
       {
         "name": "poleId",
@@ -794,7 +768,7 @@
             "subCollectionPath": "owner.id"
           },
           {
-            "name": "type",
+            "name": "size",
             "subCollectionPath": "clientItem"
           },
           {
@@ -1063,7 +1037,7 @@
             "subCollectionPath": "owner.id"
           },
           {
-            "name": "type",
+            "name": "size",
             "subCollectionPath": "clientItem"
           },
           {
@@ -1088,10 +1062,6 @@
             "name": "direction",
             "subCollectionPath": "direction",
             "class": "Long"
-          },
-          {
-            "name": "associatedBacking",
-            "subCollectionPath": "associatedBacking"
           }
         ]
       }
@@ -1151,11 +1121,7 @@
             "subCollectionPath": "height.unit"
           },
           {
-            "name": "supportType",
-            "subCollectionPath": "supportType"
-          },
-          {
-            "name": "type",
+            "name": "size",
             "subCollectionPath": "clientItem"
           }
         ]
@@ -1311,112 +1277,40 @@
             "subCollectionPath": "owner.id"
           },
           {
-            "name": "elevation",
-            "subCollectionPath": "elevation.value",
+            "name": "attachHeight",
+            "subCollectionPath": "attachHeight.value",
             "class": "Double"
           },
           {
-            "name": "elevationUnit",
-            "subCollectionPath": "elevation.unit"
+            "name": "attachHeightUnit",
+            "subCollectionPath": "attachHeight.unit"
           },
           {
-            "name": "attachmentHeight",
-            "subCollectionPath": "attachmentHeight.value",
+            "name": "XForce",
+            "subCollectionPath": "XForce.value",
             "class": "Double"
           },
           {
-            "name": "attachmentHeightUnit",
-            "subCollectionPath": "attachmentHeight.unit"
+            "name": "XForceUnit",
+            "subCollectionPath": "XForce.unit"
           },
           {
-            "name": "rotation",
-            "subCollectionPath": "rotation.value",
+            "name": "YForce",
+            "subCollectionPath": "YForce.value",
             "class": "Double"
           },
           {
-            "name": "rotationUnit",
-            "subCollectionPath": "rotation.unit"
+            "name": "YForceUnit",
+            "subCollectionPath": "YForce.unit"
           },
           {
-            "name": "x",
-            "subCollectionPath": "x.value",
+            "name": "ZForce",
+            "subCollectionPath": "ZForce.value",
             "class": "Double"
           },
           {
-            "name": "xUnit",
-            "subCollectionPath": "x.unit"
-          },
-          {
-            "name": "y",
-            "subCollectionPath": "y.value",
-            "class": "Double"
-          },
-          {
-            "name": "yUnit",
-            "subCollectionPath": "y.unit"
-          },
-          {
-            "name": "z",
-            "subCollectionPath": "z.value",
-            "class": "Double"
-          },
-          {
-            "name": "zUnit",
-            "subCollectionPath": "z.unit"
-          },
-          {
-            "name": "fx",
-            "subCollectionPath": "fx.value",
-            "class": "Double"
-          },
-          {
-            "name": "fxUnit",
-            "subCollectionPath": "fx.unit"
-          },
-          {
-            "name": "fy",
-            "subCollectionPath": "fy.value",
-            "class": "Double"
-          },
-          {
-            "name": "fyUnit",
-            "subCollectionPath": "fy.unit"
-          },
-          {
-            "name": "fz",
-            "subCollectionPath": "fz.value",
-            "class": "Double"
-          },
-          {
-            "name": "fzUnit",
-            "subCollectionPath": "fz.unit"
-          },
-          {
-            "name": "mx",
-            "subCollectionPath": "mx.value",
-            "class": "Double"
-          },
-          {
-            "name": "mxUnit",
-            "subCollectionPath": "mx.unit"
-          },
-          {
-            "name": "my",
-            "subCollectionPath": "my.value",
-            "class": "Double"
-          },
-          {
-            "name": "myUnit",
-            "subCollectionPath": "my.unit"
-          },
-          {
-            "name": "mz",
-            "subCollectionPath": "mz.value",
-            "class": "Double"
-          },
-          {
-            "name": "mzUnit",
-            "subCollectionPath": "mz.unit"
+            "name": "ZForceUnit",
+            "subCollectionPath": "ZForce.unit"
           }
         ]
       }
@@ -1497,49 +1391,6 @@
     ]
   },
   {
-    "typeName": "guyAttachPoint",
-    "collection": "designs",
-    "idAsAttribute": false,
-    "attributes": [
-      {
-        "name": "poleId",
-        "path": "id"
-      }
-    ],
-    "subCollections": [
-      {
-        "subCollectionPath": "calcDesign.structure.guyAttachPoints",
-        "includeInDefaultQuery": true,
-        "attributes": [
-          {
-            "name": "id",
-            "concatenate": [
-              {
-                "path": "id"
-              },
-              {
-                "subCollectionPath": "id"
-              }
-            ]
-          },
-          {
-            "name": "owner",
-            "subCollectionPath": "owner.id"
-          },
-          {
-            "name": "attachHeight",
-            "subCollectionPath": "attachHeight.value",
-            "class": "Double"
-          },
-          {
-            "name": "attachHeightUnit",
-            "subCollectionPath": "attachHeight.unit"
-          }
-        ]
-      }
-    ]
-  },
-  {
     "typeName": "pushBrace",
     "collection": "designs",
     "idAsAttribute": false,
@@ -1604,19 +1455,6 @@
           {
             "name": "species",
             "subCollectionPath": "clientItem.species"
-          },
-          {
-            "name": "class",
-            "subCollectionPath": "clientItem.classOfPole"
-          },
-          {
-            "name": "length",
-            "subCollectionPath": "clientItem.height.value",
-            "class": "Double"
-          },
-          {
-            "name": "lengthUnit",
-            "subCollectionPath": "clientItem.height.unit"
           }
         ]
       }
@@ -1662,7 +1500,7 @@
             "subCollectionPath": "attachmentHeight.unit"
           },
           {
-            "name": "clientItem",
+            "name": "size",
             "subCollectionPath": "clientItem"
           },
           {
@@ -1710,7 +1548,7 @@
             ]
           },
           {
-            "name": "clientItem",
+            "name": "name",
             "subCollectionPath": "clientItem"
           }
         ]
@@ -1744,7 +1582,7 @@
             ]
           },
           {
-            "name": "clientItem",
+            "name": "code",
             "subCollectionPath": "clientItem"
           }
         ]

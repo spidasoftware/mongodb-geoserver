@@ -45,10 +45,10 @@
             "stationId": "ff8081814c5ca491014c5cacaf1853c7"
         },
         "summaryNotes": [
-            "Windstream/KDL install down guy for span to the W",
-            "Windstream/KDL install down guy for span to the NW",
-            "OK to Attach at 31'3\" for span NW, 30'11\" for span W",
-            "AEP broken down guy for span N"],
+            {"description":"Windstream/KDL install down guy for span to the W"},
+            {"description":"Windstream/KDL install down guy for span to the NW"},
+            {"description":"OK to Attach at 31'3\" for span NW, 30'11\" for span W"},
+            {"description":"AEP broken down guy for span N"}],
         "forms": [{
             "title": "HTA Form",
             "template": "6ee5fba14760878be22701e1b3b7c05b-HTA Form",

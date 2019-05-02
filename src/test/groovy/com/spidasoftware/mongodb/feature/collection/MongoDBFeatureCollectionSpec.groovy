@@ -65,15 +65,14 @@ class MongoDBFeatureCollectionSpec extends Specification {
             Feature feature = locationFeatureCollectionIterator.featuresList.get(0)
         then:
             locationFeatureCollectionIterator.size() == 1
-            feature.attributeCount == 17
+            feature.attributeCount == 18
             feature.getAttribute("id") == "55fac7fde4b0e7f2e3be342c"
-            feature.getAttribute("label") == "684704E"
+            feature.getAttribute("name") == "684704E"
             feature.getAttribute("projectId") == "55fac7fde4b0e7f2e3be344f"
             feature.getAttribute("projectName") == "IJUS-44-2015-08-26-053"
             feature.getAttribute("dateModified") == 1442498557079
             feature.getAttribute("clientFile") == "SCE.client"
             feature.getAttribute("clientFileVersion") == "6ee5fba14760878be22701e1b3b7c05b"
-            feature.getAttribute("mapNumber") == "ROME AVE."
             feature.getAttribute("comments") == "Two transformers connected to lower two cross arms"
             feature.getAttribute("streetNumber") == "8812"
             feature.getAttribute("street") == "Eberhart Rd NW"
@@ -81,29 +80,30 @@ class MongoDBFeatureCollectionSpec extends Specification {
             feature.getAttribute("county") == "Tuscarawas"
             feature.getAttribute("state") == "OH"
             feature.getAttribute("zipCode") == "44622"
-            feature.getAttribute("user") == "test@test.com"
+            feature.getAttribute("technician") == "Arle Rodriguez"
             feature.getAttribute("geographicCoordinate").coordinate.y == 33.80541229248047
             feature.getAttribute("geographicCoordinate").coordinate.x == -118.3824234008789
+            feature.getAttribute("latitude") == 33.80541229248047
+            feature.getAttribute("longitude") == -118.3824234008789
     }
 
     void testLimitLocationPropertyNames() {
         setup:
             BasicDBObject mapping = jsonMapping.find { it.typeName == "location" }
-            Query query = new Query("location", Filter.INCLUDE, ["id", "label"] as String[])
+            Query query = new Query("location", Filter.INCLUDE, ["id", "name"] as String[])
             def locationFeatureCollectionIterator = new MongoDBFeatureCollection(dbCursor, featureType, mapping, query, mongoDBFeatureSource)
         when:
             Feature feature = locationFeatureCollectionIterator.featuresList.get(0)
         then:
             locationFeatureCollectionIterator.size() == 1
-            feature.attributeCount == 17
+            feature.attributeCount == 18
             feature.getAttribute("id") == "55fac7fde4b0e7f2e3be342c"
-            feature.getAttribute("label") == "684704E"
+            feature.getAttribute("name") == "684704E"
             feature.getAttribute("projectId") == null
             feature.getAttribute("projectName") == null
             feature.getAttribute("dateModified") == null
             feature.getAttribute("clientFile") == null
             feature.getAttribute("clientFileVersion") == null
-            feature.getAttribute("mapNumber") == null
             feature.getAttribute("comments") == null
             feature.getAttribute("streetNumber") == null
             feature.getAttribute("street") == null
@@ -113,5 +113,7 @@ class MongoDBFeatureCollectionSpec extends Specification {
             feature.getAttribute("zipCode") == null
             feature.getAttribute("user") == null
             feature.getAttribute("geographicCoordinate") == null
+            feature.getAttribute("latitude") == null
+            feature.getAttribute("longitude") == null
     }
 }

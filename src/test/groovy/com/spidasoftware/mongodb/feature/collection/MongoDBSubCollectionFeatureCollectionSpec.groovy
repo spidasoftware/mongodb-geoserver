@@ -85,14 +85,15 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
 
     void testGetPole() {
         setup:
-            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("pole", "designs", CQL.toFilter("designType='Measured Design'"))
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("pole", "designs", CQL.toFilter("designLayerName='Measured Design'"))
         when:
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 16
-            feature.getAttribute("designType") == "Measured Design"
-            feature.getAttribute("locationLabel") == "684704E"
+            feature.attributeCount == 17
+            feature.getAttribute("designLayerName") == "Measured Design"
+            feature.getAttribute("designLayerType") == "Measured"
+            feature.getAttribute("locationName") == "684704E"
             feature.getAttribute("locationId") == "55fac7fde4b0e7f2e3be342c"
             feature.getAttribute("clientFile") == "Acme Power.client"
             feature.getAttribute("clientFileVersion") == "6ee5fba14760878be22701e1b3b7c05b"
@@ -116,23 +117,15 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 25
-            feature.getAttribute("designType") == "Measured Design"
+            feature.attributeCount == 17
+            feature.getAttribute("designLayerName") == "Measured Design"
+            feature.getAttribute("designLayerType") == "Measured"
             feature.getAttribute("loadInfo") == "CSA Heavy"
-            feature.getAttribute("locationLabel") == "684704E"
+            feature.getAttribute("locationName") == "684704E"
             feature.getAttribute("locationId") == "55fac7fde4b0e7f2e3be342c"
             feature.getAttribute("clientFile") == "Acme Power.client"
             feature.getAttribute("clientFileVersion") == "6ee5fba14760878be22701e1b3b7c05b"
             feature.getAttribute("dateModified") == 1442498557079
-            feature.getAttribute("glc") == 2.8990375130504664
-            feature.getAttribute("glcUnit") == "FOOT"
-            feature.getAttribute("agl") == 38.5
-            feature.getAttribute("aglUnit") == "FOOT"
-            feature.getAttribute("species") == "Southern Yellow Pine"
-            feature.getAttribute("class") == "4"
-            feature.getAttribute("length") == 45
-            feature.getAttribute("lengthUnit") == "FOOT"
-            feature.getAttribute("owner") == "Acme Power"
             feature.getAttribute("actual") == 1.5677448671814123
             feature.getAttribute("allowable") == 100
             feature.getAttribute("unit") == "PERCENT"
@@ -166,14 +159,15 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
 
     void testLimitPolePropertyNames() {
         setup:
-            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("pole", "designs", CQL.toFilter("designType='Measured Design'"), ["id", "designType"] as String[])
+            def mongoDBSubCollectionFeatureCollection = getFeatureIterator("pole", "designs", CQL.toFilter("designLayerName='Measured Design'"), ["id", "designLayerName"] as String[])
         when:
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 16
-            feature.getAttribute("designType") == "Measured Design"
-            feature.getAttribute("locationLabel") == null
+            feature.attributeCount == 17
+            feature.getAttribute("designLayerName") == "Measured Design"
+            feature.getAttribute("designLayerType") == null
+            feature.getAttribute("locationName") == null
             feature.getAttribute("locationId") == null
             feature.getAttribute("clientFile") == null
             feature.getAttribute("clientFileVersion") == null
@@ -197,24 +191,16 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 25
+            feature.attributeCount == 17
             feature.getAttribute("assetType") == null
-            feature.getAttribute("designType") == null
+            feature.getAttribute("designLayerName") == null
+            feature.getAttribute("designLayerType") == null
             feature.getAttribute("loadInfo") ==null
-            feature.getAttribute("locationLabel") == null
+            feature.getAttribute("locationName") == null
             feature.getAttribute("locationId") == null
             feature.getAttribute("clientFile") == null
             feature.getAttribute("clientFileVersion") == null
             feature.getAttribute("dateModified") == null
-            feature.getAttribute("glc") == null
-            feature.getAttribute("glcUnit") == null
-            feature.getAttribute("agl") == null
-            feature.getAttribute("aglUnit") == null
-            feature.getAttribute("species") == null
-            feature.getAttribute("class") == null
-            feature.getAttribute("length") == null
-            feature.getAttribute("lengthUnit") == null
-            feature.getAttribute("owner") == null
             feature.getAttribute("actual") == 1.5677448671814123
             feature.getAttribute("allowable") == null
             feature.getAttribute("unit") == null
@@ -500,7 +486,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
             feature.attributeCount == 9
             feature.getAttribute("owner") == "Acme Power"
-            feature.getAttribute("type") == "15kV Dead End Insulator"
+            feature.getAttribute("size") == "15kV Dead End Insulator"
             feature.getAttribute("attachmentHeight") == 27.083333333333332
             feature.getAttribute("attachmentHeightUnit") == "FOOT"
             feature.getAttribute("offset") == 325
@@ -644,15 +630,14 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 9
+            feature.attributeCount == 8
             feature.getAttribute("owner") == "Acme Power"
-            feature.getAttribute("type") == "8 Foot Cross Arm"
+            feature.getAttribute("size") == "8 Foot Cross Arm"
             feature.getAttribute("attachmentHeight") == 32.666666666666664
             feature.getAttribute("attachmentHeightUnit") == "FOOT"
             feature.getAttribute("offset") == 48
             feature.getAttribute("offsetUnit") == "INCH"
             feature.getAttribute("direction") == 57
-            feature.getAttribute("associatedBacking") == "Other"
             feature.getAttribute("poleId") == "56e9b7137d84511d8dd0f13c"
     }
 
@@ -663,15 +648,14 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 9
+            feature.attributeCount == 8
             feature.getAttribute("owner") == "Acme Power"
-            feature.getAttribute("type") == null
+            feature.getAttribute("size") == null
             feature.getAttribute("attachmentHeight") == null
             feature.getAttribute("attachmentHeightUnit") == null
             feature.getAttribute("offset") == null
             feature.getAttribute("offsetUnit") == null
             feature.getAttribute("direction") == null
-            feature.getAttribute("associatedBacking") == null
             feature.getAttribute("poleId") == null
     }
 
@@ -682,15 +666,14 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 9
+            feature.attributeCount == 8
             feature.getAttribute("distance") == 12
             feature.getAttribute("distanceUnit") == "FOOT"
             feature.getAttribute("direction") == 122
             feature.getAttribute("owner") == "Acme Power"
             feature.getAttribute("height") == 0
             feature.getAttribute("heightUnit") == "FOOT"
-            feature.getAttribute("supportType") == "Other"
-            feature.getAttribute("type") == "Single"
+            feature.getAttribute("size") == "Single"
             feature.getAttribute("poleId") == "56e9b7137d84511d8dd0f13c"
     }
 
@@ -701,15 +684,14 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 9
+            feature.attributeCount == 8
             feature.getAttribute("distance") == null
             feature.getAttribute("distanceUnit") == null
             feature.getAttribute("direction") == null
             feature.getAttribute("directionUnit") == null
             feature.getAttribute("owner") == "Acme Power"
             feature.getAttribute("height") == null
-            feature.getAttribute("supportType") == null
-            feature.getAttribute("type") == null
+            feature.getAttribute("size") == null
             feature.getAttribute("poleId") == null
     }
 
@@ -790,32 +772,16 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.size() == 1
-            feature.attributeCount == 26
+            feature.attributeCount == 10
             feature.getAttribute("owner") == "Acme Power"
-            feature.getAttribute("elevation") == 0
-            feature.getAttribute("elevationUnit") == "DEGREE_ANGLE"
-            feature.getAttribute("attachmentHeight") == 32
-            feature.getAttribute("attachmentHeightUnit") == "FOOT"
-            feature.getAttribute("rotation") == 0
-            feature.getAttribute("rotationUnit") == "DEGREE_ANGLE"
-            feature.getAttribute("x") == 0
-            feature.getAttribute("xUnit") == "FOOT"
-            feature.getAttribute("y") == 0
-            feature.getAttribute("yUnit") == "FOOT"
-            feature.getAttribute("z") == 32.666666666666664
-            feature.getAttribute("zUnit") == "FOOT"
-            feature.getAttribute("fx") == 73.92457179425563
-            feature.getAttribute("fxUnit") == "POUND_FORCE"
-            feature.getAttribute("fy") == 241.92570549706124
-            feature.getAttribute("fyUnit") == "POUND_FORCE"
-            feature.getAttribute("fz") == -7.177126069505941
-            feature.getAttribute("fzUnit") == "POUND_FORCE"
-            feature.getAttribute("mx") == 0
-            feature.getAttribute("mxUnit") == "POUND_FORCE_FOOT"
-            feature.getAttribute("my") == 0
-            feature.getAttribute("myUnit") == "POUND_FORCE_FOOT"
-            feature.getAttribute("mz") == 0
-            feature.getAttribute("mzUnit") == "POUND_FORCE_FOOT"
+            feature.getAttribute("attachHeight") == 32
+            feature.getAttribute("attachHeightUnit") == "FOOT"
+            feature.getAttribute("XForce") == 0
+            feature.getAttribute("XForceUnit") == "FOOT"
+            feature.getAttribute("YForce") == 0
+            feature.getAttribute("YForceUnit") == "FOOT"
+            feature.getAttribute("ZForce") == 32.666666666666664
+            feature.getAttribute("ZForceUnit") == "FOOT"
             feature.getAttribute("poleId") == "56e9b7137d84511d8dd0f13c"
     }
 
@@ -826,32 +792,16 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 26
+            feature.attributeCount == 10
             feature.getAttribute("owner") == "Acme Power"
-            feature.getAttribute("elevation") == null
-            feature.getAttribute("elevationUnit") == null
-            feature.getAttribute("attachmentHeight") == null
-            feature.getAttribute("attachmentHeightUnit") == null
-            feature.getAttribute("rotation") == null
-            feature.getAttribute("rotationUnit") == null
-            feature.getAttribute("x") == null
-            feature.getAttribute("xUnit") == null
-            feature.getAttribute("y") == null
-            feature.getAttribute("yUnit") == null
-            feature.getAttribute("z") == null
-            feature.getAttribute("zUnit") == null
-            feature.getAttribute("fx") == null
-            feature.getAttribute("fxUnit") == null
-            feature.getAttribute("fy") == null
-            feature.getAttribute("fyUnit") == null
-            feature.getAttribute("fz") == null
-            feature.getAttribute("fzUnit") == null
-            feature.getAttribute("mx") == null
-            feature.getAttribute("mxUnit") == null
-            feature.getAttribute("my") == null
-            feature.getAttribute("myUnit") == null
-            feature.getAttribute("mz") == null
-            feature.getAttribute("mzUnit") == null
+            feature.getAttribute("attachHeight") == null
+            feature.getAttribute("attachHeightUnit") == null
+            feature.getAttribute("XForce") == null
+            feature.getAttribute("XForceUnit") == null
+            feature.getAttribute("YForce") == null
+            feature.getAttribute("YForceUnit") == null
+            feature.getAttribute("ZForce") == null
+            feature.getAttribute("ZForceUnit") == null
             feature.getAttribute("poleId") == null
     }
 
