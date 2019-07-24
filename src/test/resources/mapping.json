@@ -19,6 +19,10 @@
         "path": "calcLocation.label"
       },
       {
+        "name": "status",
+        "path": "status"
+      },
+      {
         "name": "latitude",
         "path": "calcLocation.geographicCoordinate.coordinates.1",
         "class": "Double"
@@ -312,6 +316,10 @@
         "path": "locationLabel"
       },
       {
+        "name": "status",
+        "path": "status"
+      },
+      {
         "name": "clientFile",
         "path": "clientFile"
       },
@@ -389,6 +397,10 @@
       {
         "name": "locationName",
         "path": "locationLabel"
+      },
+      {
+        "name": "status",
+        "path": "status"
       },
       {
         "name": "clientFile",

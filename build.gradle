@@ -51,7 +51,7 @@ repositories {
     mavenCentral()
     maven { url m2Settings.exposed }
     maven { url "https://dev.spidasoftware.com/artifactory/list/boundlessgeo" }
-     maven { url "https://download.osgeo.org/webdav/geotools" }
+     maven { url "http://download.osgeo.org/webdav/geotools" }
 }
 
 task sourcesZip(type: Zip, dependsOn: classes) {
