@@ -1,7 +1,7 @@
 # mongodb-geoserver
 A [MongoDB](https://www.mongodb.com/) plugin for [Geoserver](http://geoserver.org/).
 
-Download [Geoserver 2.8.3](http://geoserver.org/release/2.8.3/)
+Download [Geoserver 2.8.3](http://geoserver.org/release/2.8.3/) (Platform Independent Binary)
 
 ### To setup a dev environment:
 1. Download deployment from [here](https://dev.spidasoftware.com/artifactory/exposed-repo/com/spidasoftware/mongodb-geoserver/)
