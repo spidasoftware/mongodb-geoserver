@@ -341,6 +341,10 @@
         "class": "Long"
       },
       {
+        "name": "analysisCurrent",
+        "path": "calcDesign.analysisCurrent"
+      },
+      {
         "name": "glc",
         "path": "calcDesign.structure.pole.glc.value",
         "class": "Double"
