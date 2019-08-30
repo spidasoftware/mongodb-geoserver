@@ -345,6 +345,10 @@
         "path": "calcDesign.analysisCurrent"
       },
       {
+        "name": "resultId",
+        "path": "calcDesign.analysisDetails.resultId"
+      },
+      {
         "name": "glc",
         "path": "calcDesign.structure.pole.glc.value",
         "class": "Double"
@@ -401,6 +405,10 @@
       {
         "name": "designLayerType",
         "path": "calcDesign.layerType"
+      },
+      {
+        "name": "resultId",
+        "path": "calcDesign.analysisDetails.resultId"
       },
       {
         "name": "locationId",
