@@ -436,6 +436,10 @@
         "class": "Long"
       },
       {
+        "name": "analysisCurrent",
+        "path": "calcDesign.analysisCurrent"
+      },
+      {
         "name": "poleId",
         "path": "id"
       }
