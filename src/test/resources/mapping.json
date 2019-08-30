@@ -41,6 +41,14 @@
         "path": "projectLabel"
       },
       {
+        "name": "sourceProjectId",
+        "path": "sourceProjectId"
+      },
+      {
+        "name": "sourceProjectName",
+        "path": "sourceProjectLabel"
+      },
+      {
         "name": "clientFile",
         "path": "clientFile"
       },
