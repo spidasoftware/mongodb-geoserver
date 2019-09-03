@@ -446,7 +446,7 @@
     ],
     "subCollections": [
       {
-        "subCollectionPath": "analysisSummary",
+        "subCollectionPath": "calcDesign.analysis",
         "includeInDefaultQuery": false,
         "attributes": [
           {
