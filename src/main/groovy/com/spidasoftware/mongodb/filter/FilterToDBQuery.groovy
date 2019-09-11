@@ -486,7 +486,7 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
 
     @Override
     Object visit(PropertyIsNull filter, Object extraData) {
-        String propertyName = filter.accept(this, null)
+        String propertyName = filter.getExpression().accept(this, null)
         return new BasicDBObject(propertyName, new BasicDBObject('$exists', false))
     }
 
