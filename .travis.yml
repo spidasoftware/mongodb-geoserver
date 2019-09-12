@@ -1,4 +1,6 @@
 language: groovy
+jdk:
+  - openjdk8
 services: mongodb
 addons:
   apt:

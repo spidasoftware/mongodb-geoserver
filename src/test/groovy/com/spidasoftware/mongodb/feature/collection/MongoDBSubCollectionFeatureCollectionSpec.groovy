@@ -90,7 +90,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 17
+            feature.attributeCount == 20
             feature.getAttribute("designLayerName") == "Measured Design"
             feature.getAttribute("designLayerType") == "Measured"
             feature.getAttribute("locationName") == "684704E"
@@ -117,7 +117,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 17
+            feature.attributeCount == 20
             feature.getAttribute("designLayerName") == "Measured Design"
             feature.getAttribute("designLayerType") == "Measured"
             feature.getAttribute("loadInfo") == "CSA Heavy"
@@ -130,8 +130,8 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             feature.getAttribute("allowable") == 100
             feature.getAttribute("unit") == "PERCENT"
             feature.getAttribute("analysisDate") == 1446037442824
-            feature.getAttribute("component") ==  "Pole"
-            feature.getAttribute("analysisType") ==  "BUCKLING"
+            feature.getAttribute("component") ==  "Pole-Buckling"
+            feature.getAttribute("analysisType") ==  null
             feature.getAttribute("passes") == true
             feature.getAttribute("poleId") == "56e9b7137d84511d8dd0f13c"
             feature.getAttribute("id") == "56e9b7137d84511d8dd0f13c_ANALYSIS_0_0"
@@ -164,7 +164,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 17
+            feature.attributeCount == 20
             feature.getAttribute("designLayerName") == "Measured Design"
             feature.getAttribute("designLayerType") == null
             feature.getAttribute("locationName") == null
@@ -191,7 +191,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 17
+            feature.attributeCount == 20
             feature.getAttribute("assetType") == null
             feature.getAttribute("designLayerName") == null
             feature.getAttribute("designLayerType") == null
