@@ -65,7 +65,7 @@ class MongoDBFeatureCollectionSpec extends Specification {
             Feature feature = locationFeatureCollectionIterator.featuresList.get(0)
         then:
             locationFeatureCollectionIterator.size() == 1
-            feature.attributeCount == 21
+            feature.attributeCount == 22
             feature.getAttribute("id") == "55fac7fde4b0e7f2e3be342c"
             feature.getAttribute("name") == "684704E"
             feature.getAttribute("projectId") == "55fac7fde4b0e7f2e3be344f"
@@ -96,7 +96,7 @@ class MongoDBFeatureCollectionSpec extends Specification {
             Feature feature = locationFeatureCollectionIterator.featuresList.get(0)
         then:
             locationFeatureCollectionIterator.size() == 1
-            feature.attributeCount == 21
+            feature.attributeCount == 22
             feature.getAttribute("id") == "55fac7fde4b0e7f2e3be342c"
             feature.getAttribute("name") == "684704E"
             feature.getAttribute("projectId") == null

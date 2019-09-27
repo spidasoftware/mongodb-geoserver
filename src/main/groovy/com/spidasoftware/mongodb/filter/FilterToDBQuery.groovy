@@ -118,7 +118,7 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
             if (attr.class == "Double") {
                 doubleQueryKeys << path
             } else if (attr.class == "Long") {
-                doubleQueryKeys << path
+                longQueryKeys << path
             } else if (attr.class == "Boolean") {
                 booleanQueryKeys << path
             } else if (attr.concatenate) {
