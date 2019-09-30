@@ -37,6 +37,11 @@
         "path": "projectId"
       },
       {
+        "name": "companyId",
+        "path": "companyId",
+        "class":"Long"
+      },
+      {
         "name": "projectName",
         "path": "projectLabel"
       },
@@ -316,6 +321,11 @@
         "path": "calcDesign.layerType"
       },
       {
+        "name": "companyId",
+        "path": "companyId",
+        "class":"Long"
+      },
+      {
         "name": "locationId",
         "path": "locationId"
       },
@@ -409,6 +419,11 @@
       {
         "name": "resultId",
         "path": "calcDesign.analysisDetails.resultId"
+      },
+      {
+        "name": "companyId",
+        "path": "companyId",
+        "class":"Long"
       },
       {
         "name": "locationId",

@@ -90,7 +90,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 20
+            feature.attributeCount == 21
             feature.getAttribute("designLayerName") == "Measured Design"
             feature.getAttribute("designLayerType") == "Measured"
             feature.getAttribute("locationName") == "684704E"
@@ -117,7 +117,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 20
+            feature.attributeCount == 21
             feature.getAttribute("designLayerName") == "Measured Design"
             feature.getAttribute("designLayerType") == "Measured"
             feature.getAttribute("loadInfo") == "CSA Heavy"
@@ -164,7 +164,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 20
+            feature.attributeCount == 21
             feature.getAttribute("designLayerName") == "Measured Design"
             feature.getAttribute("designLayerType") == null
             feature.getAttribute("locationName") == null
@@ -191,7 +191,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
             mongoDBSubCollectionFeatureCollection.featuresList.size() == 1
-            feature.attributeCount == 20
+            feature.attributeCount == 21
             feature.getAttribute("assetType") == null
             feature.getAttribute("designLayerName") == null
             feature.getAttribute("designLayerType") == null
