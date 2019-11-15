@@ -356,7 +356,7 @@
       },
       {
         "name": "resultId",
-        "path": "calcDesign.analysisDetails.resultId"
+        "path": "calcDesign.analysisDetails.id"
       },
       {
         "name": "glc",
@@ -418,7 +418,7 @@
       },
       {
         "name": "resultId",
-        "path": "calcDesign.analysisDetails.resultId"
+        "path": "calcDesign.analysisDetails.id"
       },
       {
         "name": "companyId",
