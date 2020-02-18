@@ -26,7 +26,7 @@ buildscript {
 		project.ext.m2Settings = [
 			username: System.getenv('ARTIFACTORY_USERNAME'),
 			password: System.getenv('ARTIFACTORY_PASSWORD'),
-			repo: System.getenv('ARTIFACTORY_URL'),
+			repo: System.getenv('ARTIFACTORY_URL_PRIVATE'),
 			exposed: System.getenv('ARTIFACTORY_URL_EXPOSED'),
 			snapshots: System.getenv('ARTIFACTORY_URL'),
 			releases: System.getenv('ARTIFACTORY_URL')
@@ -39,8 +39,6 @@ buildscript {
 	//println "m2Settings: ${m2Settings}"
 
 	repositories {
-		mavenCentral()
-		maven { url m2Settings.exposed }
 	}
 
 	dependencies {
@@ -48,10 +46,14 @@ buildscript {
 }
 
 repositories {
-    mavenCentral()
-    maven { url m2Settings.exposed }
-    maven { url "https://dev.spidasoftware.com/artifactory/list/boundlessgeo" }
-     maven { url "http://download.osgeo.org/webdav/geotools" }
+    maven { 
+    	url m2Settings.repo 
+    	credentials {
+    		username m2Settings.username
+    		password m2Settings.password
+    	}
+    }
+    maven { url "http://download.osgeo.org/webdav/geotools" }
 }
 
 task sourcesZip(type: Zip, dependsOn: classes) {
@@ -92,7 +94,7 @@ artifacts { archives distZip }
 
 uploadArchives {
 	repositories.mavenDeployer {
-		repository(url: m2Settings.exposed) {
+		repository(url: m2Settings.repo) {
 			authentication(userName: m2Settings.username, password: m2Settings.password)
 		}
 	}
