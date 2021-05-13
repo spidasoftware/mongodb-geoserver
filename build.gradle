@@ -132,20 +132,3 @@ test {
     systemProperty "mongoPort", "27017"
     systemProperty "mongoDatabase", "test_spidadb_wfs"
 }
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Command Line Tools
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-task wrapper(type: Wrapper) {
-	/*****************************************************************************************
-		NOTES:
-		1) This will also change gradle version for all subprojects.
-		2) Setting url with "-all" so that the download includes gradle documentation.
-		3) If you only set gradleVersion, it will append "-bin".
-		http://www.gradle.org/docs/current/dsl/org.gradle.api.tasks.wrapper.Wrapper.html
- 	 *****************************************************************************************/
-	distributionUrl = 'http://services.gradle.org/distributions/gradle-1.11-all.zip'
-}
-
