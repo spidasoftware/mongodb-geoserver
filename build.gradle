@@ -102,10 +102,8 @@ uploadArchives {
 def geotoolsVersion = '24.2'
 def geoserverVersion = '2.19.0'
 dependencies {
-    compile group: 'org.geotools', name: 'gt-main', version:"${geotoolsVersion}" //, transitive: false
-//    compile group: 'org.geotools', name: 'gt-data', version:"${geotoolsVersion}", transitive: false
+    compile group: 'org.geotools', name: 'gt-main', version:"${geotoolsVersion}"
     compile group: 'org.geotools', name: 'gt-opengis', version:"${geotoolsVersion}", transitive: false
-//    compile group: 'org.geotools', name: 'gt-api', version:"${geotoolsVersion}", transitive: false
     compile group: 'org.geotools', name: 'gt-complex', version:"${geotoolsVersion}", transitive: false
     compile group: 'org.geotools', name: 'gt-referencing', version:"${geotoolsVersion}", transitive: false
     compile group: 'org.geotools', name: 'gt-metadata', version:"${geotoolsVersion}", transitive: false
@@ -126,7 +124,7 @@ dependencies {
     compile "org.codehaus.groovy:groovy-all:2.4.1"
     testCompile "org.spockframework:spock-core:1.2-groovy-2.4"
     testCompile 'org.objenesis:objenesis:1.4'
-	testRuntime('cglib:cglib-nodep:3.3.0')  // so spock can create mocks
+	testRuntime('cglib:cglib-nodep:3.3.0')
 }
 
 test {
