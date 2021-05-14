@@ -86,6 +86,7 @@ distributions {
             exclude { override ->
                 override.file.path.matches('.*(gt|net|gs|jts|jscience|wicket|htmlvalidator|slf4j|log4j|gs|spring|bcprov|srvlet|json|commons|freemarker|xstream|guava|jsr|jasypt|jai|servlet|imageio|jdom|postgres|xpp|aopalliance|cglib|hsqldb|xmlpull|xpp|vecmath|jgrdidshift|org.w3|common|ecore|picocontainer|xsd|xml|jgridshift|core).*.jar')
             }
+			duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         }
     }
 }
