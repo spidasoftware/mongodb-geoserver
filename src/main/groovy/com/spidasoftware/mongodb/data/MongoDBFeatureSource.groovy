@@ -6,12 +6,12 @@ import com.mongodb.DB
 import com.mongodb.DBCollection
 import com.mongodb.DBObject
 import com.spidasoftware.mongodb.filter.FilterToDBQuery
-import com.vividsolutions.jts.geom.Coordinate
 import org.geotools.data.*
 import org.geotools.feature.FeatureCollection
 import org.geotools.geometry.jts.ReferencedEnvelope
 import org.geotools.referencing.crs.DefaultGeographicCRS
 import org.geotools.util.logging.Logging
+import org.locationtech.jts.geom.Coordinate
 import org.opengis.feature.Feature
 import org.opengis.feature.simple.SimpleFeature
 import org.opengis.feature.type.FeatureType
@@ -20,7 +20,6 @@ import org.opengis.filter.Filter
 import org.opengis.filter.sort.SortBy
 
 import java.awt.*
-import java.util.*
 import java.util.logging.Logger
 
 public class MongoDBFeatureSource implements FeatureSource<FeatureType, Feature> {

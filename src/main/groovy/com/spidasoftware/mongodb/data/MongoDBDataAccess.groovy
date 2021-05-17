@@ -7,7 +7,6 @@ import com.mongodb.DBObject
 import com.mongodb.MongoClient
 import com.mongodb.MongoCredential
 import com.mongodb.ServerAddress
-import com.vividsolutions.jts.geom.Point
 import org.geotools.data.DataAccess
 import org.geotools.data.FeatureSource
 import org.geotools.data.ServiceInfo
@@ -15,6 +14,7 @@ import org.geotools.feature.NameImpl
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder
 import org.geotools.referencing.CRS
 import org.geotools.util.logging.Logging
+import org.locationtech.jts.geom.Point
 import org.opengis.feature.Feature
 import org.opengis.feature.type.FeatureType
 import org.opengis.feature.type.Name

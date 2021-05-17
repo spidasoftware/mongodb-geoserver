@@ -9,11 +9,11 @@ import com.mongodb.DBObject
 import com.spidasoftware.mongodb.data.MongoDBFeatureSource
 import com.spidasoftware.mongodb.feature.collection.MongoDBFeatureCollection
 import com.spidasoftware.mongodb.feature.collection.MongoDBSubCollectionFeatureCollection
-import com.vividsolutions.jts.geom.Geometry
 import org.geotools.data.Query
 import org.geotools.feature.FeatureCollection
 import org.geotools.util.Converters
 import org.geotools.util.logging.Logging
+import org.locationtech.jts.geom.Geometry
 import org.opengis.feature.type.FeatureType
 import org.opengis.filter.And
 import org.opengis.filter.BinaryComparisonOperator
