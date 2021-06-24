@@ -1,10 +1,10 @@
 # mongodb-geoserver
 A [MongoDB](https://www.mongodb.com/) plugin for [Geoserver](http://geoserver.org/).
 
-Download [Geoserver 2.8.3](http://geoserver.org/release/2.8.3/) (Platform Independent Binary)
+Download [Geoserver 2.19.0](http://geoserver.org/release/2.19.0/) (Platform Independent Binary)
 
 ### To setup a dev environment:
-1. Download deployment from [here](https://dev.spidasoftware.com/artifactory/exposed-repo/com/spidasoftware/mongodb-geoserver/)
+1. Download deployment zip from [here](https://dev.spidasoftware.com/artifactory/exposed-repo/com/spidasoftware/mongodb-geoserver/)
 2. Unzip the deployment
 3. Move the groovy jar, the mongo java driver jar and the mongodb-geoserver jar into  geoserver/WEB-INF/lib
 4. Restart geoserver.
