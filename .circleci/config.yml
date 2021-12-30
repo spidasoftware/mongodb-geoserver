@@ -52,10 +52,4 @@ workflows:
   main-workflow:
     jobs:
       - build
-      - owasp/gradle_owasp_dependency_check:
-          pre-steps:
-            - restore_cache:
-                keys:
-                  - v1-dependencies-{{ checksum "build.gradle" }}
-                  # fallback to using the latest cache if no exact match is found
-                  - v1-dependencies-
+      - owasp/gradle_owasp_dependency_check
