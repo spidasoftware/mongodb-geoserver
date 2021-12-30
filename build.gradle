@@ -40,6 +40,13 @@ buildscript {
 	//println "m2Settings: ${m2Settings}"
 
 	repositories {
+		maven {
+			url m2Settings.repo
+			credentials {
+				username m2Settings.username
+				password m2Settings.password
+			}
+		}
 	}
 
 	dependencies {
