@@ -8,6 +8,7 @@ apply plugin: 'maven'
 apply plugin: 'idea'
 apply plugin: 'project-report'
 apply plugin: 'java-library-distribution'
+apply plugin: 'org.owasp.dependencycheck'
 
 group = 'com.spidasoftware'
 version = '0.6.0'
@@ -42,6 +43,7 @@ buildscript {
 	}
 
 	dependencies {
+		classpath 'org.owasp:dependency-check-gradle:6.5.0.1'
 	}
 }
 
@@ -132,4 +134,10 @@ test {
     systemProperty "mongoHost", "localhost"
     systemProperty "mongoPort", "27017"
     systemProperty "mongoDatabase", "test_spidadb_wfs"
+}
+
+dependencyCheck {
+	failBuildOnCVSS=7
+	suppressionFile="dependency-check-suppressions.xml"
+	formats = ["HTML"]
 }
