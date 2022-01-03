@@ -49,6 +49,9 @@ jobs:
 
       # run tests!
       - run: ./gradlew test
+
+      - store_test_results:
+          path: build/test-results
 workflows:
   main-workflow:
     jobs:
