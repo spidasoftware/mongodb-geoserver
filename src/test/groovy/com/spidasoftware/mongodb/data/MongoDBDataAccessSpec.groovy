@@ -23,38 +23,6 @@ class MongoDBDataAccessSpec extends Specification {
         mongoDBDataAccess = new MongoDBDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, jsonMapping)
     }
 
-    void testGetNames() {
-        when:
-            List<Name> names = mongoDBDataAccess.getNames()
-        then:
-            names.size() == 25
-            names.findAll { it.localPart == "location" }.size() == 1
-            names.findAll { it.localPart == "poleTag" }.size() == 1
-            names.findAll { it.localPart == "remedy" }.size() == 1
-            names.findAll { it.localPart == "summaryNote" }.size() == 1
-            names.findAll { it.localPart == "form" }.size() == 1
-            names.findAll { it.localPart == "formField" }.size() == 1
-            names.findAll { it.localPart == "pole" }.size() == 1
-            names.findAll { it.localPart == "analysis" }.size() == 1
-            names.findAll { it.localPart == "wire" }.size() == 1
-            names.findAll { it.localPart == "spanPoint" }.size() == 1
-            names.findAll { it.localPart == "spanGuy" }.size() == 1
-            names.findAll { it.localPart == "guy" }.size() == 1
-            names.findAll { it.localPart == "insulator" }.size() == 1
-            names.findAll { it.localPart == "equipment" }.size() == 1
-            names.findAll { it.localPart == "damage" }.size() == 1
-            names.findAll { it.localPart == "crossArm" }.size() == 1
-            names.findAll { it.localPart == "anchor" }.size() == 1
-            names.findAll { it.localPart == "wireEndPoint" }.size() == 1
-            names.findAll { it.localPart == "notePoint" }.size() == 1
-            names.findAll { it.localPart == "pointLoad" }.size() == 1
-            names.findAll { it.localPart == "wirePointLoad" }.size() == 1
-            names.findAll { it.localPart == "pushBrace" }.size() == 1
-            names.findAll { it.localPart == "sidewalkBrace" }.size() == 1
-            names.findAll { it.localPart == "foundation" }.size() == 1
-            names.findAll { it.localPart == "assembly" }.size() == 1
-    }
-
     void "test can get schema for every type"() {
         expect:
             mongoDBDataAccess.getNames().each { Name name ->
