@@ -5,6 +5,7 @@ import com.mongodb.BasicDBObject
 import com.mongodb.DB
 import com.mongodb.DBObject
 import com.mongodb.MongoClient
+import com.mongodb.MongoClientURI
 import com.mongodb.MongoCredential
 import com.mongodb.ServerAddress
 import org.geotools.data.DataAccess
@@ -33,22 +34,25 @@ public class MongoDBDataAccess implements DataAccess<FeatureType, Feature> {
     String databaseName
     String username
     String password
+    String uri
     BasicDBList jsonMapping
 
     Map<Name, FeatureType> schemaCache = [:]
     MongoClient mongoClient
     DB database
 
-    MongoDBDataAccess(String namespace, String host, String port, String databaseName, String username, String password, BasicDBList jsonMapping) {
+    MongoDBDataAccess(String namespace, String host, String port, String databaseName, String username, String password, String uri, BasicDBList jsonMapping) {
         this.namespace  = namespace
         this.host = host
         this.port = port
         this.databaseName = databaseName
         this.username = username
         this.password = password
+        this.uri = uri
         this.jsonMapping = jsonMapping
         this.initDB()
     }
+
     @Override
     ServiceInfo getInfo() {
         return null
@@ -140,12 +144,21 @@ public class MongoDBDataAccess implements DataAccess<FeatureType, Feature> {
 
     protected void initDB() {
         try {
-            def serverAddress = new ServerAddress(host, Integer.valueOf(port))
-            if(username && password) {
-                MongoCredential credential = MongoCredential.createCredential(username, databaseName, password.toCharArray());
-                mongoClient = new MongoClient(serverAddress, Arrays.asList(credential));
-            } else {
-                mongoClient = new MongoClient(serverAddress)
+            if (uri) {
+                MongoClientURI clientURI = new MongoClientURI(uri)
+                mongoClient = new MongoClient(clientURI)
+            }
+            else if (host && port) {
+                def serverAddress = new ServerAddress(host, Integer.valueOf(port))
+                if (username && password) {
+                    MongoCredential credential = MongoCredential.createCredential(username, databaseName, password.toCharArray());
+                    mongoClient = new MongoClient(serverAddress, Arrays.asList(credential));
+                } else {
+                    mongoClient = new MongoClient(serverAddress)
+                }
+            }
+            else {
+                throw new IllegalArgumentException("Host & Port or URI Required")
             }
             database = mongoClient.getDB(databaseName)
 
@@ -153,8 +166,7 @@ public class MongoDBDataAccess implements DataAccess<FeatureType, Feature> {
             throw new IllegalArgumentException("Unknown mongodb host")
         }
 
-
-        if(database == null) {
+        if (database == null) {
             throw new IllegalArgumentException("database does not exist")
         }
 

@@ -17,12 +17,13 @@ public class MongoDBDataAccessFactory implements DataAccessFactory {
 
     private static final Logger log = Logging.getLogger(MongoDBDataAccessFactory.class.getPackage().getName())
 
-    final DataAccessFactory.Param HOST = new DataAccessFactory.Param("host", String.class, "MongoDB host", true)
-    final DataAccessFactory.Param PORT = new DataAccessFactory.Param("port", String.class, "MongoDB port", true)
+    final DataAccessFactory.Param HOST = new DataAccessFactory.Param("host", String.class, "MongoDB host", false)
+    final DataAccessFactory.Param PORT = new DataAccessFactory.Param("port", String.class, "MongoDB port", false)
     final DataAccessFactory.Param DATABASE_NAME = new DataAccessFactory.Param("databaseName", String.class, "MongoDB database name", true)
     final DataAccessFactory.Param USERNAME = new DataAccessFactory.Param("username", String.class, "MongoDB username", false)
     final DataAccessFactory.Param PASSWORD = new DataAccessFactory.Param("password", String.class, "MongoDB passsword", false, '', [(Parameter.IS_PASSWORD): true])
     final DataAccessFactory.Param NAMESPACE = new DataAccessFactory.Param("namespace", String.class, "Namespace", true)
+    final DataAccessFactory.Param URI = new DataAccessFactory.Param("uri", String.class, "MongoDB URI", false)
     final DataAccessFactory.Param FEATURE_TYPE_MAPPING_FILE = new DataAccessFactory.Param("featureTypeMappingFile", String.class, "FEATURE_TYPE_MAPPING_FILE", true)
 
     @Override
@@ -34,6 +35,7 @@ public class MongoDBDataAccessFactory implements DataAccessFactory {
                                      (String) DATABASE_NAME.lookUp(params),
                                      (String) USERNAME.lookUp(params),
                                      (String) PASSWORD.lookUp(params),
+                                     (String) URI.lookUp(params),
                                      jsonMapping)
     }
 
@@ -49,7 +51,7 @@ public class MongoDBDataAccessFactory implements DataAccessFactory {
 
     @Override
     DataAccessFactory.Param[] getParametersInfo() {
-        return [HOST, PORT, DATABASE_NAME, USERNAME, PASSWORD, FEATURE_TYPE_MAPPING_FILE, NAMESPACE]
+        return [HOST, PORT, DATABASE_NAME, USERNAME, PASSWORD, URI, FEATURE_TYPE_MAPPING_FILE, NAMESPACE]
     }
 
     @Override
@@ -66,10 +68,16 @@ public class MongoDBDataAccessFactory implements DataAccessFactory {
                 validateMappingAttributes(mapping)
             }
 
-            [NAMESPACE, HOST, PORT, DATABASE_NAME].each {
+            [NAMESPACE, DATABASE_NAME].each {
                 assert it.lookUp(params) != null
             }
-        } catch(Exception | AssertionError e) {
+            // if URI not set, HOST & PORT must be
+            if (URI.lookUp(params) == null) {
+                [HOST, PORT].each {
+                    assert it.lookUp(params) != null
+                }
+            }
+        } catch (Exception | AssertionError e) {
             log.info("Error, can't process: ${e.toString()}")
             return false
         }
@@ -87,7 +95,7 @@ public class MongoDBDataAccessFactory implements DataAccessFactory {
                    attr.useKey != null ||
                    attr.useValue != null ||
                    attr.useObjectKey != null ||
-                    attr.stringValue != null
+                   attr.stringValue != null
         }
         mapping.subCollections.each { subCollection ->
             assert subCollection.subCollectionPath != null

@@ -38,7 +38,7 @@ class MongoDBFeatureSourceSpec extends Specification {
         def serverAddress = new ServerAddress(host, Integer.valueOf(port))
         MongoClient mongoClient = new MongoClient(serverAddress)
         jsonMapping = JSON.parse(getClass().getResourceAsStream('/mapping.json').text)
-        mongoDBDataAccess = new MongoDBDataAccess(namespace, host, port, databaseName, null, null, jsonMapping)
+        mongoDBDataAccess = new MongoDBDataAccess(namespace, host, port, databaseName, null, null, null, jsonMapping)
         database = mongoClient.getDB(databaseName)
         database.getCollection("locations").remove(new BasicDBObject("id", locationJSON.get("id")))
         database.getCollection("locations").insert(locationJSON)

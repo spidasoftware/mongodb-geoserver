@@ -39,7 +39,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
         designJSON = JSON.parse(getClass().getResourceAsStream('/design.json').text)
 
         jsonMapping = JSON.parse(getClass().getResourceAsStream('/mapping.json').text)
-        mongoDBDataAccess = new MongoDBDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, jsonMapping)
+        mongoDBDataAccess = new MongoDBDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, null, jsonMapping)
 
         String host = System.getProperty("mongoHost")
         String port = System.getProperty("mongoPort")
@@ -47,7 +47,7 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
         def serverAddress = new ServerAddress(host, Integer.valueOf(port))
         MongoClient mongoClient = new MongoClient(serverAddress)
         jsonMapping = JSON.parse(getClass().getResourceAsStream('/mapping.json').text)
-        mongoDBDataAccess = new MongoDBDataAccess(namespace, host, port, databaseName, null, null, jsonMapping)
+        mongoDBDataAccess = new MongoDBDataAccess(namespace, host, port, databaseName, null, null, null, jsonMapping)
         database = mongoClient.getDB(databaseName)
 
         database.getCollection("locations").remove(new BasicDBObject("id", locationJSON.get("id")))

@@ -20,7 +20,7 @@ class MongoDBDataAccessSpec extends Specification {
     BasicDBList jsonMapping = JSON.parse(getClass().getResourceAsStream('/mapping.json').text)
 
     void setup() {
-        mongoDBDataAccess = new MongoDBDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, jsonMapping)
+        mongoDBDataAccess = new MongoDBDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, null, jsonMapping)
     }
 
     void "test can get schema for every type"() {
