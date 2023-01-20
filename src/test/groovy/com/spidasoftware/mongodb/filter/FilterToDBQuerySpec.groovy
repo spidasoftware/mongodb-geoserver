@@ -45,7 +45,7 @@ class FilterToDBQuerySpec extends Specification {
         def serverAddress = new ServerAddress(host, Integer.valueOf(port))
         MongoClient mongoClient = new MongoClient(serverAddress)
         jsonMapping = JSON.parse(getClass().getResourceAsStream('/mapping.json').text)
-        mongoDBDataAccess = new MongoDBDataAccess(namespace, host, port, databaseName, null, null, jsonMapping)
+        mongoDBDataAccess = new MongoDBDataAccess(namespace, host, port, databaseName, null, null, null, jsonMapping)
         database = mongoClient.getDB(databaseName)
 
         database.getCollection("locations").remove(new BasicDBObject("id", locationJSON.get("id")))
@@ -1377,7 +1377,7 @@ class FilterToDBQuerySpec extends Specification {
         DBCollection dbCollection = database.getCollection(collectionName)
         FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, typeName))
         BasicDBObject mapping = jsonMapping.find { it.typeName == typeName }
-        mongoDBDataAccess = new MongoDBDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, jsonMapping)
+        mongoDBDataAccess = new MongoDBDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, null, jsonMapping)
         mongoDBFeatureSource = new MongoDBFeatureSource(mongoDBDataAccess, database, featureType, mapping)
         return new FilterToDBQuery(dbCollection, featureType, mapping, mongoDBFeatureSource)
     }
