@@ -123,7 +123,7 @@ dependencies {
 //    compile(group: 'org.geoserver.web', name: 'gs-web-core', version:"${geoserverVersion}") {
 //        exclude module: 'jai_core'
 //    }
-    compile group: 'org.mongodb', name:'mongo-java-driver', version:'3.2.2'
+    compile group: 'org.mongodb', name:'mongo-java-driver', version:'3.8.2'
 	compile('org.locationtech.jts:jts:1.16.0')
 	compile('org.locationtech.jts:jts-core:1.16.0')
     compile group: 'org.jscience', name:'jscience', version:'4.3.1', transitive: false
