@@ -1,14 +1,13 @@
 package com.spidasoftware.mongodb.filter
 
-import com.mongodb.AggregationOutput
 import com.mongodb.BasicDBList
 import com.mongodb.BasicDBObject
-import com.mongodb.DBCollection
-import com.mongodb.DBCursor
-import com.mongodb.DBObject
+import com.mongodb.client.FindIterable
+import com.mongodb.client.MongoCollection
 import com.spidasoftware.mongodb.data.MongoDBFeatureSource
 import com.spidasoftware.mongodb.feature.collection.MongoDBFeatureCollection
 import com.spidasoftware.mongodb.feature.collection.MongoDBSubCollectionFeatureCollection
+import org.bson.Document
 import org.geotools.data.Query
 import org.geotools.feature.FeatureCollection
 import org.geotools.util.Converters
@@ -77,14 +76,14 @@ import java.util.regex.Pattern
 
 class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
 
-    DBCollection dbCollection
+    MongoCollection<Document> dbCollection
     FeatureType featureType
     BasicDBObject mapping
     MongoDBFeatureSource mongoDBFeatureSource
 
     private static final Logger log = Logging.getLogger(FilterToDBQuery.class.getPackage().getName())
 
-    FilterToDBQuery(DBCollection dbCollection, FeatureType featureType, BasicDBObject mapping, MongoDBFeatureSource mongoDBFeatureSource) {
+    FilterToDBQuery(MongoCollection<Document> dbCollection, FeatureType featureType, BasicDBObject mapping, MongoDBFeatureSource mongoDBFeatureSource) {
         this.dbCollection = dbCollection
         this.featureType = featureType
         this.mapping = mapping
@@ -186,20 +185,20 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
             log.fine "dbQuery = ${dbQuery}"
         }
 
-        DBCursor dbCursor = this.dbCollection.find(dbQuery)
+        FindIterable<Document> findIterable = this.dbCollection.find(dbQuery as BasicDBObject)
 
         if (supportsMaxAndOffsetQueries() && query?.getMaxFeatures() != null) {
-            dbCursor?.limit(query.getMaxFeatures())
+            findIterable = findIterable.limit(query.getMaxFeatures())
         }
 
         if (supportsMaxAndOffsetQueries() && query?.getStartIndex() != null) {
-            dbCursor?.skip(query.getStartIndex())
+            findIterable = findIterable.skip(query.getStartIndex())
         }
 
         if (mapping.subCollections) {
-            return new MongoDBSubCollectionFeatureCollection(dbCursor, this.featureType, this.mapping, query, this.mongoDBFeatureSource)
+            return new MongoDBSubCollectionFeatureCollection(findIterable, this.featureType, this.mapping, query, this.mongoDBFeatureSource)
         } else {
-            return new MongoDBFeatureCollection(dbCursor, this.featureType, this.mapping, query, this.mongoDBFeatureSource)
+            return new MongoDBFeatureCollection(findIterable, this.featureType, this.mapping, query, this.mongoDBFeatureSource)
         }
     }
 

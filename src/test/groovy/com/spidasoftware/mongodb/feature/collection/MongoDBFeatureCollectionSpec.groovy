@@ -2,11 +2,14 @@ package com.spidasoftware.mongodb.feature.collection
 
 import com.mongodb.BasicDBList
 import com.mongodb.BasicDBObject
-import com.mongodb.DB
-import com.mongodb.DBCursor
-import com.mongodb.MongoClient
+import com.mongodb.MongoClientSettings
 import com.mongodb.ServerAddress
-import com.mongodb.util.JSON
+import com.mongodb.client.FindIterable
+import com.mongodb.client.MongoClient
+import com.mongodb.client.MongoClients
+import com.mongodb.client.MongoDatabase
+import groovy.json.JsonSlurper
+import org.bson.Document
 import com.spidasoftware.mongodb.data.MongoDBDataAccess
 import com.spidasoftware.mongodb.data.MongoDBFeatureSource
 import org.geotools.data.Query
@@ -24,43 +27,85 @@ class MongoDBFeatureCollectionSpec extends Specification {
     static final Logger log = Logging.getLogger(MongoDBFeatureCollectionSpec.class.getPackage().getName())
 
     FeatureType featureType
-    DB database
-    BasicDBObject locationJSON
-    DBCursor dbCursor
+    MongoDatabase database
+    Document locationJSON
+    FindIterable<Document> findIterable
     MongoDBDataAccess mongoDBDataAccess
     MongoDBFeatureSource mongoDBFeatureSource
     BasicDBList jsonMapping
     String namespace = "http://spida/db"
 
+    private static BasicDBList parseJsonResource(String resourcePath) {
+        def jsonSlurper = new JsonSlurper()
+        def parsed = jsonSlurper.parse(MongoDBFeatureCollectionSpec.class.getResourceAsStream(resourcePath))
+        return convertToBasicDBList(parsed)
+    }
+
+    private static Document parseJsonResourceAsDocument(String resourcePath) {
+        def jsonSlurper = new JsonSlurper()
+        def parsed = jsonSlurper.parse(MongoDBFeatureCollectionSpec.class.getResourceAsStream(resourcePath))
+        return new Document(convertToBasicDBObject(parsed))
+    }
+
+    private static Object convertValue(Object value) {
+        if (value instanceof BigDecimal) {
+            return ((BigDecimal) value).doubleValue()
+        } else if (value instanceof Map) {
+            return convertToBasicDBObject(value)
+        } else if (value instanceof List) {
+            return convertToBasicDBList(value)
+        }
+        return value
+    }
+
+    private static BasicDBList convertToBasicDBList(List list) {
+        BasicDBList dbList = new BasicDBList()
+        list.each { item ->
+            dbList.add(convertValue(item))
+        }
+        return dbList
+    }
+
+    private static BasicDBObject convertToBasicDBObject(Map map) {
+        BasicDBObject dbObject = new BasicDBObject()
+        map.each { key, value ->
+            dbObject.put(key, convertValue(value))
+        }
+        return dbObject
+    }
+
     void setup() {
-        locationJSON = JSON.parse(getClass().getResourceAsStream('/location.json').text)
+        locationJSON = parseJsonResourceAsDocument('/location.json')
         String host = System.getProperty("mongoHost")
         String port = System.getProperty("mongoPort")
         String databaseName = System.getProperty("mongoDatabase")
         def serverAddress = new ServerAddress(host, Integer.valueOf(port))
-        MongoClient mongoClient = new MongoClient(serverAddress)
-        jsonMapping = JSON.parse(getClass().getResourceAsStream('/mapping.json').text)
+        MongoClientSettings settings = MongoClientSettings.builder()
+            .applyToClusterSettings { builder -> builder.hosts([serverAddress]) }
+            .build()
+        MongoClient mongoClient = MongoClients.create(settings)
+        jsonMapping = parseJsonResource('/mapping.json')
         mongoDBDataAccess = new MongoDBDataAccess(namespace, host, port, databaseName, null, null, null, jsonMapping)
-        database = mongoClient.getDB(databaseName)
-        database.getCollection("locations").remove(new BasicDBObject("id", locationJSON.get("id")))
-        database.getCollection("locations").insert(locationJSON)
-        dbCursor = database.getCollection("locations").find(new BasicDBObject("id", locationJSON.get("id")))
+        database = mongoClient.getDatabase(databaseName)
+        database.getCollection("locations").deleteOne(new Document("id", locationJSON.get("id")))
+        database.getCollection("locations").insertOne(locationJSON)
+        findIterable = database.getCollection("locations").find(new Document("id", locationJSON.get("id")))
 
-        jsonMapping = JSON.parse(getClass().getResourceAsStream('/mapping.json').text)
+        jsonMapping = parseJsonResource('/mapping.json')
         mongoDBDataAccess = new MongoDBDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, null, jsonMapping)
         featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "location"))
         mongoDBFeatureSource = new MongoDBFeatureSource(mongoDBDataAccess, database, featureType, jsonMapping.find { it.typeName == "location" })
     }
 
     void cleanup() {
-        database.getCollection("locations").remove(new BasicDBObject("id", locationJSON.get("id")))
+        database.getCollection("locations").deleteOne(new Document("id", locationJSON.get("id")))
     }
 
     void testGetLocation() {
         setup:
             BasicDBObject mapping = jsonMapping.find { it.typeName == "location" }
             Query query = new Query("location", Filter.INCLUDE)
-            def locationFeatureCollectionIterator = new MongoDBFeatureCollection(dbCursor, featureType, mapping, query, mongoDBFeatureSource)
+            def locationFeatureCollectionIterator = new MongoDBFeatureCollection(findIterable, featureType, mapping, query, mongoDBFeatureSource)
         when:
             Feature feature = locationFeatureCollectionIterator.featuresList.get(0)
         then:
@@ -91,7 +136,7 @@ class MongoDBFeatureCollectionSpec extends Specification {
         setup:
             BasicDBObject mapping = jsonMapping.find { it.typeName == "location" }
             Query query = new Query("location", Filter.INCLUDE, ["id", "name"] as String[])
-            def locationFeatureCollectionIterator = new MongoDBFeatureCollection(dbCursor, featureType, mapping, query, mongoDBFeatureSource)
+            def locationFeatureCollectionIterator = new MongoDBFeatureCollection(findIterable, featureType, mapping, query, mongoDBFeatureSource)
         when:
             Feature feature = locationFeatureCollectionIterator.featuresList.get(0)
         then:

@@ -2,12 +2,14 @@ package com.spidasoftware.mongodb.data
 
 import com.mongodb.BasicDBList
 import com.mongodb.BasicDBObject
-import com.mongodb.DB
-import com.mongodb.DBObject
-import com.mongodb.MongoClient
-import com.mongodb.MongoClientURI
+import com.mongodb.ConnectionString
+import com.mongodb.MongoClientSettings
 import com.mongodb.MongoCredential
 import com.mongodb.ServerAddress
+import com.mongodb.client.MongoClient
+import com.mongodb.client.MongoClients
+import com.mongodb.client.MongoDatabase
+import org.bson.Document
 import org.geotools.data.DataAccess
 import org.geotools.data.FeatureSource
 import org.geotools.data.ServiceInfo
@@ -39,7 +41,7 @@ public class MongoDBDataAccess implements DataAccess<FeatureType, Feature> {
 
     Map<Name, FeatureType> schemaCache = [:]
     MongoClient mongoClient
-    DB database
+    MongoDatabase database
 
     MongoDBDataAccess(String namespace, String host, String port, String databaseName, String username, String password, String uri, BasicDBList jsonMapping) {
         this.namespace  = namespace
@@ -76,9 +78,10 @@ public class MongoDBDataAccess implements DataAccess<FeatureType, Feature> {
     @Override
     List<Name> getNames() throws IOException {
         List<Name> names = []
+        List<String> collectionNames = this.database.listCollectionNames().into([])
         this.jsonMapping.each { mapping ->
             String collection = mapping.collection
-            if (this.database.getCollectionNames().contains(collection)) {
+            if (collectionNames.contains(collection)) {
                 names << new NameImpl(this.namespace, mapping.typeName)
             } else {
                 log.info("${collection} collection doesn't exist for typeName: ${mapping.typeName}")
@@ -145,22 +148,29 @@ public class MongoDBDataAccess implements DataAccess<FeatureType, Feature> {
     protected void initDB() {
         try {
             if (uri) {
-                MongoClientURI clientURI = new MongoClientURI(uri)
-                mongoClient = new MongoClient(clientURI)
+                ConnectionString connectionString = new ConnectionString(uri)
+                mongoClient = MongoClients.create(connectionString)
             }
             else if (host && port) {
                 def serverAddress = new ServerAddress(host, Integer.valueOf(port))
                 if (username && password) {
-                    MongoCredential credential = MongoCredential.createCredential(username, databaseName, password.toCharArray());
-                    mongoClient = new MongoClient(serverAddress, Arrays.asList(credential));
+                    MongoCredential credential = MongoCredential.createCredential(username, databaseName, password.toCharArray())
+                    MongoClientSettings settings = MongoClientSettings.builder()
+                        .applyToClusterSettings { builder -> builder.hosts([serverAddress]) }
+                        .credential(credential)
+                        .build()
+                    mongoClient = MongoClients.create(settings)
                 } else {
-                    mongoClient = new MongoClient(serverAddress)
+                    MongoClientSettings settings = MongoClientSettings.builder()
+                        .applyToClusterSettings { builder -> builder.hosts([serverAddress]) }
+                        .build()
+                    mongoClient = MongoClients.create(settings)
                 }
             }
             else {
                 throw new IllegalArgumentException("Host & Port or URI Required")
             }
-            database = mongoClient.getDB(databaseName)
+            database = mongoClient.getDatabase(databaseName)
 
         } catch(UnknownHostException e) {
             throw new IllegalArgumentException("Unknown mongodb host")
@@ -177,12 +187,12 @@ public class MongoDBDataAccess implements DataAccess<FeatureType, Feature> {
 
                 def collection = database.getCollection(collectionName)
 
-                def alreadyIndexed = collection.getIndexInfo().any { DBObject indexInfo ->
-                    return indexInfo.key.get(geometryPath.toString()) != null
+                def alreadyIndexed = collection.listIndexes().any { Document indexInfo ->
+                    return indexInfo.get(geometryPath.toString()) != null
                 }
 
                 if (!alreadyIndexed) {
-                    collection.createIndex(new BasicDBObject((geometryPath): "2dsphere"), new BasicDBObject('sparse', true))
+                    collection.createIndex(new BasicDBObject((geometryPath): "2dsphere"), new com.mongodb.client.model.IndexOptions().sparse(true))
                 }
             }
         }

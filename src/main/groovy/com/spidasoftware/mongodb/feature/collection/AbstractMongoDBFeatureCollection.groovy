@@ -2,11 +2,12 @@ package com.spidasoftware.mongodb.feature.collection
 
 import com.mongodb.BasicDBList
 import com.mongodb.BasicDBObject
-import com.mongodb.DBCursor
-import com.mongodb.DBObject
+import com.mongodb.client.FindIterable
+import com.mongodb.client.MongoCursor
 import com.spidasoftware.mongodb.data.MongoDBFeatureSource
 import com.spidasoftware.mongodb.feature.iterator.MongoDBFeatureIterator
 import org.apache.commons.lang3.StringUtils
+import org.bson.Document
 import org.geotools.data.Query
 import org.geotools.data.complex.feature.type.ComplexFeatureTypeFactoryImpl
 import org.geotools.data.simple.SimpleFeatureCollection
@@ -41,7 +42,8 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
 
     private static final Logger log = Logging.getLogger(AbstractMongoDBFeatureCollection.class.getPackage().getName())
 
-    DBCursor dbCursor
+    FindIterable<Document> findIterable
+    MongoCursor<Document> mongoCursor
     FeatureType featureType
     BasicDBObject mapping
     List propertyNames
@@ -59,8 +61,9 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
     static final int LONGITUDE_POSITION = 0
     static final int LATITUDE_POSITION = 1
 
-    AbstractMongoDBFeatureCollection(DBCursor dbCursor, FeatureType featureType, BasicDBObject mapping, Query query, MongoDBFeatureSource mongoDBFeatureSource) {
-        this.dbCursor = dbCursor
+    AbstractMongoDBFeatureCollection(FindIterable<Document> findIterable, FeatureType featureType, BasicDBObject mapping, Query query, MongoDBFeatureSource mongoDBFeatureSource) {
+        this.findIterable = findIterable
+        this.mongoCursor = findIterable.iterator()
         this.featureType = featureType
         this.mapping = mapping
         this.query = query
@@ -100,7 +103,7 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
         return this.featuresList.size()
     }
 
-    protected SimpleFeature buildFromAttributes(Map attributes, DBObject dbObject) {
+    protected SimpleFeature buildFromAttributes(Map attributes, Document dbObject) {
         SimpleFeatureBuilder simpleFeatureBuilder = new SimpleFeatureBuilder(this.featureType)
 
         addGeometry(simpleFeatureBuilder, dbObject)
@@ -117,7 +120,7 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
         return simpleFeatureBuilder.buildFeature(id ?: dbObject.get("id"))
     }
 
-    protected String getAttributeValueFromDBObject(DBObject dbObject, BasicDBObject attributeMapping, DBObject subCollectionObject = null, List<Integer> indices = null) {
+    protected String getAttributeValueFromDBObject(Document dbObject, BasicDBObject attributeMapping, Document subCollectionObject = null, List<Integer> indices = null) {
         String value
         if(attributeMapping.value) {
             value = attributeMapping.value
@@ -155,23 +158,36 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
         return propertyNames == null || propertyNames.size() == 0 || propertyNames.contains(property)
     }
 
-    protected Object getObjectFromPath(DBObject dbObject, String path) {
+    protected Object getObjectFromPath(Object dbObject, String path) {
         Object result = dbObject
         path.split("\\.").each { String key ->
             if(!StringUtils.isBlank(key)) {
-                result = result?.get(key)
+                if (result instanceof List) {
+                    // Handle array access with numeric index
+                    try {
+                        int index = Integer.parseInt(key)
+                        result = result.get(index)
+                    } catch (NumberFormatException e) {
+                        // Key is not a number, can't access list with it
+                        result = null
+                    }
+                } else if (result instanceof Map) {
+                    result = result.get(key)
+                } else {
+                    result = null
+                }
             }
         }
         return result
     }
 
-    protected void addGeometry(SimpleFeatureBuilder simpleFeatureBuilder, DBObject dbObject) {
+    protected void addGeometry(SimpleFeatureBuilder simpleFeatureBuilder, Document dbObject) {
 
         if (this.mapping.displayGeometry && this.mapping.geometry && containsProperty(this.mapping.geometry.name)) {
             // See Axis ordering here: http://docs.geoserver.org/2.7.2/user/services/wfs/basics.html
             // geographicCoordinate
-            DBObject geographicCoordinate = (DBObject) getObjectFromPath(dbObject, this.mapping.geometry.path)
-            BasicDBList cooridnates = (BasicDBList) geographicCoordinate.get("coordinates")
+            Document geographicCoordinate = (Document) getObjectFromPath(dbObject, this.mapping.geometry.path)
+            List cooridnates = (List) geographicCoordinate.get("coordinates")
             Double latitude = cooridnates.get(LATITUDE_POSITION)
             Double longitude = cooridnates.get(LONGITUDE_POSITION)
             Point point = new GeometryFactory().createPoint(new Coordinate(longitude, latitude))
@@ -201,7 +217,7 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
 
     @Override
     SimpleFeatureIterator features() {
-        return new MongoDBFeatureIterator(this.dbCursor, this.featuresList)
+        return new MongoDBFeatureIterator(this.mongoCursor, this.featuresList)
     }
 
     @Override

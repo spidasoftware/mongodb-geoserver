@@ -2,11 +2,14 @@ package com.spidasoftware.mongodb.feature.collection
 
 import com.mongodb.BasicDBList
 import com.mongodb.BasicDBObject
-import com.mongodb.DB
-import com.mongodb.DBCursor
-import com.mongodb.MongoClient
+import com.mongodb.MongoClientSettings
 import com.mongodb.ServerAddress
-import com.mongodb.util.JSON
+import com.mongodb.client.FindIterable
+import com.mongodb.client.MongoClient
+import com.mongodb.client.MongoClients
+import com.mongodb.client.MongoDatabase
+import groovy.json.JsonSlurper
+import org.bson.Document
 import com.spidasoftware.mongodb.data.MongoDBDataAccess
 import com.spidasoftware.mongodb.data.MongoDBFeatureSource
 import org.geotools.data.Query
@@ -26,56 +29,98 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
 
     static final Logger log = Logging.getLogger(MongoDBSubCollectionFeatureCollectionSpec.class.getPackage().getName())
 
-    @Shared DB database
-    @Shared BasicDBObject locationJSON
-    @Shared BasicDBObject designJSON
+    @Shared MongoDatabase database
+    @Shared Document locationJSON
+    @Shared Document designJSON
     @Shared BasicDBList jsonMapping
     @Shared MongoDBDataAccess mongoDBDataAccess
     @Shared String namespace = "http://spida/db"
     MongoDBFeatureSource mongoDBFeatureSource
 
-    void setup() {
-        locationJSON = JSON.parse(getClass().getResourceAsStream('/location.json').text)
-        designJSON = JSON.parse(getClass().getResourceAsStream('/design.json').text)
+    private static BasicDBList parseJsonResource(String resourcePath) {
+        def jsonSlurper = new JsonSlurper()
+        def parsed = jsonSlurper.parse(MongoDBSubCollectionFeatureCollectionSpec.class.getResourceAsStream(resourcePath))
+        return convertToBasicDBList(parsed)
+    }
 
-        jsonMapping = JSON.parse(getClass().getResourceAsStream('/mapping.json').text)
+    private static Document parseJsonResourceAsDocument(String resourcePath) {
+        def jsonSlurper = new JsonSlurper()
+        def parsed = jsonSlurper.parse(MongoDBSubCollectionFeatureCollectionSpec.class.getResourceAsStream(resourcePath))
+        return new Document(convertToBasicDBObject(parsed))
+    }
+
+    private static Object convertValue(Object value) {
+        if (value instanceof BigDecimal) {
+            return ((BigDecimal) value).doubleValue()
+        } else if (value instanceof Map) {
+            return convertToBasicDBObject(value)
+        } else if (value instanceof List) {
+            return convertToBasicDBList(value)
+        }
+        return value
+    }
+
+    private static BasicDBList convertToBasicDBList(List list) {
+        BasicDBList dbList = new BasicDBList()
+        list.each { item ->
+            dbList.add(convertValue(item))
+        }
+        return dbList
+    }
+
+    private static BasicDBObject convertToBasicDBObject(Map map) {
+        BasicDBObject dbObject = new BasicDBObject()
+        map.each { key, value ->
+            dbObject.put(key, convertValue(value))
+        }
+        return dbObject
+    }
+
+    void setup() {
+        locationJSON = parseJsonResourceAsDocument('/location.json')
+        designJSON = parseJsonResourceAsDocument('/design.json')
+
+        jsonMapping = parseJsonResource('/mapping.json')
         mongoDBDataAccess = new MongoDBDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, null, jsonMapping)
 
         String host = System.getProperty("mongoHost")
         String port = System.getProperty("mongoPort")
         String databaseName = System.getProperty("mongoDatabase")
         def serverAddress = new ServerAddress(host, Integer.valueOf(port))
-        MongoClient mongoClient = new MongoClient(serverAddress)
-        jsonMapping = JSON.parse(getClass().getResourceAsStream('/mapping.json').text)
+        MongoClientSettings settings = MongoClientSettings.builder()
+            .applyToClusterSettings { builder -> builder.hosts([serverAddress]) }
+            .build()
+        MongoClient mongoClient = MongoClients.create(settings)
+        jsonMapping = parseJsonResource('/mapping.json')
         mongoDBDataAccess = new MongoDBDataAccess(namespace, host, port, databaseName, null, null, null, jsonMapping)
-        database = mongoClient.getDB(databaseName)
+        database = mongoClient.getDatabase(databaseName)
 
-        database.getCollection("locations").remove(new BasicDBObject("id", locationJSON.get("id")))
-        database.getCollection("locations").insert(locationJSON)
+        database.getCollection("locations").deleteOne(new Document("id", locationJSON.get("id")))
+        database.getCollection("locations").insertOne(locationJSON)
 
-        database.getCollection("designs").remove(new BasicDBObject("id", designJSON.get("id")))
-        database.getCollection("designs").insert(designJSON)
+        database.getCollection("designs").deleteOne(new Document("id", designJSON.get("id")))
+        database.getCollection("designs").insertOne(designJSON)
     }
 
     void cleanup() {
-        database.getCollection("locations").remove(new BasicDBObject("id", locationJSON.get("id")))
-        database.getCollection("designs").remove(new BasicDBObject("id", designJSON.get("id")))
-        database.getCollection("designs").remove(new BasicDBObject("id", "5b216ef1cff47e0001b9d9f4"))
-        database.getCollection("designs").remove(new BasicDBObject("id", "5b216ef1cff47e0001b9d9f5"))
+        database.getCollection("locations").deleteOne(new Document("id", locationJSON.get("id")))
+        database.getCollection("designs").deleteOne(new Document("id", designJSON.get("id")))
+        database.getCollection("designs").deleteOne(new Document("id", "5b216ef1cff47e0001b9d9f4"))
+        database.getCollection("designs").deleteOne(new Document("id", "5b216ef1cff47e0001b9d9f5"))
     }
 
     void testNoAnalysisForLocation() { // Test that we don't NullPointerException when a design doesn't have analysis
         setup:
-            BasicDBObject designWithAnalysis = JSON.parse("""{ "dateModified" : 1528917745615, "id" : "5b216ef1cff47e0001b9d9f4", "locationLabel" : "Empty", "locationId" : "5b216ef1cff47e0001b9d9f6", "projectLabel" : "New Project_Empty Design Layer AS", "projectId" : "5b216ef1cff47e0001b9d9f7", "clientFile" : "Getting Started_v7.X.client", "clientFileVersion" : "f2a20ab17b9863d90884b0a65d2f6365", "calcDesign" : { "label" : "Measured Design", "layerType" : "Measured", "structure" : { "pole" : { "glc" : { "unit" : "METRE", "value" : 1.1246310380696452 }, "agl" : { "unit" : "METRE", "value" : 15.849599999999999 }, "environment" : "NONE", "temperature" : { "unit" : "CELSIUS", "value" : 15.555555555555555 }, "stressRatio" : 1, "leanAngle" : 0, "leanDirection" : 0, "clientItemVersion" : "611f76aa024d22a49fbcab865d4a3a5a", "clientItem" : { "species" : "Southern Pine", "classOfPole" : "2", "height" : { "unit" : "METRE", "value" : 18.288 } }, "externalId" : "5b216d8b8b721ed0b12182bb", "owner" : { "id" : "Acme Power", "industry" : "UTILITY", "externalId" : "43e130a1-3c21-41c9-b420-0e5b966eb2f2" } }, "wireEndPoints" : [ ], "spanPoints" : [ ], "anchors" : [ ], "notePoints" : [ ], "pointLoads" : [ ], "wirePointLoads" : [ ], "damages" : [ ], "wires" : [ ], "spanGuys" : [ ], "guys" : [ ], "equipments" : [ ], "guyAttachPoints" : [ ], "crossArms" : [ ], "insulators" : [ ], "pushBraces" : [ ], "sidewalkBraces" : [ ], "foundations" : [ ], "assemblies" : [ ] }, "mapLocation" : { "type" : "Point", "coordinates" : [ -83.01508247852325, 40.100811662473994 ] }, "analysis" : [ { "id" : "Medium", "results" : [ { "actual" : 5.37301105123481, "allowable" : 100, "unit" : "PERCENT", "analysisDate" :1528917746774, "component" : "Pole", "loadInfo" : "Medium", "passes" : true, "analysisType" : "STRESS" } ] }, { "id" : "NESC ZONE", "results" : [ ] } ], "version" : 5, "id" : "5b216ef1cff47e0001b9d9f4", "schema" : "/schema/spidacalc/calc/design.schema" }, "worstCaseAnalysisResults" : { "pole" : { "actual" : 5.37301105123481, "allowable" : 100, "unit" : "PERCENT", "analysisDate" : 1528917746774, "component" : "Pole", "loadInfo" : "Medium", "passes" : true, "analysisType" : "STRESS" } }, "user" : { "id" : "965", "email" : "amber.schmiesing@spidasoftware.com" }, "analysisSummary" : [ { "id" : "Medium", "results" : [ { "actual" : 5.37301105123481, "allowable" : 100, "unit" : "PERCENT", "analysisDate" : 1528917746774, "component" : "Pole", "loadInfo" : "Medium", "passes" : true, "analysisType" : "STRESS" } ] } ] }""")
-            BasicDBObject designNoAnalysis = JSON.parse("""{  "dateModified" : 1528917745616, "id" : "5b216ef1cff47e0001b9d9f5", "locationLabel" : "Empty", "locationId" : "5b216ef1cff47e0001b9d9f6", "projectLabel" : "New Project_Empty Design Layer AS", "projectId" : "5b216ef1cff47e0001b9d9f7", "clientFile" : "Getting Started_v7.X.client", "clientFileVersion" : "f2a20ab17b9863d90884b0a65d2f6365", "calcDesign" : { "label" : "Theoretical Design", "layerType" : "Theoretical", "version" : 5, "id" : "5b216ef1cff47e0001b9d9f5", "schema" : "/schema/spidacalc/calc/design.schema" }, "user" : { "id" : "965", "email" : "amber.schmiesing@spidasoftware.com" } }""")
-            database.getCollection("designs").insert(designWithAnalysis)
-            database.getCollection("designs").insert(designNoAnalysis)
-            DBCursor dbCursor = database.getCollection("designs").find(new BasicDBObject("locationId", "5b216ef1cff47e0001b9d9f6"))
+            Document designWithAnalysis = Document.parse("""{ "dateModified" : 1528917745615, "id" : "5b216ef1cff47e0001b9d9f4", "locationLabel" : "Empty", "locationId" : "5b216ef1cff47e0001b9d9f6", "projectLabel" : "New Project_Empty Design Layer AS", "projectId" : "5b216ef1cff47e0001b9d9f7", "clientFile" : "Getting Started_v7.X.client", "clientFileVersion" : "f2a20ab17b9863d90884b0a65d2f6365", "calcDesign" : { "label" : "Measured Design", "layerType" : "Measured", "structure" : { "pole" : { "glc" : { "unit" : "METRE", "value" : 1.1246310380696452 }, "agl" : { "unit" : "METRE", "value" : 15.849599999999999 }, "environment" : "NONE", "temperature" : { "unit" : "CELSIUS", "value" : 15.555555555555555 }, "stressRatio" : 1, "leanAngle" : 0, "leanDirection" : 0, "clientItemVersion" : "611f76aa024d22a49fbcab865d4a3a5a", "clientItem" : { "species" : "Southern Pine", "classOfPole" : "2", "height" : { "unit" : "METRE", "value" : 18.288 } }, "externalId" : "5b216d8b8b721ed0b12182bb", "owner" : { "id" : "Acme Power", "industry" : "UTILITY", "externalId" : "43e130a1-3c21-41c9-b420-0e5b966eb2f2" } }, "wireEndPoints" : [ ], "spanPoints" : [ ], "anchors" : [ ], "notePoints" : [ ], "pointLoads" : [ ], "wirePointLoads" : [ ], "damages" : [ ], "wires" : [ ], "spanGuys" : [ ], "guys" : [ ], "equipments" : [ ], "guyAttachPoints" : [ ], "crossArms" : [ ], "insulators" : [ ], "pushBraces" : [ ], "sidewalkBraces" : [ ], "foundations" : [ ], "assemblies" : [ ] }, "mapLocation" : { "type" : "Point", "coordinates" : [ -83.01508247852325, 40.100811662473994 ] }, "analysis" : [ { "id" : "Medium", "results" : [ { "actual" : 5.37301105123481, "allowable" : 100, "unit" : "PERCENT", "analysisDate" :1528917746774, "component" : "Pole", "loadInfo" : "Medium", "passes" : true, "analysisType" : "STRESS" } ] }, { "id" : "NESC ZONE", "results" : [ ] } ], "version" : 5, "id" : "5b216ef1cff47e0001b9d9f4", "schema" : "/schema/spidacalc/calc/design.schema" }, "worstCaseAnalysisResults" : { "pole" : { "actual" : 5.37301105123481, "allowable" : 100, "unit" : "PERCENT", "analysisDate" : 1528917746774, "component" : "Pole", "loadInfo" : "Medium", "passes" : true, "analysisType" : "STRESS" } }, "user" : { "id" : "965", "email" : "amber.schmiesing@spidasoftware.com" }, "analysisSummary" : [ { "id" : "Medium", "results" : [ { "actual" : 5.37301105123481, "allowable" : 100, "unit" : "PERCENT", "analysisDate" : 1528917746774, "component" : "Pole", "loadInfo" : "Medium", "passes" : true, "analysisType" : "STRESS" } ] } ] }""")
+            Document designNoAnalysis = Document.parse("""{  "dateModified" : 1528917745616, "id" : "5b216ef1cff47e0001b9d9f5", "locationLabel" : "Empty", "locationId" : "5b216ef1cff47e0001b9d9f6", "projectLabel" : "New Project_Empty Design Layer AS", "projectId" : "5b216ef1cff47e0001b9d9f7", "clientFile" : "Getting Started_v7.X.client", "clientFileVersion" : "f2a20ab17b9863d90884b0a65d2f6365", "calcDesign" : { "label" : "Theoretical Design", "layerType" : "Theoretical", "version" : 5, "id" : "5b216ef1cff47e0001b9d9f5", "schema" : "/schema/spidacalc/calc/design.schema" }, "user" : { "id" : "965", "email" : "amber.schmiesing@spidasoftware.com" } }""")
+            database.getCollection("designs").insertOne(designWithAnalysis)
+            database.getCollection("designs").insertOne(designNoAnalysis)
+            FindIterable<Document> findIterable = database.getCollection("designs").find(new Document("locationId", "5b216ef1cff47e0001b9d9f6"))
             FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "analysis"))
             Query query = new Query("analysis", CQL.toFilter("locationId='5b216ef1cff47e0001b9d9f6'"), [])
             BasicDBObject mapping = jsonMapping.find { it.typeName == "analysis" }
             mongoDBFeatureSource = new MongoDBFeatureSource(mongoDBDataAccess, database, featureType, mapping)
-            def mongoDBSubCollectionFeatureCollection = new MongoDBSubCollectionFeatureCollection(dbCursor, featureType, mapping, query, mongoDBFeatureSource)
+            def mongoDBSubCollectionFeatureCollection = new MongoDBSubCollectionFeatureCollection(findIterable, featureType, mapping, query, mongoDBFeatureSource)
         when:
             Feature feature = mongoDBSubCollectionFeatureCollection.featuresList.get(0)
         then:
@@ -806,11 +851,11 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
     }
 
     private MongoDBSubCollectionFeatureCollection getFeatureIterator(String typeName, String collectionName, Filter filter, String[] propertyNames = null) {
-        DBCursor dbCursor = database.getCollection(collectionName).find(new BasicDBObject("id", collectionName == "designs" ? designJSON.get("id") : locationJSON.get("id")))
+        FindIterable<Document> findIterable = database.getCollection(collectionName).find(new Document("id", collectionName == "designs" ? designJSON.get("id") : locationJSON.get("id")))
         FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, typeName))
         Query query = new Query(typeName, filter, propertyNames)
         BasicDBObject mapping = jsonMapping.find { it.typeName == typeName }
         mongoDBFeatureSource = new MongoDBFeatureSource(mongoDBDataAccess, database, featureType, mapping)
-        return new MongoDBSubCollectionFeatureCollection(dbCursor, featureType, mapping, query, mongoDBFeatureSource)
+        return new MongoDBSubCollectionFeatureCollection(findIterable, featureType, mapping, query, mongoDBFeatureSource)
     }
 }

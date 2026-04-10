@@ -2,7 +2,7 @@ package com.spidasoftware.mongodb.data
 
 import com.mongodb.BasicDBList
 import com.mongodb.BasicDBObject
-import com.mongodb.util.JSON
+import groovy.json.JsonSlurper
 import org.geotools.data.DataAccess
 import org.geotools.data.DataAccessFactory
 import org.geotools.data.Parameter
@@ -28,7 +28,7 @@ public class MongoDBDataAccessFactory implements DataAccessFactory {
 
     @Override
     DataAccess<? extends FeatureType, ? extends Feature> createDataStore(Map<String, Serializable> params) throws IOException {
-        BasicDBList jsonMapping = JSON.parse( new File((String) FEATURE_TYPE_MAPPING_FILE.lookUp(params)).text)
+        BasicDBList jsonMapping = parseJsonFile(new File((String) FEATURE_TYPE_MAPPING_FILE.lookUp(params)).text)
         return new MongoDBDataAccess((String) NAMESPACE.lookUp(params),
                                      (String) HOST.lookUp(params),
                                      (String) PORT.lookUp(params),
@@ -37,6 +37,40 @@ public class MongoDBDataAccessFactory implements DataAccessFactory {
                                      (String) PASSWORD.lookUp(params),
                                      (String) URI.lookUp(params),
                                      jsonMapping)
+    }
+
+    private static BasicDBList parseJsonFile(String jsonText) {
+        def jsonSlurper = new JsonSlurper()
+        def parsed = jsonSlurper.parseText(jsonText)
+        return convertListToBasicDBList(parsed)
+    }
+
+    private static BasicDBList convertListToBasicDBList(java.util.List list) {
+        BasicDBList dbList = new BasicDBList()
+        list.each { item ->
+            if (item instanceof java.util.Map) {
+                dbList.add(convertMapToBasicDBObject((java.util.Map) item))
+            } else if (item instanceof java.util.List) {
+                dbList.add(convertListToBasicDBList((java.util.List) item))
+            } else {
+                dbList.add(item)
+            }
+        }
+        return dbList
+    }
+
+    private static BasicDBObject convertMapToBasicDBObject(java.util.Map map) {
+        BasicDBObject dbObject = new BasicDBObject()
+        map.each { key, value ->
+            if (value instanceof java.util.Map) {
+                dbObject.put(key, convertMapToBasicDBObject((java.util.Map) value))
+            } else if (value instanceof java.util.List) {
+                dbObject.put(key, convertListToBasicDBList((java.util.List) value))
+            } else {
+                dbObject.put(key, value)
+            }
+        }
+        return dbObject
     }
 
     @Override
@@ -59,7 +93,7 @@ public class MongoDBDataAccessFactory implements DataAccessFactory {
         try {
             String featureTypeMappingFile = FEATURE_TYPE_MAPPING_FILE.lookUp(params)
             def mappingFile = new File(featureTypeMappingFile)
-            BasicDBList jsonMapping = JSON.parse(mappingFile.text)
+            BasicDBList jsonMapping = parseJsonFile(mappingFile.text)
             assert jsonMapping.size() > 0
             jsonMapping.each { mapping ->
                 assert mapping.typeName != null
@@ -97,7 +131,7 @@ public class MongoDBDataAccessFactory implements DataAccessFactory {
                    attr.useObjectKey != null ||
                    attr.stringValue != null
         }
-        mapping.subCollections.each { subCollection ->
+        mapping.subCollections?.each { subCollection ->
             assert subCollection.subCollectionPath != null
             assert subCollection.includeInDefaultQuery != null
             validateMappingAttributes(subCollection)
@@ -107,7 +141,7 @@ public class MongoDBDataAccessFactory implements DataAccessFactory {
     @Override
     boolean isAvailable() {
         try {
-            Class.forName("com.mongodb.DB")
+            Class.forName("com.mongodb.client.MongoClient")
             return  true
         } catch(ClassNotFoundException e) {
             return false

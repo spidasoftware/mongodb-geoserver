@@ -1,9 +1,9 @@
 package com.spidasoftware.mongodb.feature.collection
 
 import com.mongodb.BasicDBObject
-import com.mongodb.DBCursor
-import com.mongodb.DBObject
+import com.mongodb.client.FindIterable
 import com.spidasoftware.mongodb.data.MongoDBFeatureSource
+import org.bson.Document
 import org.geotools.data.Query
 import org.geotools.feature.simple.SimpleFeatureBuilder
 import org.geotools.util.logging.Logging
@@ -15,15 +15,15 @@ class MongoDBFeatureCollection extends AbstractMongoDBFeatureCollection {
 
     private static final Logger log = Logging.getLogger(MongoDBFeatureCollection.class.getPackage().getName())
 
-    MongoDBFeatureCollection(DBCursor dbCursor, FeatureType featureType, BasicDBObject mapping, Query query, MongoDBFeatureSource mongoDBFeatureSource) {
-        super(dbCursor, featureType, mapping, query, mongoDBFeatureSource)
+    MongoDBFeatureCollection(FindIterable<Document> findIterable, FeatureType featureType, BasicDBObject mapping, Query query, MongoDBFeatureSource mongoDBFeatureSource) {
+        super(findIterable, featureType, mapping, query, mongoDBFeatureSource)
     }
 
     @Override
     void initFeaturesList() {
-        while(this.dbCursor.hasNext()) {
+        while(this.mongoCursor.hasNext()) {
             SimpleFeatureBuilder simpleFeatureBuilder = new SimpleFeatureBuilder(this.featureType)
-            DBObject dbObject =  this.dbCursor.next()
+            Document dbObject = this.mongoCursor.next()
             addGeometry(simpleFeatureBuilder, dbObject)
 
             Map attributes = [:]
