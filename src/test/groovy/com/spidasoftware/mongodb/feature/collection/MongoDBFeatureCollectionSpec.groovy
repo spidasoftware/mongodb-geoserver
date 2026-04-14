@@ -8,7 +8,7 @@ import com.mongodb.client.FindIterable
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
-import groovy.json.JsonSlurper
+import com.spidasoftware.mongodb.TestJsonUtils
 import org.bson.Document
 import com.spidasoftware.mongodb.data.MongoDBDataAccess
 import com.spidasoftware.mongodb.data.MongoDBFeatureSource
@@ -35,47 +35,8 @@ class MongoDBFeatureCollectionSpec extends Specification {
     BasicDBList jsonMapping
     String namespace = "http://spida/db"
 
-    private static BasicDBList parseJsonResource(String resourcePath) {
-        def jsonSlurper = new JsonSlurper()
-        def parsed = jsonSlurper.parse(MongoDBFeatureCollectionSpec.class.getResourceAsStream(resourcePath))
-        return convertToBasicDBList(parsed)
-    }
-
-    private static Document parseJsonResourceAsDocument(String resourcePath) {
-        def jsonSlurper = new JsonSlurper()
-        def parsed = jsonSlurper.parse(MongoDBFeatureCollectionSpec.class.getResourceAsStream(resourcePath))
-        return new Document(convertToBasicDBObject(parsed))
-    }
-
-    private static Object convertValue(Object value) {
-        if (value instanceof BigDecimal) {
-            return ((BigDecimal) value).doubleValue()
-        } else if (value instanceof Map) {
-            return convertToBasicDBObject(value)
-        } else if (value instanceof List) {
-            return convertToBasicDBList(value)
-        }
-        return value
-    }
-
-    private static BasicDBList convertToBasicDBList(List list) {
-        BasicDBList dbList = new BasicDBList()
-        list.each { item ->
-            dbList.add(convertValue(item))
-        }
-        return dbList
-    }
-
-    private static BasicDBObject convertToBasicDBObject(Map map) {
-        BasicDBObject dbObject = new BasicDBObject()
-        map.each { key, value ->
-            dbObject.put(key, convertValue(value))
-        }
-        return dbObject
-    }
-
     void setup() {
-        locationJSON = parseJsonResourceAsDocument('/location.json')
+        locationJSON = TestJsonUtils.parseJsonResourceAsDocument(MongoDBFeatureCollectionSpec.class, '/location.json')
         String host = System.getProperty("mongoHost")
         String port = System.getProperty("mongoPort")
         String databaseName = System.getProperty("mongoDatabase")
@@ -84,14 +45,14 @@ class MongoDBFeatureCollectionSpec extends Specification {
             .applyToClusterSettings { builder -> builder.hosts([serverAddress]) }
             .build()
         MongoClient mongoClient = MongoClients.create(settings)
-        jsonMapping = parseJsonResource('/mapping.json')
+        jsonMapping = TestJsonUtils.parseJsonResource(MongoDBFeatureCollectionSpec.class, '/mapping.json')
         mongoDBDataAccess = new MongoDBDataAccess(namespace, host, port, databaseName, null, null, null, jsonMapping)
         database = mongoClient.getDatabase(databaseName)
         database.getCollection("locations").deleteOne(new Document("id", locationJSON.get("id")))
         database.getCollection("locations").insertOne(locationJSON)
         findIterable = database.getCollection("locations").find(new Document("id", locationJSON.get("id")))
 
-        jsonMapping = parseJsonResource('/mapping.json')
+        jsonMapping = TestJsonUtils.parseJsonResource(MongoDBFeatureCollectionSpec.class, '/mapping.json')
         mongoDBDataAccess = new MongoDBDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, null, jsonMapping)
         featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, "location"))
         mongoDBFeatureSource = new MongoDBFeatureSource(mongoDBDataAccess, database, featureType, jsonMapping.find { it.typeName == "location" })
