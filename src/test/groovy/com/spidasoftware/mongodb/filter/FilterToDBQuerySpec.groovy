@@ -1,7 +1,15 @@
 package com.spidasoftware.mongodb.filter
 
-import com.mongodb.*
-import com.mongodb.util.JSON
+import com.mongodb.BasicDBList
+import com.mongodb.BasicDBObject
+import com.mongodb.MongoClientSettings
+import com.mongodb.ServerAddress
+import com.mongodb.client.MongoClient
+import com.mongodb.client.MongoClients
+import com.mongodb.client.MongoCollection
+import com.mongodb.client.MongoDatabase
+import groovy.json.JsonSlurper
+import org.bson.Document
 import com.spidasoftware.mongodb.data.MongoDBDataAccess
 import com.spidasoftware.mongodb.data.MongoDBFeatureSource
 import java.util.regex.Pattern
@@ -25,39 +33,92 @@ class FilterToDBQuerySpec extends Specification {
 
     static final Logger log = Logging.getLogger(FilterToDBQuerySpec.class.getPackage().getName())
 
-    @Shared DB database
-    @Shared BasicDBObject locationJSON
-    @Shared BasicDBObject designJSON
+    @Shared MongoDatabase database
+    @Shared Document locationJSON
+    @Shared Document designJSON
     @Shared BasicDBList jsonMapping
     @Shared MongoDBDataAccess mongoDBDataAccess
     @Shared String namespace = "http://spida/db"
     @Shared MongoDBFeatureSource mongoDBFeatureSource
 
-    void setupSpec() {
-        designJSON = JSON.parse(getClass().getResourceAsStream('/design.json').text)
-        locationJSON = JSON.parse(getClass().getResourceAsStream('/location.json').text)
+    private static BasicDBList parseJsonResource(String resourcePath) {
+        def jsonSlurper = new JsonSlurper()
+        def parsed = jsonSlurper.parse(FilterToDBQuerySpec.class.getResourceAsStream(resourcePath))
+        return convertToBasicDBList(parsed)
+    }
 
-        jsonMapping = JSON.parse(getClass().getResourceAsStream('/mapping.json').text)
+    private static Document parseJsonResourceAsDocument(String resourcePath) {
+        def jsonSlurper = new JsonSlurper()
+        def parsed = jsonSlurper.parse(FilterToDBQuerySpec.class.getResourceAsStream(resourcePath))
+        return new Document(convertToBasicDBObject(parsed))
+    }
+
+    private static Object convertValue(Object value) {
+        if (value instanceof BigDecimal) {
+            return ((BigDecimal) value).doubleValue()
+        } else if (value instanceof Map) {
+            return convertToBasicDBObject(value)
+        } else if (value instanceof List) {
+            return convertToBasicDBList(value)
+        }
+        return value
+    }
+
+    private static BasicDBList convertToBasicDBList(List list) {
+        BasicDBList dbList = new BasicDBList()
+        list.each { item ->
+            dbList.add(convertValue(item))
+        }
+        return dbList
+    }
+
+    private static BasicDBObject convertToBasicDBObject(Map map) {
+        BasicDBObject dbObject = new BasicDBObject()
+        map.each { key, value ->
+            dbObject.put(key, convertValue(value))
+        }
+        return dbObject
+    }
+
+    private static Object parseJson(String jsonString) {
+        def jsonSlurper = new JsonSlurper()
+        def parsed = jsonSlurper.parseText(jsonString)
+        if (parsed instanceof List) {
+            return convertToBasicDBList(parsed)
+        } else if (parsed instanceof Map) {
+            return convertToBasicDBObject(parsed)
+        }
+        return parsed
+    }
+
+    void setupSpec() {
+        designJSON = parseJsonResourceAsDocument('/design.json')
+        locationJSON = parseJsonResourceAsDocument('/location.json')
+
+        jsonMapping = parseJsonResource('/mapping.json')
 
         String host = System.getProperty("mongoHost")
         String port = System.getProperty("mongoPort")
         String databaseName = System.getProperty("mongoDatabase")
         def serverAddress = new ServerAddress(host, Integer.valueOf(port))
-        MongoClient mongoClient = new MongoClient(serverAddress)
-        jsonMapping = JSON.parse(getClass().getResourceAsStream('/mapping.json').text)
+        MongoClientSettings settings = MongoClientSettings.builder()
+            .applyToClusterSettings { builder -> builder.hosts([serverAddress]) }
+            .build()
+        MongoClient mongoClient = MongoClients.create(settings)
+        jsonMapping = parseJsonResource('/mapping.json')
         mongoDBDataAccess = new MongoDBDataAccess(namespace, host, port, databaseName, null, null, null, jsonMapping)
-        database = mongoClient.getDB(databaseName)
+        database = mongoClient.getDatabase(databaseName)
 
-        database.getCollection("locations").remove(new BasicDBObject("id", locationJSON.get("id")))
-        database.getCollection("locations").insert(locationJSON)
+        database.getCollection("locations").deleteOne(new Document("id", locationJSON.get("id")))
+        database.getCollection("locations").insertOne(locationJSON)
 
-        database.getCollection("designs").remove(new BasicDBObject("id", designJSON.get("id")))
-        database.getCollection("designs").insert(designJSON)
+        database.getCollection("designs").deleteOne(new Document("id", designJSON.get("id")))
+        database.getCollection("designs").insertOne(designJSON)
     }
 
     void cleanupSpec() {
-        database.getCollection("locations").remove(new BasicDBObject("id", locationJSON.get("id")))
-        database.getCollection("designs").remove(new BasicDBObject("id", designJSON.get("id")))
+        database.getCollection("locations").deleteOne(new Document("id", locationJSON.get("id")))
+        database.getCollection("designs").deleteOne(new Document("id", designJSON.get("id")))
     }
 
     @Unroll("test get #typeName Features no query or filter")
@@ -147,7 +208,7 @@ class FilterToDBQuerySpec extends Specification {
         when:
             BasicDBObject dbQuery = filterToDBQuery.visit(query.getFilter(), null)
         then:
-            dbQuery == new BasicDBObject('$and', JSON.parse('[{"id": "-1"}, {"id": "-2"}]'))
+            dbQuery == new BasicDBObject('$and', parseJson('[{"id": "-1"}, {"id": "-2"}]'))
         when:
             FeatureCollection featureCollection = filterToDBQuery.getFeatureCollection(query)
         then:
@@ -197,22 +258,22 @@ class FilterToDBQuerySpec extends Specification {
         where:
             typeName       | collectionName | id                                                                   | expectedQuery                                                                                                                                             | expectedSize
             "location"     | "locations"    | "55fac7fde4b0e7f2e3be342c"                                           | new BasicDBObject("id", "55fac7fde4b0e7f2e3be342c")                                                                                                       | 1
-            "poleTag"      | "locations"    | "55fac7fde4b0e7f2e3be342c_MAP"                                       | new BasicDBObject('$and', JSON.parse('[{"id":"55fac7fde4b0e7f2e3be342c"}, {"calcLocation.poleTags.type":"MAP"}]'))                                        | 1
-            "form"         | "locations"    | "55fac7fde4b0e7f2e3be342c_6ee5fba14760878be22701e1b3b7c05b-HTA Form" | new BasicDBObject('$and', JSON.parse('[{"id":"55fac7fde4b0e7f2e3be342c"}, {"calcLocation.forms.template":"6ee5fba14760878be22701e1b3b7c05b-HTA Form"}]')) | 1
+            "poleTag"      | "locations"    | "55fac7fde4b0e7f2e3be342c_MAP"                                       | new BasicDBObject('$and', parseJson('[{"id":"55fac7fde4b0e7f2e3be342c"}, {"calcLocation.poleTags.type":"MAP"}]'))                                        | 1
+            "form"         | "locations"    | "55fac7fde4b0e7f2e3be342c_6ee5fba14760878be22701e1b3b7c05b-HTA Form" | new BasicDBObject('$and', parseJson('[{"id":"55fac7fde4b0e7f2e3be342c"}, {"calcLocation.forms.template":"6ee5fba14760878be22701e1b3b7c05b-HTA Form"}]')) | 1
             "pole"         | "designs"      | "56e9b7137d84511d8dd0f13c"                                           | new BasicDBObject("id", "56e9b7137d84511d8dd0f13c")                                                                                                       | 1
             "analysis"     | "designs"      | "56e9b7137d84511d8dd0f13c_ANALYSIS_0_0"                              | new BasicDBObject("id", "56e9b7137d84511d8dd0f13c")                                                                                                       | 1
-            "wire"         | "designs"      | "56e9b7137d84511d8dd0f13c_Wire#1"                                    | new BasicDBObject('$and', JSON.parse('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.wires.id":"Wire#1"}]'))                                  | 1
-            "spanPoint"    | "designs"      | "56e9b7137d84511d8dd0f13c_SpanPoint#1"                               | new BasicDBObject('$and', JSON.parse('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.spanPoints.id":"SpanPoint#1"}]'))                        | 1
-            "spanGuy"      | "designs"      | "56e9b7137d84511d8dd0f13c_SpanGuy#1"                                 | new BasicDBObject('$and', JSON.parse('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.spanGuys.id":"SpanGuy#1"}]'))                            | 1
-            "guy"          | "designs"      | "56e9b7137d84511d8dd0f13c_Guy#1"                                     | new BasicDBObject('$and', JSON.parse('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.guys.id":"Guy#1"}]'))                                    | 1
-            "insulator"    | "designs"      | "56e9b7137d84511d8dd0f13c_Insulator#1"                               | new BasicDBObject('$and', JSON.parse('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.insulators.id":"Insulator#1"}]'))                        | 1
-            "equipment"    | "designs"      | "56e9b7137d84511d8dd0f13c_Equip#1"                                   | new BasicDBObject('$and', JSON.parse('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.equipments.id":"Equip#1"}]'))                            | 1
-            "damage"       | "designs"      | "56e9b7137d84511d8dd0f13c_Damage#1"                                  | new BasicDBObject('$and', JSON.parse('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.damages.id":"Damage#1"}]'))                              | 1
-            "crossArm"     | "designs"      | "56e9b7137d84511d8dd0f13c_CrossArm#1"                                | new BasicDBObject('$and', JSON.parse('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.crossArms.id":"CrossArm#1"}]'))                          | 1
-            "anchor"       | "designs"      | "56e9b7137d84511d8dd0f13c_Anchor#1"                                  | new BasicDBObject('$and', JSON.parse('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.anchors.id":"Anchor#1"}]'))                              | 1
-            "wireEndPoint" | "designs"      | "56e9b7137d84511d8dd0f13c_WEP#1"                                     | new BasicDBObject('$and', JSON.parse('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.wireEndPoints.id":"WEP#1"}]'))                           | 1
-            "notePoint"    | "designs"      | "56e9b7137d84511d8dd0f13c_NotePoint#1"                               | new BasicDBObject('$and', JSON.parse('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.notePoints.id":"NotePoint#1"}]'))                        | 1
-            "pointLoad"    | "designs"      | "56e9b7137d84511d8dd0f13c_PointLoad#1"                               | new BasicDBObject('$and', JSON.parse('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.pointLoads.id":"PointLoad#1"}]'))                        | 1
+            "wire"         | "designs"      | "56e9b7137d84511d8dd0f13c_Wire#1"                                    | new BasicDBObject('$and', parseJson('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.wires.id":"Wire#1"}]'))                                  | 1
+            "spanPoint"    | "designs"      | "56e9b7137d84511d8dd0f13c_SpanPoint#1"                               | new BasicDBObject('$and', parseJson('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.spanPoints.id":"SpanPoint#1"}]'))                        | 1
+            "spanGuy"      | "designs"      | "56e9b7137d84511d8dd0f13c_SpanGuy#1"                                 | new BasicDBObject('$and', parseJson('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.spanGuys.id":"SpanGuy#1"}]'))                            | 1
+            "guy"          | "designs"      | "56e9b7137d84511d8dd0f13c_Guy#1"                                     | new BasicDBObject('$and', parseJson('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.guys.id":"Guy#1"}]'))                                    | 1
+            "insulator"    | "designs"      | "56e9b7137d84511d8dd0f13c_Insulator#1"                               | new BasicDBObject('$and', parseJson('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.insulators.id":"Insulator#1"}]'))                        | 1
+            "equipment"    | "designs"      | "56e9b7137d84511d8dd0f13c_Equip#1"                                   | new BasicDBObject('$and', parseJson('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.equipments.id":"Equip#1"}]'))                            | 1
+            "damage"       | "designs"      | "56e9b7137d84511d8dd0f13c_Damage#1"                                  | new BasicDBObject('$and', parseJson('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.damages.id":"Damage#1"}]'))                              | 1
+            "crossArm"     | "designs"      | "56e9b7137d84511d8dd0f13c_CrossArm#1"                                | new BasicDBObject('$and', parseJson('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.crossArms.id":"CrossArm#1"}]'))                          | 1
+            "anchor"       | "designs"      | "56e9b7137d84511d8dd0f13c_Anchor#1"                                  | new BasicDBObject('$and', parseJson('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.anchors.id":"Anchor#1"}]'))                              | 1
+            "wireEndPoint" | "designs"      | "56e9b7137d84511d8dd0f13c_WEP#1"                                     | new BasicDBObject('$and', parseJson('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.wireEndPoints.id":"WEP#1"}]'))                           | 1
+            "notePoint"    | "designs"      | "56e9b7137d84511d8dd0f13c_NotePoint#1"                               | new BasicDBObject('$and', parseJson('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.notePoints.id":"NotePoint#1"}]'))                        | 1
+            "pointLoad"    | "designs"      | "56e9b7137d84511d8dd0f13c_PointLoad#1"                               | new BasicDBObject('$and', parseJson('[{"id":"56e9b7137d84511d8dd0f13c"}, {"calcDesign.structure.pointLoads.id":"PointLoad#1"}]'))                        | 1
     }
 
     @Unroll("Test location property query for #description")
@@ -368,7 +429,7 @@ class FilterToDBQuerySpec extends Specification {
             "template doesn't exist"   | CQL.toFilter("template='TEST'")                                                         | new BasicDBObject("calcLocation.forms.template", "TEST")                                                                                                  | 0
             "locationId exists"        | CQL.toFilter("locationId='55fac7fde4b0e7f2e3be342c'")                                   | new BasicDBObject("id", "55fac7fde4b0e7f2e3be342c")                                                                                                       | 2
             "locationId doesn't exist" | CQL.toFilter("locationId='TEST'")                                                       | new BasicDBObject("id", "TEST")                                                                                                                           | 0
-            "id exists"                | CQL.toFilter("id='55fac7fde4b0e7f2e3be342c_6ee5fba14760878be22701e1b3b7c05b-HTA Form'") | new BasicDBObject('$and', JSON.parse('[{"id":"55fac7fde4b0e7f2e3be342c"}, {"calcLocation.forms.template":"6ee5fba14760878be22701e1b3b7c05b-HTA Form"}]')) | 1
+            "id exists"                | CQL.toFilter("id='55fac7fde4b0e7f2e3be342c_6ee5fba14760878be22701e1b3b7c05b-HTA Form'") | new BasicDBObject('$and', parseJson('[{"id":"55fac7fde4b0e7f2e3be342c"}, {"calcLocation.forms.template":"6ee5fba14760878be22701e1b3b7c05b-HTA Form"}]')) | 1
             "id doesn't exist"         | CQL.toFilter("id='TEST'")                                                               | new BasicDBObject("id", "TEST")                                                                                                                           | 0
     }
 
@@ -395,7 +456,7 @@ class FilterToDBQuerySpec extends Specification {
             "value doesn't exist"     | CQL.toFilter("value='TEST'")                                                                | new BasicDBObject()                                                                                                                                       | 0
             "groupName exists"        | CQL.toFilter("groupName='Group Name'")                                                      | new BasicDBObject("calcLocation.forms.fields.Group Name", new BasicDBObject('$exists', true))                                                             | 1
             "groupName doesn't exist" | CQL.toFilter("groupName='TEST'")                                                            | new BasicDBObject("calcLocation.forms.fields.TEST", new BasicDBObject('$exists', true))                                                                   | 0
-            "formId exists"           | CQL.toFilter("formId='55fac7fde4b0e7f2e3be342c_6ee5fba14760878be22701e1b3b7c05b-HTA Form'") | new BasicDBObject('$and', JSON.parse('[{"id":"55fac7fde4b0e7f2e3be342c"}, {"calcLocation.forms.template":"6ee5fba14760878be22701e1b3b7c05b-HTA Form"}]')) | 1
+            "formId exists"           | CQL.toFilter("formId='55fac7fde4b0e7f2e3be342c_6ee5fba14760878be22701e1b3b7c05b-HTA Form'") | new BasicDBObject('$and', parseJson('[{"id":"55fac7fde4b0e7f2e3be342c"}, {"calcLocation.forms.template":"6ee5fba14760878be22701e1b3b7c05b-HTA Form"}]')) | 1
             "formId doesn't exist"    | CQL.toFilter("formId='TEST'")                                                               | new BasicDBObject("id", "TEST")                                                                                                                           | 0
     }
 
@@ -1350,7 +1411,7 @@ class FilterToDBQuerySpec extends Specification {
         when:
             FeatureCollection featureCollection = filterToDBQuery.getFeatureCollection(query)
         then:
-            featureCollection.dbCursor.size() == 1
+            featureCollection.findIterable.into([]).size() == 1
             featureCollection.size() == 1
     }
 
@@ -1363,7 +1424,7 @@ class FilterToDBQuerySpec extends Specification {
         when:
             FeatureCollection featureCollection = filterToDBQuery.getFeatureCollection(query)
         then:
-            featureCollection.dbCursor.size() == expectedResultsSize
+            featureCollection.findIterable.into([]).size() == expectedResultsSize
             featureCollection.size() == expectedResultsSize
         where:
             filter                                                                | expectedResultsSize
@@ -1374,7 +1435,7 @@ class FilterToDBQuerySpec extends Specification {
     }
 
     private FilterToDBQuery getFilterToDBQuery(String typeName, String collectionName) {
-        DBCollection dbCollection = database.getCollection(collectionName)
+        MongoCollection<Document> dbCollection = database.getCollection(collectionName)
         FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, typeName))
         BasicDBObject mapping = jsonMapping.find { it.typeName == typeName }
         mongoDBDataAccess = new MongoDBDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, null, jsonMapping)
@@ -1392,14 +1453,14 @@ class FilterToDBQuerySpec extends Specification {
             def maxLat = 34
             def filter = CQL.toFilter("BBOX(geographicCoordinate,$minLng,$minLat,$maxLng,$maxLat,'EPSG:4326')")
             Query query = new Query(typeName, filter)
-            DBCollection dbCollection = database.getCollection(collectionName)
+            MongoCollection<Document> dbCollection = database.getCollection(collectionName)
             FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, typeName))
             BasicDBObject mapping = jsonMapping.find { it.typeName == typeName }
             FilterToDBQuery filterToDBQuery = new FilterToDBQuery(dbCollection, featureType, mapping, mongoDBFeatureSource)
         when:
             FeatureCollection featureCollection = filterToDBQuery.getFeatureCollection(query)
         then:
-            featureCollection.dbCursor.size() == 1
+            featureCollection.findIterable.into([]).size() == 1
             featureCollection.size() == 1
         when:
             minLng = -120
@@ -1411,7 +1472,7 @@ class FilterToDBQuerySpec extends Specification {
             query = new Query(typeName, filter)
             featureCollection = filterToDBQuery.getFeatureCollection(query)
         then:
-            featureCollection.dbCursor.size() == 0
+            featureCollection.findIterable.into([]).size() == 0
             featureCollection.size() == 0
     }
 
@@ -1421,15 +1482,15 @@ class FilterToDBQuerySpec extends Specification {
             String collectionName = "locations"
             def otherLocations = []
             (1..9).each { i ->
-                BasicDBObject clonedLocation = locationJSON.clone()
-                clonedLocation.put("id", UUID.randomUUID())
+                Document clonedLocation = Document.parse(locationJSON.toJson())
+                clonedLocation.put("id", UUID.randomUUID().toString())
                 clonedLocation.remove("_id")
                 otherLocations << clonedLocation
-                database.getCollection(collectionName).insert(clonedLocation)
+                database.getCollection(collectionName).insertOne(clonedLocation)
             }
             Query query = new Query(typeName, Filter.INCLUDE, 5, Query.ALL_NAMES, null)
             query.setStartIndex(0)
-            DBCollection dbCollection = database.getCollection(collectionName)
+            MongoCollection<Document> dbCollection = database.getCollection(collectionName)
             FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, typeName))
             BasicDBObject mapping = jsonMapping.find { it.typeName == typeName }
             FilterToDBQuery filterToDBQuery = new FilterToDBQuery(dbCollection, featureType, mapping, mongoDBFeatureSource)
@@ -1456,8 +1517,8 @@ class FilterToDBQuerySpec extends Specification {
             featureCollectionSize == 5
             nextFiveLocationIds.every { !firstFiveLocationIds.contains(it) }
         cleanup:
-            otherLocations.each { BasicDBObject location ->
-                database?.getCollection(collectionName)?.remove(new BasicDBObject("id", location.get("id")))
+            otherLocations.each { Document location ->
+                database?.getCollection(collectionName)?.deleteOne(new Document("id", location.get("id")))
             }
     }
 
@@ -1467,21 +1528,21 @@ class FilterToDBQuerySpec extends Specification {
             String collectionName = "locations"
             def filter = CQL.toFilter("id='55fac7fde4b0e7f2e3be342c' AND dateModified=1442498557079 AND clientFile='SCE.client'")
             Query query = new Query(typeName, filter)
-            DBCollection dbCollection = database.getCollection(collectionName)
+            MongoCollection<Document> dbCollection = database.getCollection(collectionName)
             FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, typeName))
             BasicDBObject mapping = jsonMapping.find { it.typeName == typeName }
             FilterToDBQuery filterToDBQuery = new FilterToDBQuery(dbCollection, featureType, mapping, mongoDBFeatureSource)
         when:
             FeatureCollection featureCollection = filterToDBQuery.getFeatureCollection(query)
         then:
-            featureCollection.dbCursor.size() == 1
+            featureCollection.findIterable.into([]).size() == 1
             featureCollection.size() == 1
         when:
             filter = CQL.toFilter("id='TEST' AND dateModified=1442498557079 AND clientFile='SCE.client'")
             query = new Query(typeName, filter)
             featureCollection = filterToDBQuery.getFeatureCollection(query)
         then:
-            featureCollection.dbCursor.size() == 0
+            featureCollection.findIterable.into([]).size() == 0
             featureCollection.size() == 0
     }
 
@@ -1489,23 +1550,23 @@ class FilterToDBQuerySpec extends Specification {
         setup:
             String typeName = "location"
             String collectionName = "locations"
-            BasicDBObject clonedLocation = locationJSON.clone()
-            String otherId = UUID.randomUUID()
+            Document clonedLocation = Document.parse(locationJSON.toJson())
+            String otherId = UUID.randomUUID().toString()
             clonedLocation.put("id", otherId)
             clonedLocation.remove("_id")
-            database.getCollection(collectionName).insert(clonedLocation)
+            database.getCollection(collectionName).insertOne(clonedLocation)
             def filter = CQL.toFilter("id='55fac7fde4b0e7f2e3be342c' OR id='${otherId}'")
             Query query = new Query(typeName, filter)
-            DBCollection dbCollection = database.getCollection(collectionName)
+            MongoCollection<Document> dbCollection = database.getCollection(collectionName)
             FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, typeName))
             BasicDBObject mapping = jsonMapping.find { it.typeName == typeName }
             FilterToDBQuery filterToDBQuery = new FilterToDBQuery(dbCollection, featureType, mapping, mongoDBFeatureSource)
         when:
             FeatureCollection featureCollection = filterToDBQuery.getFeatureCollection(query)
         then:
-            featureCollection.dbCursor.size() == 2
+            featureCollection.findIterable.into([]).size() == 2
             featureCollection.size() == 2
         cleanup:
-            database?.getCollection(collectionName)?.remove(new BasicDBObject("id", otherId))
+            database?.getCollection(collectionName)?.deleteOne(new Document("id", otherId))
     }
 }

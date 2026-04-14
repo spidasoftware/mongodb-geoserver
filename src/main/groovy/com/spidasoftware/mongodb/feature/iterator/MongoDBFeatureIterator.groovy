@@ -1,7 +1,7 @@
 package com.spidasoftware.mongodb.feature.iterator
 
-import com.mongodb.DBCursor
-import com.mongodb.DBObject
+import com.mongodb.client.MongoCursor
+import org.bson.Document
 import org.geotools.data.simple.SimpleFeatureIterator
 import org.geotools.util.logging.Logging
 import org.opengis.feature.simple.SimpleFeature
@@ -13,10 +13,10 @@ class MongoDBFeatureIterator implements SimpleFeatureIterator {
     private static final Logger log = Logging.getLogger(MongoDBFeatureIterator.class.getPackage().getName())
 
     List<SimpleFeature> featuresList = []
-    DBCursor dbCursor
+    MongoCursor<Document> mongoCursor
 
-    MongoDBFeatureIterator(DBCursor dbCursor, List<SimpleFeature> featuresList) {
-        this.dbCursor = dbCursor
+    MongoDBFeatureIterator(MongoCursor<Document> mongoCursor, List<SimpleFeature> featuresList) {
+        this.mongoCursor = mongoCursor
         this.featuresList = featuresList
     }
 
@@ -35,6 +35,6 @@ class MongoDBFeatureIterator implements SimpleFeatureIterator {
 
     @Override
     void close() {
-        this.dbCursor.close()
+        this.mongoCursor.close()
     }
 }

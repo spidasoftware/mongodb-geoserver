@@ -2,10 +2,10 @@ package com.spidasoftware.mongodb.data
 
 import com.mongodb.BasicDBList
 import com.mongodb.BasicDBObject
-import com.mongodb.DB
-import com.mongodb.DBCollection
-import com.mongodb.DBObject
+import com.mongodb.client.MongoCollection
+import com.mongodb.client.MongoDatabase
 import com.spidasoftware.mongodb.filter.FilterToDBQuery
+import org.bson.Document
 import org.geotools.data.*
 import org.geotools.feature.FeatureCollection
 import org.geotools.geometry.jts.ReferencedEnvelope
@@ -28,12 +28,12 @@ public class MongoDBFeatureSource implements FeatureSource<FeatureType, Feature>
 
     MongoDBDataAccess store
     FeatureType featureType
-    DBCollection dbCollection
-    DB database
+    MongoCollection<Document> dbCollection
+    MongoDatabase database
     String namespace
     BasicDBObject mapping
 
-    public MongoDBFeatureSource(MongoDBDataAccess store, DB database, FeatureType featureType, BasicDBObject mapping) {
+    public MongoDBFeatureSource(MongoDBDataAccess store, MongoDatabase database, FeatureType featureType, BasicDBObject mapping) {
         this.store = store
         this.namespace = featureType.getName().getNamespaceURI()
         this.featureType = featureType
@@ -115,19 +115,19 @@ public class MongoDBFeatureSource implements FeatureSource<FeatureType, Feature>
     @Override
     public ReferencedEnvelope getBounds() throws IOException {
         if(mapping.geometry?.path) {
-            BasicDBList aggregateList = new BasicDBList()
-            aggregateList.add(new BasicDBObject('$unwind': '$' + mapping.geometry.path + '.coordinates'))
-            aggregateList.add(new BasicDBObject('$group': new BasicDBObject('_id': '$_id',
-                    'lng': new BasicDBObject('$first': '$' + mapping.geometry.path + '.coordinates'),
-                    'lat': new BasicDBObject('$last': '$' + mapping.geometry.path + '.coordinates'))))
-            aggregateList.add(new BasicDBObject('$group': new BasicDBObject('_id': null,
-                    'minLat': new BasicDBObject('$min': '$lat'),
-                    'minLng': new BasicDBObject('$min': '$lng'),
-                    'maxLat': new BasicDBObject('$max': '$lat'),
-                    'maxLng': new BasicDBObject('$max': '$lng'))))
-            def iterator = dbCollection.aggregate(aggregateList)?.results()?.iterator()
+            List<Document> aggregateList = []
+            aggregateList.add(new Document('$unwind': '$' + mapping.geometry.path + '.coordinates'))
+            aggregateList.add(new Document('$group': new Document('_id': '$_id',
+                    'lng': new Document('$first': '$' + mapping.geometry.path + '.coordinates'),
+                    'lat': new Document('$last': '$' + mapping.geometry.path + '.coordinates'))))
+            aggregateList.add(new Document('$group': new Document('_id': null,
+                    'minLat': new Document('$min': '$lat'),
+                    'minLng': new Document('$min': '$lng'),
+                    'maxLat': new Document('$max': '$lat'),
+                    'maxLng': new Document('$max': '$lng'))))
+            def iterator = dbCollection.aggregate(aggregateList)?.iterator()
             if(iterator.hasNext()) {
-                DBObject dbObject = iterator.next()
+                Document dbObject = iterator.next()
                 return new ReferencedEnvelope(dbObject.get("minLng"), dbObject.get("maxLng"), dbObject.get("minLat"), dbObject.get("maxLat"), DefaultGeographicCRS.WGS84)
             }
         }
@@ -150,7 +150,7 @@ public class MongoDBFeatureSource implements FeatureSource<FeatureType, Feature>
     public int getCount(Query query) throws IOException {
         FeatureCollection featureCollection = new FilterToDBQuery(this.dbCollection, this.featureType, this.mapping, this).getFeatureCollection(query)
         int result = featureCollection.size()
-        featureCollection.dbCursor.close()
+        featureCollection.mongoCursor.close()
         return result
     }
 

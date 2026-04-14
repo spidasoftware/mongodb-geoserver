@@ -11,7 +11,7 @@ apply plugin: 'java-library-distribution'
 apply plugin: 'org.owasp.dependencycheck'
 
 group = 'com.spidasoftware'
-version = '0.6.1'
+version = '26.0.0'
 description = "mongodb-geoserver-plugin"
 
 sourceCompatibility = 11
@@ -92,7 +92,7 @@ distributions {
         		from { 'README.md' }
         	}
             exclude { override ->
-                override.file.path.matches('.*(gt|net|gs|jts|jscience|wicket|htmlvalidator|slf4j|log4j|gs|spring|bcprov|srvlet|json|commons|freemarker|xstream|guava|jsr|jasypt|jai|servlet|imageio|jdom|postgres|xpp|aopalliance|cglib|hsqldb|xmlpull|xpp|vecmath|jgrdidshift|org.w3|common|ecore|picocontainer|xsd|xml|jgridshift|core).*.jar')
+                override.file.path.matches('.*(gt|net|gs|jts|jscience|wicket|htmlvalidator|slf4j|log4j|gs|spring|bcprov|srvlet|json|commons|freemarker|xstream|guava|jsr|jasypt|jai|servlet|imageio|jdom|postgres|xpp|aopalliance|cglib|hsqldb|xmlpull|xpp|vecmath|jgrdidshift|org.w3|common|ecore|picocontainer|xsd|xml|jgridshift|gt-main-core).*.jar')
             }
         }
     }
@@ -123,7 +123,7 @@ dependencies {
 //    compile(group: 'org.geoserver.web', name: 'gs-web-core', version:"${geoserverVersion}") {
 //        exclude module: 'jai_core'
 //    }
-    compile group: 'org.mongodb', name:'mongo-java-driver', version:'3.8.2'
+    compile group: 'org.mongodb', name:'mongodb-driver-sync', version:'5.2.0'
 	compile('org.locationtech.jts:jts:1.16.0')
 	compile('org.locationtech.jts:jts-core:1.16.0')
     compile group: 'org.jscience', name:'jscience', version:'4.3.1', transitive: false
@@ -134,6 +134,7 @@ dependencies {
     testCompile "org.spockframework:spock-core:1.2-groovy-2.4"
     testCompile 'org.objenesis:objenesis:1.4'
 	testRuntime('cglib:cglib-nodep:3.3.0')
+	testRuntime('org.slf4j:slf4j-simple:1.7.36')
 }
 
 test {

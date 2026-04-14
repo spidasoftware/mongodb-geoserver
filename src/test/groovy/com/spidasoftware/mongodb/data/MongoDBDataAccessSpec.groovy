@@ -1,7 +1,7 @@
 package com.spidasoftware.mongodb.data
 
 import com.mongodb.BasicDBList
-import com.mongodb.util.JSON
+import com.spidasoftware.mongodb.TestJsonUtils
 import org.geotools.feature.NameImpl
 import org.geotools.referencing.CRS
 import org.geotools.util.logging.Logging
@@ -17,7 +17,7 @@ class MongoDBDataAccessSpec extends Specification {
 
     MongoDBDataAccess mongoDBDataAccess
     String namespace = "http://spida/db"
-    BasicDBList jsonMapping = JSON.parse(getClass().getResourceAsStream('/mapping.json').text)
+    BasicDBList jsonMapping = TestJsonUtils.parseJsonResource(MongoDBDataAccessSpec.class, '/mapping.json')
 
     void setup() {
         mongoDBDataAccess = new MongoDBDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, null, jsonMapping)

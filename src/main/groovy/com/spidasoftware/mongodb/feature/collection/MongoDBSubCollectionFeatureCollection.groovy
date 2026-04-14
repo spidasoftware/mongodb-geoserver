@@ -1,10 +1,9 @@
 package com.spidasoftware.mongodb.feature.collection
 
 import com.mongodb.BasicDBObject
-import com.mongodb.DBCursor
-import com.mongodb.DBObject
+import com.mongodb.client.FindIterable
 import com.spidasoftware.mongodb.data.MongoDBFeatureSource
-import org.bson.types.BasicBSONList
+import org.bson.Document
 import org.geotools.data.Query
 import org.geotools.util.logging.Logging
 import org.opengis.feature.Feature
@@ -16,14 +15,14 @@ class MongoDBSubCollectionFeatureCollection extends AbstractMongoDBFeatureCollec
 
     private static final Logger log = Logging.getLogger(MongoDBSubCollectionFeatureCollection.class.getPackage().getName())
 
-    MongoDBSubCollectionFeatureCollection(DBCursor dbCursor, FeatureType featureType, BasicDBObject mapping, Query query, MongoDBFeatureSource mongoDBFeatureSource) {
-        super(dbCursor, featureType, mapping, query, mongoDBFeatureSource)
+    MongoDBSubCollectionFeatureCollection(FindIterable<Document> findIterable, FeatureType featureType, BasicDBObject mapping, Query query, MongoDBFeatureSource mongoDBFeatureSource) {
+        super(findIterable, featureType, mapping, query, mongoDBFeatureSource)
     }
 
     void initFeaturesList() {
         int offsetSkipped = 0
-        while(this.dbCursor.hasNext() && (this.max == null || this.featuresList.size() < this.max)) {
-            DBObject dbObject =  this.dbCursor.next()
+        while(this.mongoCursor.hasNext() && (this.max == null || this.featuresList.size() < this.max)) {
+            Document dbObject = this.mongoCursor.next()
 
             List<Feature> features = getFeatures([:], dbObject, this.mapping) - null
             features.each { Feature feature ->
@@ -38,7 +37,7 @@ class MongoDBSubCollectionFeatureCollection extends AbstractMongoDBFeatureCollec
         }
     }
 
-    private List<Feature> getFeatures(Map attributes, DBObject dbObject, BasicDBObject objectMapping, Object subCollectionObject = null, List<Integer> indices = null) {
+    private List<Feature> getFeatures(Map attributes, Document dbObject, BasicDBObject objectMapping, Object subCollectionObject = null, List<Integer> indices = null) {
         if(objectMapping.attributes.any { it.stringValue } ) {
             return getStringValueFeatures(attributes, dbObject, objectMapping, subCollectionObject)
         } else if(objectMapping.attributes.any { it.useKey || it.useValue }) {
@@ -48,21 +47,21 @@ class MongoDBSubCollectionFeatureCollection extends AbstractMongoDBFeatureCollec
             return getUseObjectKeyFeatures(attributes, dbObject, objectMapping, subCollectionObject, indices)
         } else {
             objectMapping.attributes.each { attributeMapping ->
-                attributes.put(attributeMapping.name, getAttributeValueFromDBObject(dbObject, attributeMapping, subCollectionObject, indices))
+                attributes.put(attributeMapping.name, getAttributeValueFromDBObject(dbObject, attributeMapping, subCollectionObject as Document, indices))
             }
         }
 
         if(objectMapping.subCollections) {
-            return getSubcollectionFeatures(objectMapping.subCollections, attributes, dbObject, subCollectionObject, indices)
+            return getSubcollectionFeatures(objectMapping.subCollections, attributes, dbObject, subCollectionObject as Document, indices)
         } else {
             return [buildFromAttributes(attributes, dbObject)]
         }
     }
 
-    private List<Feature> getSubcollectionFeatures(def subCollections, Map attributes, DBObject dbObject, DBObject subCollectionObject = null, List<Integer> indices = null) {
+    private List<Feature> getSubcollectionFeatures(def subCollections, Map attributes, Document dbObject, Document subCollectionObject = null, List<Integer> indices = null) {
         return subCollections.collect { subCollectionMapping ->
-            DBObject subCollectionFromObject = (subCollectionObject ? getObjectFromPath(subCollectionObject, subCollectionMapping.subCollectionPath) : getObjectFromPath(dbObject, subCollectionMapping.subCollectionPath))
-            if(subCollectionFromObject instanceof BasicBSONList) {
+            def subCollectionFromObject = (subCollectionObject ? getObjectFromPath(subCollectionObject, subCollectionMapping.subCollectionPath) : getObjectFromPath(dbObject, subCollectionMapping.subCollectionPath))
+            if(subCollectionFromObject instanceof List) {
                 List<Feature> features = []
                 if(indices == null) {
                     indices = []
@@ -79,7 +78,7 @@ class MongoDBSubCollectionFeatureCollection extends AbstractMongoDBFeatureCollec
         }.flatten()
     }
 
-    private List<Feature> getStringValueFeatures(Map attributes, DBObject dbObject, BasicDBObject objectMapping, Object subCollectionObject = null) {
+    private List<Feature> getStringValueFeatures(Map attributes, Document dbObject, BasicDBObject objectMapping, Object subCollectionObject = null) {
         def stringValueAttr = objectMapping.attributes.find { it.stringValue }
         if(subCollectionObject instanceof String) {
             def clonedAttributes = attributes.clone()
@@ -89,7 +88,7 @@ class MongoDBSubCollectionFeatureCollection extends AbstractMongoDBFeatureCollec
         return []
     }
 
-    private List<Feature> getUseKeyOrUseValueFeatures(Map attributes, DBObject dbObject, BasicDBObject objectMapping, Object subCollectionObject = null, List<Integer> indices = null) {
+    private List<Feature> getUseKeyOrUseValueFeatures(Map attributes, Document dbObject, BasicDBObject objectMapping, Object subCollectionObject = null, List<Integer> indices = null) {
         def keyAttr = objectMapping.attributes.find { it.useKey }
         def valueAttr = objectMapping.attributes.find { it.useValue }
 
@@ -104,10 +103,10 @@ class MongoDBSubCollectionFeatureCollection extends AbstractMongoDBFeatureCollec
                 }
                 objectMapping.attributes.each { attributeMapping ->
                     if (attributeMapping != keyAttr && attributeMapping != valueAttr)
-                        clonedAttributes.put(attributeMapping.name, getAttributeValueFromDBObject(dbObject, attributeMapping, subCollectionObject, indices))
+                        clonedAttributes.put(attributeMapping.name, getAttributeValueFromDBObject(dbObject, attributeMapping, subCollectionObject as Document, indices))
                 }
                 if (objectMapping.subCollections) {
-                    return getSubcollectionFeatures(objectMapping.subCollections, clonedAttributes, dbObject, subCollectionObject)
+                    return getSubcollectionFeatures(objectMapping.subCollections, clonedAttributes, dbObject, subCollectionObject as Document)
                 } else {
                     return [buildFromAttributes(clonedAttributes, dbObject)]
                 }
@@ -126,20 +125,20 @@ class MongoDBSubCollectionFeatureCollection extends AbstractMongoDBFeatureCollec
         }
     }
 
-    private List<Feature> getUseObjectKeyFeatures(Map attributes, DBObject dbObject, BasicDBObject objectMapping, Object subCollectionObject = null, List<Integer> indices = null) {
-        if(!(subCollectionObject ?: dbObject).any { key, value -> value instanceof BasicDBObject}) {
+    private List<Feature> getUseObjectKeyFeatures(Map attributes, Document dbObject, BasicDBObject objectMapping, Object subCollectionObject = null, List<Integer> indices = null) {
+        if(!(subCollectionObject ?: dbObject).any { key, value -> value instanceof Document}) {
             return []
         }
         def userObjectKeyAttr = objectMapping.attributes.find { it.useObjectKey }
         return (subCollectionObject ?: dbObject).collect { def key, def value ->
-            if(value instanceof BasicDBObject) {
+            if(value instanceof Document) {
 
                 def clonedAttributes = attributes.clone()
                 clonedAttributes.put(userObjectKeyAttr.name, key)
 
                 objectMapping.attributes.each { attributeMapping ->
                     if(attributeMapping != userObjectKeyAttr)
-                        clonedAttributes.put(attributeMapping.name, getAttributeValueFromDBObject(dbObject, attributeMapping, subCollectionObject, indices))
+                        clonedAttributes.put(attributeMapping.name, getAttributeValueFromDBObject(dbObject, attributeMapping, subCollectionObject as Document, indices))
                 }
                 if(objectMapping.subCollections) {
                     return getSubcollectionFeatures(objectMapping.subCollections, clonedAttributes, dbObject, value)
