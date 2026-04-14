@@ -1,8 +1,7 @@
 package com.spidasoftware.mongodb.data
 
 import com.mongodb.BasicDBList
-import com.mongodb.BasicDBObject
-import groovy.json.JsonSlurper
+import com.spidasoftware.mongodb.TestJsonUtils
 import org.geotools.feature.NameImpl
 import org.geotools.referencing.CRS
 import org.geotools.util.logging.Logging
@@ -18,40 +17,7 @@ class MongoDBDataAccessSpec extends Specification {
 
     MongoDBDataAccess mongoDBDataAccess
     String namespace = "http://spida/db"
-    BasicDBList jsonMapping = parseJsonResource('/mapping.json')
-
-    private static BasicDBList parseJsonResource(String resourcePath) {
-        def jsonSlurper = new JsonSlurper()
-        def parsed = jsonSlurper.parse(MongoDBDataAccessSpec.class.getResourceAsStream(resourcePath))
-        return convertToBasicDBList(parsed)
-    }
-
-    private static Object convertValue(Object value) {
-        if (value instanceof BigDecimal) {
-            return ((BigDecimal) value).doubleValue()
-        } else if (value instanceof Map) {
-            return convertToBasicDBObject(value)
-        } else if (value instanceof List) {
-            return convertToBasicDBList(value)
-        }
-        return value
-    }
-
-    private static BasicDBList convertToBasicDBList(List list) {
-        BasicDBList dbList = new BasicDBList()
-        list.each { item ->
-            dbList.add(convertValue(item))
-        }
-        return dbList
-    }
-
-    private static BasicDBObject convertToBasicDBObject(Map map) {
-        BasicDBObject dbObject = new BasicDBObject()
-        map.each { key, value ->
-            dbObject.put(key, convertValue(value))
-        }
-        return dbObject
-    }
+    BasicDBList jsonMapping = TestJsonUtils.parseJsonResource(MongoDBDataAccessSpec.class, '/mapping.json')
 
     void setup() {
         mongoDBDataAccess = new MongoDBDataAccess(namespace, System.getProperty("mongoHost"), System.getProperty("mongoPort"), System.getProperty("mongoDatabase"), null, null, null, jsonMapping)
