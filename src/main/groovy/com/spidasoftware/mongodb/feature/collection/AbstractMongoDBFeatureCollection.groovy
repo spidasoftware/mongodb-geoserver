@@ -5,6 +5,7 @@ import com.mongodb.BasicDBObject
 import com.mongodb.client.FindIterable
 import com.mongodb.client.MongoCursor
 import com.spidasoftware.mongodb.data.MongoDBFeatureSource
+import com.spidasoftware.mongodb.feature.iterator.LazyMongoDBFeatureIterator
 import com.spidasoftware.mongodb.feature.iterator.MongoDBFeatureIterator
 import org.apache.commons.lang3.StringUtils
 import org.bson.Document
@@ -42,6 +43,10 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
 
     private static final Logger log = Logging.getLogger(AbstractMongoDBFeatureCollection.class.getPackage().getName())
 
+    // Configuration flag for lazy loading - enabled by default for memory efficiency
+    // Set -Dmongodb.geoserver.lazyLoading=false to disable
+    static boolean ENABLE_LAZY_LOADING = !Boolean.getBoolean("mongodb.geoserver.eagerLoading")
+
     FindIterable<Document> findIterable
     MongoCursor<Document> mongoCursor
     FeatureType featureType
@@ -50,13 +55,35 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
     CoordinateReferenceSystem targetCRS = null
     CoordinateReferenceSystem sourceCRS
     MathTransform transform
+    // Cache transform to avoid repeated lookups
+    private MathTransform cachedTransform = null
     String namespace
     Integer max
     Integer offset
     Filter filter
     Query query
     MongoDBFeatureSource mongoDBFeatureSource
-    List<SimpleFeature> featuresList = []
+    // Internal storage for features - use getFeaturesList() to access
+    private List<SimpleFeature> _featuresList = []
+    private boolean lazyMode = false
+    private Integer cachedSize = null
+    private boolean materialized = false
+
+    /**
+     * Get the features list, materializing from cursor if in lazy mode.
+     * This property auto-materializes when accessed, ensuring backward compatibility.
+     */
+    List<SimpleFeature> getFeaturesList() {
+        ensureMaterialized()
+        return _featuresList
+    }
+
+    /**
+     * Direct access to internal list without materialization - for internal use only.
+     */
+    protected List<SimpleFeature> getFeaturesListDirect() {
+        return _featuresList
+    }
 
     static final int LONGITUDE_POSITION = 0
     static final int LATITUDE_POSITION = 1
@@ -73,34 +100,81 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
         this.offset = query?.getStartIndex()
         this.filter = query?.getFilter()
         this.mongoDBFeatureSource = mongoDBFeatureSource
+        this.lazyMode = ENABLE_LAZY_LOADING
 
         if(this.mapping.displayGeometry && this.mapping.geometry) {
             this.sourceCRS = CRS.decode(this.mapping.geometry.crs)
             this.targetCRS = query?.getCoordinateSystemReproject() ?: sourceCRS
             if (this.sourceCRS != this.targetCRS) {
-                try {
-                    /*
-                    For some reason this errors out the first call to find the transform but works on the second call
-                     */
-                    this.transform = CRS.findMathTransform(this.sourceCRS, this.targetCRS)
-                } catch (e) {
-                    this.transform = CRS.findMathTransform(this.sourceCRS, this.targetCRS)
-                }
+                // Cache the transform for reuse
+                this.cachedTransform = getOrCreateTransform()
+                this.transform = this.cachedTransform
             }
         }
-        this.initFeaturesList()
+
+        // Only eagerly load if lazy mode is disabled
+        if (!lazyMode) {
+            this.initFeaturesList()
+        }
+    }
+
+    /**
+     * Get or create a cached MathTransform for CRS conversion.
+     */
+    private MathTransform getOrCreateTransform() {
+        if (cachedTransform != null) {
+            return cachedTransform
+        }
+        try {
+            /*
+            For some reason this errors out the first call to find the transform but works on the second call
+             */
+            return CRS.findMathTransform(this.sourceCRS, this.targetCRS)
+        } catch (e) {
+            return CRS.findMathTransform(this.sourceCRS, this.targetCRS)
+        }
     }
 
     abstract void initFeaturesList()
 
+    /**
+     * Build features from a single document. Used by lazy iterator for on-demand loading.
+     * Subclasses should override this to handle their specific document structure.
+     */
+    abstract List<SimpleFeature> buildFeaturesFromDocument(Document dbObject)
+
     @Override
     boolean isEmpty() {
-        return featuresList.isEmpty()
+        if (lazyMode && !materialized) {
+            // For lazy mode, check if cursor has any documents
+            // This is more efficient than loading all features
+            return !mongoCursor.hasNext() && _featuresList.isEmpty()
+        }
+        return _featuresList.isEmpty()
     }
 
     @Override
     int size() {
-        return this.featuresList.size()
+        if (lazyMode && cachedSize == null) {
+            // In lazy mode, we need to count by iterating
+            // Cache the result for subsequent calls
+            // For a more efficient solution, use MongoDB count() directly
+            ensureMaterialized()
+            return _featuresList.size()
+        } else if (cachedSize != null) {
+            return cachedSize
+        }
+        return this._featuresList.size()
+    }
+
+    @Override
+    SimpleFeatureIterator features() {
+        if (lazyMode && !materialized) {
+            // Create a new cursor for lazy iteration
+            def newCursor = findIterable.iterator()
+            return new LazyMongoDBFeatureIterator(newCursor, this)
+        }
+        return new MongoDBFeatureIterator(this.mongoCursor, this._featuresList)
     }
 
     protected SimpleFeature buildFromAttributes(Map attributes, Document dbObject) {
@@ -216,11 +290,6 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
     }
 
     @Override
-    SimpleFeatureIterator features() {
-        return new MongoDBFeatureIterator(this.mongoCursor, this.featuresList)
-    }
-
-    @Override
     SimpleFeatureType getSchema() {
         return this.featureType
     }
@@ -250,22 +319,44 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
 
     @Override
     boolean contains(Object o) {
-        return this.featuresList.contains(o)
+        ensureMaterialized()
+        return this._featuresList.contains(o)
     }
 
     @Override
     boolean containsAll(Collection<?> o) {
-        return this.featuresList.containsAll(o)
+        ensureMaterialized()
+        return this._featuresList.containsAll(o)
     }
 
     @Override
     Object[] toArray() {
-        return this.featuresList.toArray()
+        ensureMaterialized()
+        return this._featuresList.toArray()
     }
 
     @Override
     def <O> O[] toArray(O[] a) {
-        a = this.featuresList.toArray()
+        ensureMaterialized()
+        a = this._featuresList.toArray()
         return a
+    }
+
+    /**
+     * Materialize all features into _featuresList if in lazy mode and not yet loaded.
+     * Called by methods that need the full collection (toArray, contains, etc.)
+     */
+    private void ensureMaterialized() {
+        if (lazyMode && !materialized) {
+            materialized = true
+            // Create a fresh cursor and iterator to populate the list
+            def newCursor = findIterable.iterator()
+            def iterator = new LazyMongoDBFeatureIterator(newCursor, this)
+            while (iterator.hasNext()) {
+                _featuresList.add(iterator.next())
+            }
+            iterator.close()
+            cachedSize = _featuresList.size()
+        }
     }
 }
