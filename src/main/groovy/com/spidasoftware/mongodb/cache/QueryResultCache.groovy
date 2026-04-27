@@ -73,7 +73,7 @@ class QueryResultCache {
      * Get a cached result if available and valid.
      */
     def get(String key) {
-        if (!CACHE_ENABLED) {
+        if (!CACHE_ENABLED || MAX_CACHE_SIZE <= 0) {
             return null
         }
 
@@ -113,13 +113,15 @@ class QueryResultCache {
      * Store a result in the cache.
      */
     void put(String key, Object value) {
-        if (!CACHE_ENABLED || value == null) {
+        if (!CACHE_ENABLED || MAX_CACHE_SIZE <= 0 || value == null) {
             return
         }
 
-        // Evict old entries if needed
+        // Evict old entries if needed. Bound the loop in case eviction cannot make progress.
         while (cache.size() >= MAX_CACHE_SIZE) {
-            evictOldest()
+            if (!evictOldest()) {
+                return
+            }
         }
 
         cache.put(key, new CacheEntry(value))
@@ -132,16 +134,31 @@ class QueryResultCache {
     /**
      * Evict the least recently used entry.
      */
-    private void evictOldest() {
+    private boolean evictOldest() {
         String oldestKey = null
         synchronized (accessOrder) {
             if (!accessOrder.isEmpty()) {
                 oldestKey = accessOrder.removeLast()
             }
         }
-        if (oldestKey != null) {
-            cache.remove(oldestKey)
+
+        // Under contention, access order can lag behind map contents. Fall back to any key.
+        if (oldestKey == null && !cache.isEmpty()) {
+            def iterator = cache.keySet().iterator()
+            if (iterator.hasNext()) {
+                oldestKey = iterator.next()
+            }
         }
+
+        if (oldestKey != null) {
+            def removed = cache.remove(oldestKey)
+            synchronized (accessOrder) {
+                accessOrder.remove(oldestKey)
+            }
+            return removed != null
+        }
+
+        return false
     }
 
     /**
@@ -171,7 +188,7 @@ class QueryResultCache {
      * Check if caching is enabled.
      */
     static boolean isEnabled() {
-        return CACHE_ENABLED
+        return CACHE_ENABLED && MAX_CACHE_SIZE > 0
     }
 
     /**
