@@ -9,6 +9,8 @@ import org.geotools.util.logging.Logging
 import org.opengis.feature.simple.SimpleFeature
 import org.opengis.filter.Filter
 
+import java.util.ArrayDeque
+import java.util.Deque
 import java.util.logging.Logger
 
 /**
@@ -30,7 +32,7 @@ class LazyMongoDBFeatureIterator implements SimpleFeatureIterator {
     private boolean applyFilterInJava = false
 
     // Buffer for sub-collection features (when one document produces multiple features)
-    private List<SimpleFeature> featureBuffer = []
+    private Deque<SimpleFeature> featureBuffer = new ArrayDeque<>()
     private int featuresReturned = 0
     private int offsetSkipped = 0
     private SimpleFeature nextFeature = null
@@ -82,7 +84,7 @@ class LazyMongoDBFeatureIterator implements SimpleFeatureIterator {
         while (nextFeature == null && !exhausted) {
             // First check the buffer
             if (!featureBuffer.isEmpty()) {
-                SimpleFeature candidate = featureBuffer.remove(0)
+                SimpleFeature candidate = featureBuffer.removeFirst()
                 if (shouldInclude(candidate)) {
                     if (offsetSkipped < offset) {
                         offsetSkipped++
