@@ -9,6 +9,13 @@ Download [Geoserver 2.19.0](http://geoserver.org/release/2.19.0/) (Platform Inde
 3. Move the groovy jar, the mongo java driver jar and the mongodb-geoserver jar into  geoserver/WEB-INF/lib
 4. Restart geoserver.
 
+### Cache settings
+Query result caching is disabled by default and can be configured with JVM system properties:
+
+* `-Dmongodb.geoserver.enableCache=true` Enable the query result cache.
+* `-Dmongodb.geoserver.cacheSize=100` Maximum number of cached entries.
+* `-Dmongodb.geoserver.cacheTTL=60000` Cache entry TTL in milliseconds (default is 60000, i.e. 1 minute).
+
 ### Add a store and layers for development
 1. Create a mapping file that includes a mapping for each mongo collection that will be published.
 2. In geoserver, click "Workspaces", then click "Add new workspace"

@@ -13,6 +13,7 @@ import java.util.logging.Logger
  *
  * Enable caching with -Dmongodb.geoserver.enableCache=true
  * Set cache size with -Dmongodb.geoserver.cacheSize=100
+ * Set cache TTL (milliseconds) with -Dmongodb.geoserver.cacheTTL=60000
  */
 class QueryResultCache {
 
@@ -20,7 +21,7 @@ class QueryResultCache {
 
     private static final boolean CACHE_ENABLED = Boolean.getBoolean("mongodb.geoserver.enableCache")
     private static final int MAX_CACHE_SIZE = Integer.getInteger("mongodb.geoserver.cacheSize", 100)
-    private static final long CACHE_TTL_MS = Long.getLong("mongodb.geoserver.cacheTTL", 60000) // 1 minute default
+    private static final long CACHE_TTL_MS = Long.getLong("mongodb.geoserver.cacheTTL", 60000) // 1 minute default (milliseconds)
 
     // Thread-safe cache using soft references
     private final Map<String, CacheEntry> cache = new ConcurrentHashMap<>()
