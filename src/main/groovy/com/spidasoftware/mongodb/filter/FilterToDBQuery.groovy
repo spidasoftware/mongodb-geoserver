@@ -147,12 +147,8 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
         objectMapping.subCollections?.each { subCollection ->
             if (subCollection.includeInDefaultQuery) {
                 def queryPath = joinWithDot(currentPath, subCollection.subCollectionPath)
-                // Use $exists and $ne:[] instead of slow $where JavaScript execution
-                // This is 5-10x faster and works with MongoDB 4.2+
-                defaultQueries.add(new BasicDBObject("${queryPath}", new BasicDBObject([
-                    '$exists': true,
-                    '$ne': []
-                ])))
+                // Use first-element existence to require a non-empty array without $where
+                defaultQueries.add(new BasicDBObject("${queryPath}.0", new BasicDBObject('$exists', true)))
             }
             subCollection.subCollections.each {
                 def nestedQueries = getDefaultCollectionQueries(it, it.subCollectionPath)
