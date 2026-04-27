@@ -209,11 +209,9 @@ public class MongoDBDataAccess implements DataAccess<FeatureType, Feature> {
 
         mapping.attributes?.each { attr ->
             if (attr.path) {
-                // Add the root path for indexing (not deeply nested)
                 String path = attr.path
-                String rootPath = path.contains(".") ? path.split("\\.").take(2).join(".") : path
-                if (!rootPath.contains("coordinates")) { // Skip coordinate arrays
-                    paths.add(rootPath)
+                if (!path.contains("coordinates")) { // Skip coordinate arrays
+                    paths.add(path)
                 }
             }
         }
