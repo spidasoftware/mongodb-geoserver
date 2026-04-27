@@ -340,8 +340,8 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
             def nestedPath = joinWithDot(subCollectionPath, subCollection.subCollectionPath)
             collectPathsForProperty(propertyName, subCollection, nestedPath, paths)
             // Also include the sub-collection path itself
-            if (subCollection.subCollectionPath) {
-                addPathToProjection(null, paths, subCollection.subCollectionPath)
+            if (nestedPath) {
+                addPathToProjection(null, paths, nestedPath)
             }
         }
     }
