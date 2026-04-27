@@ -278,6 +278,9 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
         // Always include _id
         projection.put("_id", 1)
 
+        // Always include backing document id used for feature id construction
+        projection.put("id", 1)
+
         // Include geometry path if geometry is requested or if it's in the property list
         if (map.geometry?.path) {
             boolean geometryRequested = propertyNames.any { it == map.geometry.name } ||
@@ -287,7 +290,7 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
             }
         }
 
-        // Include id path
+        // Include mapped id attribute path when present
         String idPath = getDBQueryPathForPropertyName("id", map)
         if (idPath) {
             addPathToProjection(projection, projectedPaths, idPath)
