@@ -35,6 +35,6 @@ class MongoDBFeatureIterator implements SimpleFeatureIterator {
 
     @Override
     void close() {
-        this.mongoCursor.close()
+        this.mongoCursor?.close()
     }
 }

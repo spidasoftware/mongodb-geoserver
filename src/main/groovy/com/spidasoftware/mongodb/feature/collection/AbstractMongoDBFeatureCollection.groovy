@@ -99,7 +99,6 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
 
     AbstractMongoDBFeatureCollection(FindIterable<Document> findIterable, FeatureType featureType, BasicDBObject mapping, Query query, MongoDBFeatureSource mongoDBFeatureSource) {
         this.findIterable = findIterable
-        this.mongoCursor = findIterable.iterator()
         this.featureType = featureType
         this.mapping = mapping
         this.query = query
@@ -123,6 +122,7 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
 
         // Only eagerly load if lazy mode is disabled
         if (!lazyMode) {
+            this.mongoCursor = findIterable.iterator()
             this.initFeaturesList()
         }
     }
@@ -155,9 +155,13 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
     @Override
     boolean isEmpty() {
         if (lazyMode && !materialized) {
-            // For lazy mode, check if cursor has any documents
-            // This is more efficient than loading all features
-            return !mongoCursor.hasNext() && _featuresList.isEmpty()
+            // For lazy mode, probe with a short-lived cursor to avoid holding one open.
+            def probeCursor = findIterable.iterator()
+            try {
+                return !probeCursor.hasNext() && _featuresList.isEmpty()
+            } finally {
+                probeCursor.close()
+            }
         }
         return _featuresList.isEmpty()
     }
@@ -182,6 +186,9 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
             // Create a new cursor for lazy iteration
             def newCursor = findIterable.iterator()
             return new LazyMongoDBFeatureIterator(newCursor, this)
+        }
+        if (this.mongoCursor == null) {
+            this.mongoCursor = findIterable.iterator()
         }
         return new MongoDBFeatureIterator(this.mongoCursor, this._featuresList)
     }
