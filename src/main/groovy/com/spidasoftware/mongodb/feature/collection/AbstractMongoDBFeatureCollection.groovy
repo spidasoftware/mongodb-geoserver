@@ -43,9 +43,18 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
 
     private static final Logger log = Logging.getLogger(AbstractMongoDBFeatureCollection.class.getPackage().getName())
 
-    // Configuration flag for lazy loading - enabled by default for memory efficiency
-    // Set -Dmongodb.geoserver.lazyLoading=false to disable
-    static boolean ENABLE_LAZY_LOADING = !Boolean.getBoolean("mongodb.geoserver.eagerLoading")
+    // Lazy loading is enabled by default for memory efficiency.
+    // Preferred flag: -Dmongodb.geoserver.lazyLoading=true|false
+    // Legacy fallback: -Dmongodb.geoserver.eagerLoading=true|false (inverse semantics)
+    static boolean ENABLE_LAZY_LOADING = resolveLazyLoadingEnabled()
+
+    private static boolean resolveLazyLoadingEnabled() {
+        String lazyLoading = System.getProperty("mongodb.geoserver.lazyLoading")
+        if (lazyLoading != null) {
+            return Boolean.parseBoolean(lazyLoading)
+        }
+        return !Boolean.getBoolean("mongodb.geoserver.eagerLoading")
+    }
 
     FindIterable<Document> findIterable
     MongoCursor<Document> mongoCursor

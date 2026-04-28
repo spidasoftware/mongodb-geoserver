@@ -16,6 +16,12 @@ Query result caching is disabled by default and can be configured with JVM syste
 * `-Dmongodb.geoserver.cacheSize=100` Maximum number of cached entries.
 * `-Dmongodb.geoserver.cacheTTL=60000` Cache entry TTL in milliseconds (default is 60000, i.e. 1 minute).
 
+### Feature loading settings
+Feature loading uses lazy mode by default and can be configured with JVM system properties:
+
+* `-Dmongodb.geoserver.lazyLoading=true|false` Enable or disable lazy loading (default is true).
+* `-Dmongodb.geoserver.eagerLoading=true|false` Legacy inverse flag; only used when `lazyLoading` is not set.
+
 ### Add a store and layers for development
 1. Create a mapping file that includes a mapping for each mongo collection that will be published.
 2. In geoserver, click "Workspaces", then click "Add new workspace"
