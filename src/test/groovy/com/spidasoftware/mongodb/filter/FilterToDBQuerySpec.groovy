@@ -1434,6 +1434,55 @@ class FilterToDBQuerySpec extends Specification {
             CQL.toFilter("comments like '%connected to lower two cross arm'")     | 0
     }
 
+    void "test buildProjection includes id and requested sub-collection roots"() {
+        setup:
+            FilterToDBQuery filterToDBQuery = getFilterToDBQuery("formField", "locations")
+        when:
+            Document projection = filterToDBQuery.buildProjection(["groupName"] as String[], filterToDBQuery.mapping)
+        then:
+            projection.get("_id") == 1
+            projection.get("id") == 1
+            projection.get("calcLocation") == 1
+    }
+
+    void "test propertyNames projection preserves feature ids for sub-collection features"() {
+        setup:
+            String typeName = "formField"
+            String collectionName = "locations"
+            Query query = new Query(typeName, Filter.INCLUDE, Query.DEFAULT_MAX, ["name"] as String[], null)
+            FilterToDBQuery filterToDBQuery = getFilterToDBQuery(typeName, collectionName)
+        when:
+            FeatureCollection featureCollection = filterToDBQuery.getFeatureCollection(query)
+            FeatureIterator featureIterator = featureCollection.features()
+            List<String> ids = []
+            while (featureIterator.hasNext()) {
+                ids << featureIterator.next().getID()
+            }
+            featureIterator.close()
+        then:
+            ids.size() == 2
+            ids.every { it == locationJSON.get("id") }
+    }
+
+    void "test propertyNames projection keeps nested sub-collection values available"() {
+        setup:
+            String typeName = "formField"
+            String collectionName = "locations"
+            Query query = new Query(typeName, CQL.toFilter("groupName='Group Name'"), Query.DEFAULT_MAX, ["groupName"] as String[], null)
+            FilterToDBQuery filterToDBQuery = getFilterToDBQuery(typeName, collectionName)
+        when:
+            FeatureCollection featureCollection = filterToDBQuery.getFeatureCollection(query)
+            FeatureIterator featureIterator = featureCollection.features()
+            List<String> groupNames = []
+            while (featureIterator.hasNext()) {
+                groupNames << featureIterator.next().getProperty("groupName")?.value
+            }
+            featureIterator.close()
+        then:
+            featureCollection.size() == 1
+            groupNames == ["Group Name"]
+    }
+
     private FilterToDBQuery getFilterToDBQuery(String typeName, String collectionName) {
         MongoCollection<Document> dbCollection = database.getCollection(collectionName)
         FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, typeName))
