@@ -16,9 +16,6 @@ class MongoDBSubCollectionFeatureCollection extends AbstractMongoDBFeatureCollec
 
     private static final Logger log = Logging.getLogger(MongoDBSubCollectionFeatureCollection.class.getPackage().getName())
 
-    // Batch size for processing sub-collections to reduce memory pressure
-    private static final int BATCH_SIZE = 100
-
     MongoDBSubCollectionFeatureCollection(FindIterable<Document> findIterable, FeatureType featureType, BasicDBObject mapping, Query query, MongoDBFeatureSource mongoDBFeatureSource) {
         super(findIterable, featureType, mapping, query, mongoDBFeatureSource)
     }
