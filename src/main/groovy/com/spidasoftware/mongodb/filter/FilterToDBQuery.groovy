@@ -310,9 +310,15 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
 
     private void addPathToProjection(Document projection, Set<String> projectedPaths, String path) {
         if (path) {
-            // For nested paths, include the root element
-            String rootPath = path.contains(".") ? path.split("\\.")[0] : path
-            projectedPaths.add(rootPath)
+            // MongoDB projections support nested field paths directly.
+            // Avoid parent/child projection collisions (e.g. a and a.b).
+            // Prefer more specific paths to keep projection narrow.
+            if (projectedPaths.any { existingPath -> existingPath.startsWith(path + ".") }) {
+                return
+            }
+
+            projectedPaths.removeIf { existingPath -> path.startsWith(existingPath + ".") }
+            projectedPaths.add(path)
         }
     }
 

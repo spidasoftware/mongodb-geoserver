@@ -1434,7 +1434,7 @@ class FilterToDBQuerySpec extends Specification {
             CQL.toFilter("comments like '%connected to lower two cross arm'")     | 0
     }
 
-    void "test buildProjection includes id and requested sub-collection roots"() {
+    void "test buildProjection includes id and collision-safe nested sub-collection paths"() {
         setup:
             FilterToDBQuery filterToDBQuery = getFilterToDBQuery("formField", "locations")
         when:
@@ -1442,7 +1442,9 @@ class FilterToDBQuerySpec extends Specification {
         then:
             projection.get("_id") == 1
             projection.get("id") == 1
-            projection.get("calcLocation") == 1
+            projection.get("calcLocation.forms.fields") == 1
+            projection.get("calcLocation.forms") == null
+            projection.get("calcLocation") == null
     }
 
     void "test propertyNames projection preserves feature ids for sub-collection features"() {
