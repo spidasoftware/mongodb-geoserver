@@ -46,13 +46,12 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
     // Lazy loading is enabled by default for memory efficiency.
     // Preferred flag: -Dmongodb.geoserver.lazyLoading=true|false
     // Legacy fallback: -Dmongodb.geoserver.eagerLoading=true|false (inverse semantics)
-    static boolean ENABLE_LAZY_LOADING = resolveLazyLoadingEnabled()
-
-    private static boolean resolveLazyLoadingEnabled() {
+    static boolean ENABLE_LAZY_LOADING = {
         String lazyLoading = System.getProperty("mongodb.geoserver.lazyLoading")
         if (lazyLoading != null) {
             return Boolean.parseBoolean(lazyLoading)
         }
+        // Fallback to legacy eager loading flag if lazy loading not explicitly set
         return !Boolean.getBoolean("mongodb.geoserver.eagerLoading")
     }
 
