@@ -602,15 +602,27 @@ class FilterToDBQuery implements FilterVisitor, ExpressionVisitor {
     @Override
     Object visit(BBOX filter, Object extraData) {
         BoundingBox boundingBox = filter.getBounds()
-        List bottomLeft = [boundingBox.getMinX(), boundingBox.getMinY()]
-        List bottomRight = [boundingBox.getMaxX(), boundingBox.getMinY()]
-        List topRight = [boundingBox.getMaxX(), boundingBox.getMaxY()]
-        List topLeft = [boundingBox.getMinX(), boundingBox.getMaxY()]
-        List ring = [bottomLeft, bottomRight, topRight, topLeft, bottomLeft]
+        // If the bbox is degenerate (zero area), expand it slightly
+        // to avoid MongoDB "Loop must have at least 3 different vertices" error
+        double minX = boundingBox.getMinX()
+        double minY = boundingBox.getMinY()
+        double maxX = boundingBox.getMaxX()
+        double maxY = boundingBox.getMaxY()
+
+        if (minX == maxX && minY == maxY) {
+            double epsilon = 0.000001  // ~0.1m
+            minX -= epsilon
+            minY -= epsilon
+            maxX += epsilon
+            maxY += epsilon
+        }
+
+        List ring = [[minX, minY], [maxX, minY], [maxX, maxY], [minX, maxY], [minX, minY]]
         BasicDBObject geometry = new BasicDBObject()
         geometry.put("type", "Polygon")
         geometry.put("coordinates", [ring])
-        return new BasicDBObject(filter.getExpression1().accept(this, null), new BasicDBObject('$geoWithin', new BasicDBObject('$geometry', geometry)))
+        return new BasicDBObject(filter.getExpression1().accept(this, null),
+            new BasicDBObject('$geoWithin', new BasicDBObject('$geometry', geometry)))
     }
 
     @Override
