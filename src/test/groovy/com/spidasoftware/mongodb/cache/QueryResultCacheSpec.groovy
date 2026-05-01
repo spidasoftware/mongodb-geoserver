@@ -105,7 +105,7 @@ class QueryResultCacheSpec extends Specification {
 
         GroovyClassLoader classLoader = new GroovyClassLoader(this.class.classLoader)
         try {
-            File sourceFile = new File('/Users/brian.batey/Documents/GitHub/mongodb-geoserver/src/main/groovy/com/spidasoftware/mongodb/cache/QueryResultCache.groovy')
+            File sourceFile = resolveSourceFile('src/main/groovy/com/spidasoftware/mongodb/cache/QueryResultCache.groovy')
             String uniqueClassName = "QueryResultCacheSpec_${UUID.randomUUID().toString().replace('-', '_')}"
             String source = sourceFile.getText('UTF-8').replaceFirst(/class\s+QueryResultCache\b/, "class ${uniqueClassName}")
             Class cacheClass = classLoader.parseClass(source, "${uniqueClassName}.groovy")
@@ -120,6 +120,28 @@ class QueryResultCacheSpec extends Specification {
             }
             classLoader.close()
         }
+    }
+
+    private File resolveSourceFile(String relativePath) {
+        File current = new File(System.getProperty('user.dir'))
+        while (current != null) {
+            File marker = new File(current, 'build.gradle')
+            if (marker.exists()) {
+                File candidate = new File(current, relativePath)
+                if (candidate.exists()) {
+                    return candidate
+                }
+                break
+            }
+            current = current.parentFile
+        }
+
+        File fallback = new File(relativePath)
+        if (fallback.exists()) {
+            return fallback
+        }
+
+        throw new FileNotFoundException("Unable to locate ${relativePath}; user.dir=${System.getProperty('user.dir')}")
     }
 
     private Map getCacheEntries(Object cache) {
