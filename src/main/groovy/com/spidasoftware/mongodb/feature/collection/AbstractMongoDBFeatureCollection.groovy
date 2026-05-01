@@ -64,7 +64,7 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
     CoordinateReferenceSystem sourceCRS
     MathTransform transform
     // Cache transform to avoid repeated lookups
-    private MathTransform cachedTransform = null
+    private volatile MathTransform cachedTransform = null
     String namespace
     Integer max
     Integer offset
@@ -130,17 +130,21 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
      * Get or create a cached MathTransform for CRS conversion.
      */
     private MathTransform getOrCreateTransform() {
-        if (cachedTransform != null) {
-            return cachedTransform
+        if (cachedTransform == null) {
+            synchronized (this) {
+                if (cachedTransform == null) {
+                    try {
+                        /*
+                        For some reason this errors out the first call to find the transform but works on the second call
+                         */
+                        cachedTransform = CRS.findMathTransform(this.sourceCRS, this.targetCRS)
+                    } catch (e) {
+                        cachedTransform = CRS.findMathTransform(this.sourceCRS, this.targetCRS)
+                    }
+                }
+            }
         }
-        try {
-            /*
-            For some reason this errors out the first call to find the transform but works on the second call
-             */
-            return CRS.findMathTransform(this.sourceCRS, this.targetCRS)
-        } catch (e) {
-            return CRS.findMathTransform(this.sourceCRS, this.targetCRS)
-        }
+        return cachedTransform
     }
 
     abstract void initFeaturesList()
