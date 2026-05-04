@@ -6,8 +6,21 @@ Download [Geoserver 2.19.0](http://geoserver.org/release/2.19.0/) (Platform Inde
 ### To setup a dev environment:
 1. Download deployment zip from [here](https://dev.spidastudio.com/artifactory/exposed-repo/com/spidasoftware/mongodb-geoserver/)
 2. Unzip the deployment
-3. Move the groovy jar, the mongo java driver jar and the mongodb-geoserver jar into  geoserver/WEB-INF/lib
+3. Move the groovy-all-2.X JAR, the mongo-driver-core-5.2.0.jarm, the mongo-driver-sync-5.2.0.jar, the bson-5.2.0.jar and the mongodb-geoserver jar into  geoserver/WEB-INF/lib
 4. Restart geoserver.
+
+### Cache settings
+Query result caching is disabled by default and can be configured with JVM system properties:
+
+* `-Dmongodb.geoserver.enableCache=true` Enable the query result cache.
+* `-Dmongodb.geoserver.cacheSize=100` Maximum number of cached entries.
+* `-Dmongodb.geoserver.cacheTTL=60000` Cache entry TTL in milliseconds (default is 60000, i.e. 1 minute).
+
+### Feature loading settings
+Feature loading uses lazy mode by default and can be configured with JVM system properties:
+
+* `-Dmongodb.geoserver.lazyLoading=true|false` Enable or disable lazy loading (default is true).
+* `-Dmongodb.geoserver.eagerLoading=true|false` Legacy inverse flag; only used when `lazyLoading` is not set.
 
 ### Add a store and layers for development
 1. Create a mapping file that includes a mapping for each mongo collection that will be published.

@@ -811,10 +811,43 @@ class MongoDBSubCollectionFeatureCollectionSpec extends Specification {
             feature.getAttribute("poleId") == null
     }
 
-    private MongoDBSubCollectionFeatureCollection getFeatureIterator(String typeName, String collectionName, Filter filter, String[] propertyNames = null) {
+    void "test lazy mode iterator honors filter offset and max"() {
+        setup:
+            boolean previousLazyLoading = AbstractMongoDBFeatureCollection.ENABLE_LAZY_LOADING
+            AbstractMongoDBFeatureCollection.ENABLE_LAZY_LOADING = true
+
+            def baselineCollection = getFeatureIterator("analysis", "designs", CQL.toFilter("actual>=1.5677448671814123"))
+            def baselineIterator = baselineCollection.features()
+            List<String> baselineIds = []
+            while (baselineIterator.hasNext()) {
+                baselineIds << baselineIterator.next().getAttribute("id")
+            }
+            baselineIterator.close()
+
+            def boundedCollection = getFeatureIterator("analysis", "designs", CQL.toFilter("actual>=1.5677448671814123"), null, 2, 1)
+        when:
+            def boundedIterator = boundedCollection.features()
+            List<String> boundedIds = []
+            while (boundedIterator.hasNext()) {
+                boundedIds << boundedIterator.next().getAttribute("id")
+            }
+            boundedIterator.close()
+        then:
+            boundedIds == baselineIds.drop(1).take(2)
+        cleanup:
+            AbstractMongoDBFeatureCollection.ENABLE_LAZY_LOADING = previousLazyLoading
+    }
+
+    private MongoDBSubCollectionFeatureCollection getFeatureIterator(String typeName, String collectionName, Filter filter, String[] propertyNames = null, Integer maxFeatures = null, Integer startIndex = null) {
         FindIterable<Document> findIterable = database.getCollection(collectionName).find(new Document("id", collectionName == "designs" ? designJSON.get("id") : locationJSON.get("id")))
         FeatureType featureType = mongoDBDataAccess.getSchema(new NameImpl(namespace, typeName))
         Query query = new Query(typeName, filter, propertyNames)
+        if (maxFeatures != null) {
+            query.setMaxFeatures(maxFeatures)
+        }
+        if (startIndex != null) {
+            query.setStartIndex(startIndex)
+        }
         BasicDBObject mapping = jsonMapping.find { it.typeName == typeName }
         mongoDBFeatureSource = new MongoDBFeatureSource(mongoDBDataAccess, database, featureType, mapping)
         return new MongoDBSubCollectionFeatureCollection(findIterable, featureType, mapping, query, mongoDBFeatureSource)

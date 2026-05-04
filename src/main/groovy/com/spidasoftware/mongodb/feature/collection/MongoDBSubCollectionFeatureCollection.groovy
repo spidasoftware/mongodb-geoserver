@@ -7,6 +7,7 @@ import org.bson.Document
 import org.geotools.data.Query
 import org.geotools.util.logging.Logging
 import org.opengis.feature.Feature
+import org.opengis.feature.simple.SimpleFeature
 import org.opengis.feature.type.FeatureType
 
 import java.util.logging.Logger
@@ -21,20 +22,29 @@ class MongoDBSubCollectionFeatureCollection extends AbstractMongoDBFeatureCollec
 
     void initFeaturesList() {
         int offsetSkipped = 0
-        while(this.mongoCursor.hasNext() && (this.max == null || this.featuresList.size() < this.max)) {
+        int offsetTarget = this.offset ?: 0
+
+        while(this.mongoCursor.hasNext() && (this.max == null || this.featuresListDirect.size() < this.max)) {
             Document dbObject = this.mongoCursor.next()
 
-            List<Feature> features = getFeatures([:], dbObject, this.mapping) - null
-            features.each { Feature feature ->
+            List<Feature> features = buildFeaturesFromDocument(dbObject)
+            for (Feature feature : features) {
                 if (this.filter == null || this.filter.evaluate(feature)) {
-                    if(offsetSkipped < this.offset) {
+                    if (offsetSkipped < offsetTarget) {
                         offsetSkipped++
-                    } else if(this.max == null || this.featuresList.size() < this.max) {
-                        this.featuresList.add(feature)
+                    } else if (this.max == null || this.featuresListDirect.size() < this.max) {
+                        this.featuresListDirect.add(feature)
+                    } else {
+                        break
                     }
                 }
             }
         }
+    }
+
+    @Override
+    List<SimpleFeature> buildFeaturesFromDocument(Document dbObject) {
+        return (getFeatures([:], dbObject, this.mapping) - null) as List<SimpleFeature>
     }
 
     private List<Feature> getFeatures(Map attributes, Document dbObject, BasicDBObject objectMapping, Object subCollectionObject = null, List<Integer> indices = null) {

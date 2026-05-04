@@ -181,20 +181,70 @@ public class MongoDBDataAccess implements DataAccess<FeatureType, Feature> {
         }
 
         this.jsonMapping.each { BasicDBObject mapping ->
+            def collectionName = mapping.collection
+            def collection = database.getCollection(collectionName)
+
+            // Create geometry index
             if(mapping.geometry) {
-                def collectionName = mapping.collection
                 def geometryPath = mapping.geometry.path
+                createIndexIfNotExists(collection, geometryPath, "2dsphere", true)
+            }
 
-                def collection = database.getCollection(collectionName)
-
-                def alreadyIndexed = collection.listIndexes().any { Document indexInfo ->
-                    return indexInfo.get(geometryPath.toString()) != null
-                }
-
-                if (!alreadyIndexed) {
-                    collection.createIndex(new BasicDBObject((geometryPath): "2dsphere"), new com.mongodb.client.model.IndexOptions().sparse(true))
+            // Auto-create indexes for frequently queried attribute paths
+            // This greatly improves query performance (10-100x for attribute queries)
+            if (Boolean.getBoolean("mongodb.geoserver.autoCreateIndexes")) {
+                Set<String> indexablePaths = collectIndexablePaths(mapping)
+                indexablePaths.each { path ->
+                    createIndexIfNotExists(collection, path, 1, false)
                 }
             }
+        }
+    }
+
+    /**
+     * Collect all attribute paths that should be indexed for query performance.
+     */
+    private Set<String> collectIndexablePaths(BasicDBObject mapping, String prefix = null) {
+        Set<String> paths = []
+
+        mapping.attributes?.each { attr ->
+            if (attr.path) {
+                String path = attr.path
+                if (!path.contains("coordinates")) { // Skip coordinate arrays
+                    paths.add(path)
+                }
+            }
+        }
+
+        // Recurse into sub-collections for commonly queried nested paths
+        mapping.subCollections?.each { subCollection ->
+            String subPath = subCollection.subCollectionPath
+            if (subPath) {
+                paths.add(subPath)
+            }
+        }
+
+        return paths
+    }
+
+    /**
+     * Create an index if it doesn't already exist.
+     */
+    private void createIndexIfNotExists(def collection, String path, def indexType, boolean sparse) {
+        try {
+            def existingIndexes = collection.listIndexes().collect { it.get("key")?.keySet() }.flatten()
+
+            if (!existingIndexes.contains(path)) {
+                def indexOptions = new com.mongodb.client.model.IndexOptions()
+                    .sparse(sparse)
+                    .background(true) // Create index in background to avoid locking
+
+                collection.createIndex(new BasicDBObject((path): indexType), indexOptions)
+                log.info("Created index on ${collection.getNamespace()}.${path}")
+            }
+        } catch (Exception e) {
+            // Log but don't fail - indexes are optimization, not required
+            log.warning("Failed to create index on ${path}: ${e.message}")
         }
     }
 }

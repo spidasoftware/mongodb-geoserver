@@ -11,7 +11,7 @@ apply plugin: 'java-library-distribution'
 apply plugin: 'org.owasp.dependencycheck'
 
 group = 'com.spidasoftware'
-version = '26.0.0'
+version = '26.1.0'
 description = "mongodb-geoserver-plugin"
 
 sourceCompatibility = 11
