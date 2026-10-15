@@ -4,11 +4,11 @@ import com.mongodb.BasicDBObject
 import com.mongodb.client.FindIterable
 import com.spidasoftware.mongodb.data.MongoDBFeatureSource
 import org.bson.Document
-import org.geotools.data.Query
+import org.geotools.api.data.Query
 import org.geotools.feature.simple.SimpleFeatureBuilder
 import org.geotools.util.logging.Logging
-import org.opengis.feature.simple.SimpleFeature
-import org.opengis.feature.type.FeatureType
+import org.geotools.api.feature.simple.SimpleFeature
+import org.geotools.api.feature.type.FeatureType
 
 import java.util.logging.Logger
 

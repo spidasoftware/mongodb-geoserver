@@ -4,7 +4,7 @@ import com.mongodb.client.MongoCursor
 import org.bson.Document
 import org.geotools.data.simple.SimpleFeatureIterator
 import org.geotools.util.logging.Logging
-import org.opengis.feature.simple.SimpleFeature
+import org.geotools.api.feature.simple.SimpleFeature
 
 import java.util.logging.Logger
 

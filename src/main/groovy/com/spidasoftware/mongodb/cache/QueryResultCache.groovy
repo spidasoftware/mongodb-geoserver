@@ -1,6 +1,6 @@
 package com.spidasoftware.mongodb.cache
 
-import org.geotools.data.Query
+import org.geotools.api.data.Query
 import org.geotools.util.logging.Logging
 
 import java.lang.ref.SoftReference

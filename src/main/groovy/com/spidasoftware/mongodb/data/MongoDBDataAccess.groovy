@@ -10,17 +10,17 @@ import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
 import org.bson.Document
-import org.geotools.data.DataAccess
-import org.geotools.data.FeatureSource
-import org.geotools.data.ServiceInfo
+import org.geotools.api.data.DataAccess
+import org.geotools.api.data.FeatureSource
+import org.geotools.api.data.ServiceInfo
 import org.geotools.feature.NameImpl
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder
 import org.geotools.referencing.CRS
 import org.geotools.util.logging.Logging
 import org.locationtech.jts.geom.Point
-import org.opengis.feature.Feature
-import org.opengis.feature.type.FeatureType
-import org.opengis.feature.type.Name
+import org.geotools.api.feature.Feature
+import org.geotools.api.feature.type.FeatureType
+import org.geotools.api.feature.type.Name
 
 import java.util.logging.Logger
 

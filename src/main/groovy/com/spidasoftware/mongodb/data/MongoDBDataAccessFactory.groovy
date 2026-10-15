@@ -3,14 +3,14 @@ package com.spidasoftware.mongodb.data
 import com.mongodb.BasicDBList
 import com.mongodb.BasicDBObject
 import groovy.json.JsonSlurper
-import org.geotools.data.DataAccess
-import org.geotools.data.DataAccessFactory
-import org.geotools.data.Parameter
+import org.geotools.api.data.DataAccess
+import org.geotools.api.data.DataAccessFactory
+import org.geotools.api.data.Parameter
 import org.geotools.util.logging.Logging
-import org.opengis.feature.Feature
-import org.opengis.feature.type.FeatureType
+import org.geotools.api.feature.Feature
+import org.geotools.api.feature.type.FeatureType
 
-import java.awt.*
+import java.awt.RenderingHints
 import java.util.logging.Logger
 
 public class MongoDBDataAccessFactory implements DataAccessFactory {

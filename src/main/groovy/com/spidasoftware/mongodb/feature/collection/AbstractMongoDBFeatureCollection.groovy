@@ -9,7 +9,7 @@ import com.spidasoftware.mongodb.feature.iterator.LazyMongoDBFeatureIterator
 import com.spidasoftware.mongodb.feature.iterator.MongoDBFeatureIterator
 import org.apache.commons.lang3.StringUtils
 import org.bson.Document
-import org.geotools.data.Query
+import org.geotools.api.data.Query
 import org.geotools.data.complex.feature.type.ComplexFeatureTypeFactoryImpl
 import org.geotools.data.simple.SimpleFeatureCollection
 import org.geotools.data.simple.SimpleFeatureIterator
@@ -24,18 +24,18 @@ import org.geotools.util.logging.Logging
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.Point
-import org.opengis.feature.FeatureVisitor
-import org.opengis.feature.simple.SimpleFeature
-import org.opengis.feature.simple.SimpleFeatureType
-import org.opengis.feature.type.FeatureType
-import org.opengis.feature.type.GeometryDescriptor
-import org.opengis.feature.type.GeometryType
-import org.opengis.filter.Filter
-import org.opengis.filter.sort.SortBy
-import org.opengis.referencing.crs.CoordinateReferenceSystem
-import org.opengis.referencing.cs.AxisDirection
-import org.opengis.referencing.operation.MathTransform
-import org.opengis.util.ProgressListener
+import org.geotools.api.feature.FeatureVisitor
+import org.geotools.api.feature.simple.SimpleFeature
+import org.geotools.api.feature.simple.SimpleFeatureType
+import org.geotools.api.feature.type.FeatureType
+import org.geotools.api.feature.type.GeometryDescriptor
+import org.geotools.api.feature.type.GeometryType
+import org.geotools.api.filter.Filter
+import org.geotools.api.filter.sort.SortBy
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem
+import org.geotools.api.referencing.cs.AxisDirection
+import org.geotools.api.referencing.operation.MathTransform
+import org.geotools.api.util.ProgressListener
 
 import java.util.logging.Logger
 
@@ -301,7 +301,7 @@ abstract class AbstractMongoDBFeatureCollection implements SimpleFeatureCollecti
             if (this.targetCRS != this.sourceCRS) {
                 ComplexFeatureTypeFactoryImpl complexFeatureTypeFactory = new ComplexFeatureTypeFactoryImpl()
                 NameImpl pointName = featureType.getGeometryDescriptor().getName()
-                GeometryType geometryType = complexFeatureTypeFactory.createGeometryType(pointName, org.opengis.geometry.primitive.Point.class, this.targetCRS, true, false, new ArrayList(), null, null)
+                GeometryType geometryType = complexFeatureTypeFactory.createGeometryType(pointName, org.geotools.api.geometry.primitive.Point.class, this.targetCRS, true, false, new ArrayList(), null, null)
                 geometryDescriptor = complexFeatureTypeFactory.createGeometryDescriptor(geometryType, pointName, 1, 1, false, "")
             }
             simpleFeatureBuilder.set(new NameImpl(namespace, this.mapping.geometry.name), new GeometryAttributeImpl(point, geometryDescriptor, null))

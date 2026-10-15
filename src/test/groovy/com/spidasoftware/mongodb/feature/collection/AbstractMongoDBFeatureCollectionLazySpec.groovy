@@ -5,11 +5,11 @@ import com.mongodb.client.FindIterable
 import com.mongodb.client.MongoCursor
 import com.spidasoftware.mongodb.data.MongoDBFeatureSource
 import org.bson.Document
-import org.geotools.data.Query
+import org.geotools.api.data.Query
 import org.geotools.feature.NameImpl
-import org.opengis.feature.simple.SimpleFeature
-import org.opengis.feature.type.FeatureType
-import org.opengis.filter.Filter
+import org.geotools.api.feature.simple.SimpleFeature
+import org.geotools.api.feature.type.FeatureType
+import org.geotools.api.filter.Filter
 import spock.lang.Specification
 
 class AbstractMongoDBFeatureCollectionLazySpec extends Specification {

@@ -7,20 +7,21 @@ import com.mongodb.client.MongoDatabase
 import com.spidasoftware.mongodb.cache.QueryResultCache
 import com.spidasoftware.mongodb.filter.FilterToDBQuery
 import org.bson.Document
+import org.geotools.api.data.*
 import org.geotools.data.*
 import org.geotools.feature.FeatureCollection
 import org.geotools.geometry.jts.ReferencedEnvelope
 import org.geotools.referencing.crs.DefaultGeographicCRS
 import org.geotools.util.logging.Logging
 import org.locationtech.jts.geom.Coordinate
-import org.opengis.feature.Feature
-import org.opengis.feature.simple.SimpleFeature
-import org.opengis.feature.type.FeatureType
-import org.opengis.feature.type.Name
-import org.opengis.filter.Filter
-import org.opengis.filter.sort.SortBy
+import org.geotools.api.feature.Feature
+import org.geotools.api.feature.simple.SimpleFeature
+import org.geotools.api.feature.type.FeatureType
+import org.geotools.api.feature.type.Name
+import org.geotools.api.filter.Filter
+import org.geotools.api.filter.sort.SortBy
 
-import java.awt.*
+import java.awt.RenderingHints
 import java.util.logging.Logger
 
 public class MongoDBFeatureSource implements FeatureSource<FeatureType, Feature> {
@@ -161,7 +162,7 @@ public class MongoDBFeatureSource implements FeatureSource<FeatureType, Feature>
 
         // Add $match stage with query filter if present
         def filterToDBQuery = new FilterToDBQuery(this.dbCollection, this.featureType, this.mapping, this)
-        def dbQuery = filterToDBQuery.visit(query?.getFilter() ?: org.opengis.filter.Filter.INCLUDE, "")
+        def dbQuery = filterToDBQuery.visit(query?.getFilter() ?: org.geotools.api.filter.Filter.INCLUDE, "")
         def defaultQueries = filterToDBQuery.getDefaultCollectionQueries(mapping)
 
         if (defaultQueries.size() > 0 || dbQuery != null) {

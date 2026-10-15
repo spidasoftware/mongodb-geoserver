@@ -1,151 +1,183 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // General Gradle Settings
+// Requires JDK 17+ to run Gradle (Gradle 9.x). The plugin itself is compiled for Java 17 because
+// GeoTools 34.x / GeoServer 2.28.x are Java 17 class files.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-apply plugin: 'java'
-apply plugin: 'groovy'
-apply plugin: 'maven'
-apply plugin: 'idea'
-apply plugin: 'project-report'
-apply plugin: 'java-library-distribution'
-apply plugin: 'org.owasp.dependencycheck'
+plugins {
+	id 'groovy'
+	id 'java-library-distribution'
+	id 'maven-publish'
+	id 'idea'
+	id 'project-report'
+	id 'org.owasp.dependencycheck' version '13.0.0'
+}
 
 group = 'com.spidasoftware'
-version = '26.1.0'
+version = '34.5.0'
 description = "mongodb-geoserver-plugin"
 
-sourceCompatibility = 11
-targetCompatibility = 11
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Dependencies
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-buildscript {
-
-	try {
-		project.ext.m2Settings = [
-			username: System.getenv('ARTIFACTORY_USERNAME'),
-			password: System.getenv('ARTIFACTORY_PASSWORD'),
-			repo: System.getenv('ARTIFACTORY_URL_PRIVATE'),
-			exposed: System.getenv('ARTIFACTORY_URL_EXPOSED'),
-			snapshots: System.getenv('ARTIFACTORY_URL'),
-			releases: System.getenv('ARTIFACTORY_URL')
-		]
-	} catch(ex){
-		println ex.message //use ex.printStackTrace() if you want to show the full stacktrace
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
 	}
+}
 
-	//uncomment to print out maven settings
-	//println "m2Settings: ${m2Settings}"
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Versions - keep geotoolsVersion in sync with the GeoServer WAR used by min
+// (min/scripts/docker/tomcat/geoserver/geoserver.war). GeoServer 2.28.x == GeoTools 34.x
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+def geotoolsVersion = '34.5'
+def jtsVersion = '1.20.0'
+def groovyVersion = '4.0.33'   // Matches the Groovy 4 line used by Grails 7 in min
+def spockVersion = '2.5-groovy-4.0'
+def mongoDriverVersion = '5.2.0'
 
-	repositories {
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Repositories
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+def artifactory = [
+	username: System.getenv('ARTIFACTORY_USERNAME'),
+	password: System.getenv('ARTIFACTORY_PASSWORD'),
+	repo    : System.getenv('ARTIFACTORY_URL_PRIVATE'),
+	exposed : System.getenv('ARTIFACTORY_URL_EXPOSED'),
+]
+
+repositories {
+	if (artifactory.repo) {
 		maven {
-			url m2Settings.repo
+			url = artifactory.repo
 			credentials {
-				username m2Settings.username
-				password m2Settings.password
+				username = artifactory.username
+				password = artifactory.password
 			}
 		}
 	}
-
-	dependencies {
-		classpath 'org.owasp:dependency-check-gradle:6.5.0.1'
-	}
+	mavenCentral()
+	maven { url = 'https://repo.osgeo.org/repository/release/' }
 }
 
-repositories {
-    maven { 
-    	url m2Settings.repo 
-    	credentials {
-    		username m2Settings.username
-    		password m2Settings.password
-    	}
-    }
-    maven { url "http://download.osgeo.org/webdav/geotools" }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Dependencies
+//
+// compileOnly    -> already provided by the GeoServer WAR (WEB-INF/lib); NOT shipped in the plugin zip.
+// implementation -> NOT provided by GeoServer; shipped in the plugin zip's lib/ folder and copied into
+//                   geoserver/WEB-INF/lib by min/scripts/docker/build-min-in-container.sh.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+configurations {
+	// Tests need the GeoServer-provided jars on the classpath too
+	testImplementation.extendsFrom compileOnly
 }
 
-task sourcesZip(type: Zip, dependsOn: classes) {
-    classifier = 'sources'
-    into ('') {
-		from { 'build.gradle' }
-		from { 'gradlew' }
-		from { 'gradlew.bat' }
-		from { 'LICENSE' }
-		from { 'README.md' }
-        		
+dependencies {
+	// Provided by GeoServer
+	compileOnly "org.geotools:gt-main:${geotoolsVersion}"
+	compileOnly "org.geotools:gt-api:${geotoolsVersion}"
+	compileOnly "org.geotools:gt-referencing:${geotoolsVersion}"
+	compileOnly "org.geotools:gt-metadata:${geotoolsVersion}"
+	compileOnly "org.geotools:gt-complex:${geotoolsVersion}"
+	compileOnly "org.geotools:gt-cql:${geotoolsVersion}"
+	compileOnly "org.geotools.xsd:gt-xsd-core:${geotoolsVersion}"
+	compileOnly "org.geotools.ogc:net.opengis.wfs:${geotoolsVersion}"
+	compileOnly "org.locationtech.jts:jts-core:${jtsVersion}"
+	compileOnly "org.apache.commons:commons-lang3:3.18.0"
+
+	// Shipped with the plugin
+	implementation "org.mongodb:mongodb-driver-sync:${mongoDriverVersion}"
+	implementation "org.apache.groovy:groovy:${groovyVersion}"
+	implementation "org.apache.groovy:groovy-json:${groovyVersion}"
+
+	// Test only
+	testImplementation platform("org.spockframework:spock-bom:${spockVersion}")
+	testImplementation "org.spockframework:spock-core"
+	testRuntimeOnly "org.geotools:gt-epsg-wkt:${geotoolsVersion}"
+	testRuntimeOnly "commons-jxpath:commons-jxpath:1.4.0"
+	testRuntimeOnly "net.bytebuddy:byte-buddy:1.17.7"
+	testRuntimeOnly "org.objenesis:objenesis:3.4"
+	testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+	testRuntimeOnly "org.slf4j:slf4j-simple:2.0.17"
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Tests (require a MongoDB instance)
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+test {
+	useJUnitPlatform()
+	testLogging.showStandardStreams = true
+	systemProperty "mongoHost", findProperty('mongoHost') ?: "localhost"
+	systemProperty "mongoPort", findProperty('mongoPort') ?: "27017"
+	systemProperty "mongoDatabase", findProperty('mongoDatabase') ?: "test_spidadb_wfs"
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Distribution zip: mongodb-geoserver-<version>.zip
+//   mongodb-geoserver-<version>/
+//     mongodb-geoserver-<version>.jar
+//     mongodb-geoserver-<version>-sources.zip   (min extracts src/test/resources/mapping.json from this)
+//     lib/*.jar                                 (runtime deps NOT provided by GeoServer)
+//     LICENSE, README.md
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+tasks.register('sourcesZip', Zip) {
+	archiveClassifier = 'sources'
+	from(layout.projectDirectory) {
+		include 'build.gradle', 'settings.gradle', 'gradlew', 'gradlew.bat', 'LICENSE', 'README.md'
 	}
-	into ('src') {
-		from { 'src' }
-	}
-	into ('gradle') {
-		from { 'gradle' }
-	}
-} 
+	into('src') { from 'src' }
+	into('gradle') { from 'gradle' }
+}
 
 distributions {
-    main {
-        contents {
-        	from sourcesZip
-        	into ('') {
-        		from { 'LICENSE' }
-        		from { 'README.md' }
-        	}
-            exclude { override ->
-                override.file.path.matches('.*(gt|net|gs|jts|jscience|wicket|htmlvalidator|slf4j|log4j|gs|spring|bcprov|srvlet|json|commons|freemarker|xstream|guava|jsr|jasypt|jai|servlet|imageio|jdom|postgres|xpp|aopalliance|cglib|hsqldb|xmlpull|xpp|vecmath|jgrdidshift|org.w3|common|ecore|picocontainer|xsd|xml|jgridshift|gt-main-core).*.jar')
-            }
-        }
-    }
-}
-
-artifacts { archives distZip }
-
-uploadArchives {
-	repositories.mavenDeployer {
-		repository(url: m2Settings.exposed) {
-			authentication(userName: m2Settings.username, password: m2Settings.password)
+	main {
+		distributionBaseName = 'mongodb-geoserver'
+		contents {
+			from tasks.named('sourcesZip')
+			from 'LICENSE', 'README.md'
 		}
 	}
 }
 
-def geotoolsVersion = '24.2'
-def geoserverVersion = '2.19.0'
-dependencies {
-    compile group: 'org.geotools', name: 'gt-main', version:"${geotoolsVersion}"
-    compile group: 'org.geotools', name: 'gt-opengis', version:"${geotoolsVersion}", transitive: false
-    compile group: 'org.geotools', name: 'gt-complex', version:"${geotoolsVersion}", transitive: false
-    compile group: 'org.geotools', name: 'gt-referencing', version:"${geotoolsVersion}", transitive: false
-    compile group: 'org.geotools', name: 'gt-metadata', version:"${geotoolsVersion}", transitive: false
-	compile group: 'org.geotools', name: 'gt-cql', version:"${geotoolsVersion}", transitive: false
-	compile group: 'org.geotools', name: 'gt-epsg-wkt', version:"${geotoolsVersion}", transitive: false
-    compile group: 'org.geotools.xsd', name: 'gt-xsd-core', version:"${geotoolsVersion}", transitive: false
-    compile group: 'org.geotools.ogc', name: 'net.opengis.wfs', version:"${geotoolsVersion}", transitive: false
-//    compile(group: 'org.geoserver.web', name: 'gs-web-core', version:"${geoserverVersion}") {
-//        exclude module: 'jai_core'
-//    }
-    compile group: 'org.mongodb', name:'mongodb-driver-sync', version:'5.2.0'
-	compile('org.locationtech.jts:jts:1.16.0')
-	compile('org.locationtech.jts:jts-core:1.16.0')
-    compile group: 'org.jscience', name:'jscience', version:'4.3.1', transitive: false
-	compile("org.apache.commons:commons-lang3:3.9")
-	runtime("commons-jxpath:commons-jxpath:1.3")
-
-    compile "org.codehaus.groovy:groovy-all:2.4.21"
-    testCompile "org.spockframework:spock-core:1.2-groovy-2.4"
-    testCompile 'org.objenesis:objenesis:1.4'
-	testRuntime('cglib:cglib-nodep:3.3.0')
-	testRuntime('org.slf4j:slf4j-simple:1.7.36')
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Publishing to Artifactory (exposed repo) - replaces the old `uploadArchives`
+//   ./gradlew publish   (or ./gradlew uploadArchives)
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+publishing {
+	publications {
+		maven(MavenPublication) {
+			artifactId = 'mongodb-geoserver'
+			from components.java
+			artifact tasks.named('distZip')
+		}
+	}
+	repositories {
+		if (artifactory.exposed) {
+			maven {
+				name = 'artifactoryExposed'
+				url = artifactory.exposed
+				credentials {
+					username = artifactory.username
+					password = artifactory.password
+				}
+			}
+		}
+	}
 }
 
-test {
-    testLogging.showStandardStreams = true
-    systemProperty "mongoHost", "localhost"
-    systemProperty "mongoPort", "27017"
-    systemProperty "mongoDatabase", "test_spidadb_wfs"
+tasks.register('uploadArchives') {
+	group = 'publishing'
+	description = 'Alias for publish (kept for the instructions in the min README).'
+	dependsOn 'publish'
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// OWASP dependency check (./gradlew dependencyCheckAnalyze) - set NVD_API_KEY for faster/more reliable runs
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 dependencyCheck {
-	failBuildOnCVSS=7
-	suppressionFile="dependency-check-suppressions.xml"
+	failBuildOnCVSS = 7
+	suppressionFile = "dependency-check-suppressions.xml"
 	formats = ["HTML"]
+	scanConfigurations = ['runtimeClasspath']
+	nvd {
+		apiKey = System.getenv('NVD_API_KEY')
+	}
 }
+

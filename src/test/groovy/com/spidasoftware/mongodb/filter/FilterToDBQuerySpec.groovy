@@ -13,7 +13,7 @@ import org.bson.Document
 import com.spidasoftware.mongodb.data.MongoDBDataAccess
 import com.spidasoftware.mongodb.data.MongoDBFeatureSource
 import java.util.regex.Pattern
-import org.geotools.data.Query
+import org.geotools.api.data.Query
 import org.geotools.feature.FeatureCollection
 import org.geotools.feature.FeatureIterator
 import org.geotools.feature.NameImpl
@@ -21,8 +21,8 @@ import org.geotools.filter.FilterFactoryImpl
 import org.geotools.filter.identity.FeatureIdImpl
 import org.geotools.filter.text.cql2.CQL
 import org.geotools.util.logging.Logging
-import org.opengis.feature.type.FeatureType
-import org.opengis.filter.Filter
+import org.geotools.api.feature.type.FeatureType
+import org.geotools.api.filter.Filter
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
