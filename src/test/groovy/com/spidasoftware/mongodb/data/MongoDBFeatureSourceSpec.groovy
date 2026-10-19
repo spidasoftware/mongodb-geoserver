@@ -9,12 +9,12 @@ import com.mongodb.client.MongoDatabase
 import com.spidasoftware.mongodb.TestJsonUtils
 import org.bson.Document
 import com.spidasoftware.mongodb.feature.collection.MongoDBFeatureCollection
-import org.geotools.data.Query
+import org.geotools.api.data.Query
 import org.geotools.feature.FeatureCollection
 import org.geotools.feature.NameImpl
 import org.geotools.filter.text.cql2.CQL
 import org.geotools.util.logging.Logging
-import org.opengis.feature.type.FeatureType
+import org.geotools.api.feature.type.FeatureType
 import spock.lang.Shared
 import spock.lang.Specification
 

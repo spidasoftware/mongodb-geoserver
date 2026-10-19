@@ -1,12 +1,21 @@
 # mongodb-geoserver
 A [MongoDB](https://www.mongodb.com/) plugin for [Geoserver](http://geoserver.org/).
 
-Download [Geoserver 2.19.0](http://geoserver.org/release/2.19.0/) (Platform Independent Binary)
+Download [Geoserver 2.28.5](http://geoserver.org/release/2.28.5/) (Platform Independent Binary). The plugin version tracks the GeoTools version (GeoServer 2.28.x == GeoTools 34.x), e.g. plugin `34.5.0` is built against GeoTools `34.5`.
+
+### Building / publishing
+Requires **JDK 17+** (Gradle 9.x, GeoTools 34.x are Java 17).
+
+* Run tests (needs MongoDB on `localhost:27017`, override with `-PmongoHost=... -PmongoPort=...`): `./gradlew test`
+* Build the deployment zip: `./gradlew distZip` (output: `build/distributions/mongodb-geoserver-<version>.zip`)
+* Publish to Artifactory (needs `ARTIFACTORY_USERNAME`, `ARTIFACTORY_PASSWORD`, `ARTIFACTORY_URL_EXPOSED`; `ARTIFACTORY_URL_PRIVATE` is optional for resolving): `./gradlew publish` (`./gradlew uploadArchives` is kept as an alias)
+
+GeoTools/JTS/commons jars are `compileOnly` because the GeoServer WAR already provides them; only `implementation` dependencies end up in the zip's `lib/` folder.
 
 ### To setup a dev environment:
 1. Download deployment zip from [here](https://dev.spidastudio.com/artifactory/exposed-repo/com/spidasoftware/mongodb-geoserver/)
 2. Unzip the deployment
-3. Move the groovy-all-2.X JAR, the mongo-driver-core-5.2.0.jarm, the mongo-driver-sync-5.2.0.jar, the bson-5.2.0.jar and the mongodb-geoserver jar into  geoserver/WEB-INF/lib
+3. Move the mongodb-geoserver jar and every jar in the zip's `lib/` folder (groovy-4.x, groovy-json-4.x, mongodb-driver-sync, mongodb-driver-core, bson, bson-record-codec) into geoserver/WEB-INF/lib
 4. Restart geoserver.
 
 ### Cache settings

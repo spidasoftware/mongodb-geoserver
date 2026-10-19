@@ -5,8 +5,8 @@ import com.spidasoftware.mongodb.TestJsonUtils
 import org.geotools.feature.NameImpl
 import org.geotools.referencing.CRS
 import org.geotools.util.logging.Logging
-import org.opengis.feature.type.FeatureType
-import org.opengis.feature.type.Name
+import org.geotools.api.feature.type.FeatureType
+import org.geotools.api.feature.type.Name
 import spock.lang.Specification
 
 import java.util.logging.Logger

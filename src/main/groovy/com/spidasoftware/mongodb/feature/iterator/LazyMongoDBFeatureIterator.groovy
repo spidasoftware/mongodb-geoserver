@@ -6,8 +6,8 @@ import com.spidasoftware.mongodb.feature.collection.AbstractMongoDBFeatureCollec
 import org.bson.Document
 import org.geotools.data.simple.SimpleFeatureIterator
 import org.geotools.util.logging.Logging
-import org.opengis.feature.simple.SimpleFeature
-import org.opengis.filter.Filter
+import org.geotools.api.feature.simple.SimpleFeature
+import org.geotools.api.filter.Filter
 
 import java.util.ArrayDeque
 import java.util.Deque
